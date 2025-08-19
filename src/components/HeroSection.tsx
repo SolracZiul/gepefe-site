@@ -35,8 +35,8 @@ export const HeroSection = () => {
             </Button>
             <Button 
               size="lg" 
-              variant="outline"
-              className="border-white/30 text-white hover:bg-white/10"
+              variant="secondary"
+              className="bg-white/20 text-primary-foreground border-white/40 hover:bg-white/30"
             >
               <Users className="mr-2 h-5 w-5" />
               Sobre o GEPEFE
