@@ -1,9 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { BookOpen, Users, Download } from "lucide-react";
-
 export const HeroSection = () => {
-  return (
-    <section className="relative py-20 px-4 bg-gradient-hero overflow-hidden">
+  return <section className="relative py-20 px-4 bg-gradient-hero overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-10 left-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
@@ -25,41 +23,19 @@ export const HeroSection = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button 
-              size="lg" 
-              variant="secondary"
-              className="bg-white/90 text-primary hover:bg-white shadow-elegant"
-            >
+            <Button size="lg" variant="secondary" className="bg-white/90 text-primary hover:bg-white shadow-elegant">
               <BookOpen className="mr-2 h-5 w-5" />
               Explorar Publicações
             </Button>
-            <Button 
-              size="lg" 
-              variant="secondary"
-              className="bg-white/20 text-primary-foreground border-white/40 hover:bg-white/30"
-            >
+            <Button size="lg" variant="secondary" className="border-white/40 bg-white/90 text-slate-950">
               <Users className="mr-2 h-5 w-5" />
               Sobre o GEPEFE
             </Button>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto">
-            <div className="text-center">
-              <div className="text-3xl font-bold mb-2">50+</div>
-              <div className="text-primary-foreground/80">Artigos Publicados</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold mb-2">15+</div>
-              <div className="text-primary-foreground/80">Pesquisadores</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold mb-2">1000+</div>
-              <div className="text-primary-foreground/80">Downloads</div>
-            </div>
-          </div>
+          
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
