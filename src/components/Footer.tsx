@@ -1,0 +1,84 @@
+import { Mail, ExternalLink, MapPin } from "lucide-react";
+
+export const Footer = () => {
+  return (
+    <footer className="bg-foreground text-background py-12 px-4">
+      <div className="container mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* About */}
+          <div>
+            <div className="flex items-center space-x-2 mb-4">
+              <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
+                <span className="text-primary-foreground font-bold text-lg">G</span>
+              </div>
+              <div>
+                <h3 className="font-bold text-lg">GEPEFE</h3>
+                <p className="text-sm text-background/70">Repositório Acadêmico</p>
+              </div>
+            </div>
+            <p className="text-background/80 text-sm">
+              Grupo de Estudos e Pesquisas em Educação Física e Escola - 
+              Promovendo o conhecimento científico em Educação Física escolar.
+            </p>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <h4 className="font-semibold mb-4">Contato</h4>
+            <div className="space-y-3 text-sm">
+              <div className="flex items-center space-x-2">
+                <Mail className="w-4 h-4 text-primary" />
+                <span className="text-background/80">gepefe@universidade.edu.br</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <MapPin className="w-4 h-4 text-primary" />
+                <span className="text-background/80">Universidade Federal - Campus Principal</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <ExternalLink className="w-4 h-4 text-primary" />
+                <a 
+                  href="#" 
+                  className="text-background/80 hover:text-primary transition-colors"
+                >
+                  Site Institucional
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <h4 className="font-semibold mb-4">Links Rápidos</h4>
+            <div className="space-y-2 text-sm">
+              <a href="#" className="block text-background/80 hover:text-primary transition-colors">
+                Sobre o Grupo
+              </a>
+              <a href="#" className="block text-background/80 hover:text-primary transition-colors">
+                Pesquisadores
+              </a>
+              <a href="#" className="block text-background/80 hover:text-primary transition-colors">
+                Projetos em Andamento
+              </a>
+              <a href="#" className="block text-background/80 hover:text-primary transition-colors">
+                Como Publicar
+              </a>
+              <a href="#" className="block text-background/80 hover:text-primary transition-colors">
+                Políticas de Acesso
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-background/20 mt-8 pt-8 text-center">
+          <p className="text-sm text-background/60">
+            © 2024 GEPEFE - Grupo de Estudos e Pesquisas em Educação Física e Escola. 
+            Todos os direitos reservados.
+          </p>
+          <p className="text-xs text-background/50 mt-2">
+            Este repositório é dedicado ao acesso aberto do conhecimento científico.
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+};
