@@ -27,7 +27,7 @@ export const HeroSection = () => {
               <BookOpen className="mr-2 h-5 w-5" />
               Explorar Publicações
             </Button>
-            <Button size="lg" variant="secondary" className="border-white/40 bg-white/90 text-slate-950">
+            <Button size="lg" variant="secondary" className="bg-white/90 text-primary hover:bg-white shadow-elegant">
               <Users className="mr-2 h-5 w-5" />
               Sobre o GEPEFE
             </Button>
