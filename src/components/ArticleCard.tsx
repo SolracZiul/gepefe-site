@@ -1,7 +1,9 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, Eye, Calendar, User } from "lucide-react";
+import { Download, Eye, Calendar, User, Heart } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useFavorites } from "@/hooks/useFavorites";
 
 export interface Article {
   id: string;
@@ -20,6 +22,9 @@ interface ArticleCardProps {
 }
 
 export const ArticleCard = ({ article }: ArticleCardProps) => {
+  const { user } = useAuth();
+  const { toggleFavorite, isFavorited } = useFavorites(user?.id || null);
+
   const handleDownload = () => {
     if (article.pdf_url) {
       window.open(article.pdf_url, '_blank');
@@ -43,9 +48,22 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
           <Badge variant="secondary" className="bg-primary/10 text-primary">
             {article.category}
           </Badge>
-          <div className="flex items-center text-sm text-muted-foreground">
-            <Download className="w-4 h-4 mr-1" />
-            {article.download_count}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center text-sm text-muted-foreground">
+              <Download className="w-4 h-4 mr-1" />
+              {article.download_count}
+            </div>
+            
+            {user && (
+              <Button
+                variant={isFavorited(article.id) ? "default" : "outline"}
+                size="sm"
+                onClick={() => toggleFavorite(article.id)}
+                className="flex items-center gap-1"
+              >
+                <Heart className={`h-4 w-4 ${isFavorited(article.id) ? 'fill-current' : ''}`} />
+              </Button>
+            )}
           </div>
         </div>
         

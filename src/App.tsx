@@ -13,6 +13,7 @@ import Dissertacoes from "./pages/Dissertacoes";
 import Todos from "./pages/Todos";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
+import Favoritos from "./pages/Favoritos";
 
 console.log("App.tsx: All imports loaded successfully");
 console.log("Components check:", { Index, NotFound, Sobre, ArtigosCompletos, TextosAcademicos, Pesquisas, Dissertacoes, Todos, Auth, Admin });
@@ -35,6 +36,7 @@ const App = () => {
             <Route path="/textos-academicos" element={<TextosAcademicos />} />
             <Route path="/pesquisas" element={<Pesquisas />} />
             <Route path="/dissertacoes" element={<Dissertacoes />} />
+            <Route path="/favoritos" element={<Favoritos />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/admin" element={<Admin />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
