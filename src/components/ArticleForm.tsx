@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Loader2, ArrowLeft, Upload, FileText, Trash2 } from "lucide-react";
 
 interface Article {
   id: string;
@@ -18,6 +18,9 @@ interface Article {
   publish_date: string;
   download_count: number;
   pdf_url: string | null;
+  file_path: string | null;
+  file_size: number | null;
+  file_type: string | null;
   tags: string[];
 }
 
@@ -29,6 +32,8 @@ interface ArticleFormProps {
 
 export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) => {
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
     title: "",
     authors: "",
@@ -61,6 +66,71 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
     }
   }, [article]);
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      if (!allowedTypes.includes(file.type)) {
+        toast({
+          variant: "destructive",
+          title: "Tipo de arquivo inválido",
+          description: "Apenas arquivos PDF, DOC e DOCX são permitidos.",
+        });
+        return;
+      }
+
+      // Validate file size (10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        toast({
+          variant: "destructive",
+          title: "Arquivo muito grande",
+          description: "O arquivo deve ter no máximo 10MB.",
+        });
+        return;
+      }
+
+      setSelectedFile(file);
+    }
+  };
+
+  const uploadFile = async (file: File): Promise<{ path: string; size: number; type: string } | null> => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = fileName;
+
+      const { error: uploadError } = await supabase.storage
+        .from('academic-articles')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      return {
+        path: filePath,
+        size: file.size,
+        type: file.type
+      };
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Erro no upload",
+        description: error.message,
+      });
+      return null;
+    }
+  };
+
+  const deleteUploadedFile = async (filePath: string) => {
+    try {
+      await supabase.storage
+        .from('academic-articles')
+        .remove([filePath]);
+    } catch (error) {
+      console.error('Error deleting file:', error);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -68,6 +138,18 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
     try {
       const authorsArray = formData.authors.split(",").map(author => author.trim()).filter(Boolean);
       const tagsArray = formData.tags.split(",").map(tag => tag.trim()).filter(Boolean);
+
+      let fileData = null;
+      if (selectedFile) {
+        setUploading(true);
+        fileData = await uploadFile(selectedFile);
+        setUploading(false);
+        
+        if (!fileData) {
+          setLoading(false);
+          return;
+        }
+      }
 
       const articleData = {
         title: formData.title,
@@ -77,9 +159,17 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
         publish_date: formData.publish_date,
         pdf_url: formData.pdf_url || null,
         tags: tagsArray,
+        file_path: fileData?.path || (article?.file_path || null),
+        file_size: fileData?.size || (article?.file_size || null),
+        file_type: fileData?.type || (article?.file_type || null),
       };
 
       if (article) {
+        // If updating and there's a new file, delete the old one
+        if (fileData && article.file_path) {
+          await deleteUploadedFile(article.file_path);
+        }
+
         // Update existing article
         const { error } = await supabase
           .from('articles')
@@ -113,6 +203,13 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
 
       onSuccess();
     } catch (error: any) {
+      // If there was an error and we uploaded a file, clean it up
+      if (selectedFile) {
+        const fileExt = selectedFile.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+        await deleteUploadedFile(fileName);
+      }
+
       toast({
         variant: "destructive",
         title: "Erro ao salvar artigo",
@@ -120,6 +217,7 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
       });
     } finally {
       setLoading(false);
+      setUploading(false);
     }
   };
 
@@ -217,15 +315,69 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="pdf_url">URL do PDF</Label>
-                <Input
-                  id="pdf_url"
-                  type="url"
-                  value={formData.pdf_url}
-                  onChange={(e) => setFormData({ ...formData, pdf_url: e.target.value })}
-                  placeholder="https://exemplo.com/arquivo.pdf"
-                />
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Arquivo do Documento</Label>
+                  <div className="flex items-center gap-4">
+                    <div className="flex-1">
+                      <Input
+                        type="file"
+                        accept=".pdf,.doc,.docx"
+                        onChange={handleFileSelect}
+                        className="file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                      />
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Aceita arquivos PDF, DOC e DOCX (máx. 10MB)
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {selectedFile && (
+                    <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
+                      <FileText className="h-4 w-4" />
+                      <span className="text-sm">{selectedFile.name}</span>
+                      <span className="text-xs text-muted-foreground">
+                        ({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
+                      </span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSelectedFile(null)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
+
+                  {article?.file_path && !selectedFile && (
+                    <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
+                      <FileText className="h-4 w-4" />
+                      <span className="text-sm">Arquivo atual hospedado</span>
+                      <span className="text-xs text-muted-foreground">
+                        ({article.file_size ? (article.file_size / 1024 / 1024).toFixed(2) + ' MB' : 'Tamanho desconhecido'})
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg">
+                  <strong>Ou</strong> use uma URL externa (compatibilidade com links antigos):
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="pdf_url">URL Externa do PDF</Label>
+                  <Input
+                    id="pdf_url"
+                    type="url"
+                    value={formData.pdf_url}
+                    onChange={(e) => setFormData({ ...formData, pdf_url: e.target.value })}
+                    placeholder="https://exemplo.com/arquivo.pdf"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Apenas se não fizer upload do arquivo acima
+                  </p>
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -243,14 +395,17 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
               </div>
 
               <div className="flex gap-4 pt-4">
-                <Button type="submit" disabled={loading}>
-                  {loading ? (
+                <Button type="submit" disabled={loading || uploading}>
+                  {loading || uploading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Salvando...
+                      {uploading ? "Fazendo upload..." : "Salvando..."}
                     </>
                   ) : (
-                    article ? "Atualizar Publicação" : "Criar Publicação"
+                    <>
+                      <Upload className="mr-2 h-4 w-4" />
+                      {article ? "Atualizar Publicação" : "Criar Publicação"}
+                    </>
                   )}
                 </Button>
                 <Button type="button" variant="outline" onClick={onCancel}>

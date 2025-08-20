@@ -22,6 +22,9 @@ export type Database = {
           created_at: string
           created_by: string | null
           download_count: number
+          file_path: string | null
+          file_size: number | null
+          file_type: string | null
           id: string
           pdf_url: string | null
           publish_date: string
@@ -36,6 +39,9 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           download_count?: number
+          file_path?: string | null
+          file_size?: number | null
+          file_type?: string | null
           id?: string
           pdf_url?: string | null
           publish_date?: string
@@ -50,6 +56,9 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           download_count?: number
+          file_path?: string | null
+          file_size?: number | null
+          file_type?: string | null
           id?: string
           pdf_url?: string | null
           publish_date?: string

@@ -4,6 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { Download, Eye, Calendar, User, Heart } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
+import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
+import { ArticleViewer } from "./ArticleViewer";
 
 // Component for displaying article information with favorites functionality
 
@@ -16,6 +19,9 @@ export interface Article {
   publish_date: string;
   download_count: number;
   pdf_url: string | null;
+  file_path: string | null;
+  file_size: number | null;
+  file_type: string | null;
   tags: string[];
 }
 
@@ -26,22 +32,47 @@ interface ArticleCardProps {
 export const ArticleCard = ({ article }: ArticleCardProps) => {
   const { user } = useAuth();
   const { toggleFavorite, isFavorited } = useFavorites(user?.id || null);
+  const [showPreview, setShowPreview] = useState(false);
 
-  const handleDownload = () => {
-    if (article.pdf_url) {
-      window.open(article.pdf_url, '_blank');
-    } else {
-      console.log(`PDF não disponível para: ${article.title}`);
+  const handleDownload = async () => {
+    try {
+      if (article.file_path) {
+        // Download from Supabase Storage
+        const { data, error } = await supabase.storage
+          .from('academic-articles')
+          .download(article.file_path);
+
+        if (error) throw error;
+
+        // Create download link
+        const url = URL.createObjectURL(data);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${article.title}.${article.file_type?.split('/')[1] || 'pdf'}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        // Update download count
+        await supabase
+          .from('articles')
+          .update({ download_count: article.download_count + 1 })
+          .eq('id', article.id);
+      } else if (article.pdf_url) {
+        // External URL - open in new tab
+        window.open(article.pdf_url, '_blank');
+      }
+    } catch (error) {
+      console.error('Error downloading file:', error);
     }
   };
 
   const handlePreview = () => {
-    if (article.pdf_url) {
-      window.open(article.pdf_url, '_blank');
-    } else {
-      console.log(`PDF não disponível para: ${article.title}`);
-    }
+    setShowPreview(true);
   };
+
+  const hasFile = article.file_path || article.pdf_url;
 
   return (
     <Card className="group hover:shadow-elegant transition-all duration-300 bg-gradient-card border-border/50">
@@ -104,7 +135,7 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
             variant="outline" 
             size="sm" 
             className="flex-1"
-            disabled={!article.pdf_url}
+            disabled={!hasFile}
           >
             <Eye className="w-4 h-4 mr-2" />
             Visualizar
@@ -113,12 +144,19 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
             onClick={handleDownload}
             size="sm" 
             className="flex-1 bg-gradient-primary hover:shadow-glow"
-            disabled={!article.pdf_url}
+            disabled={!hasFile}
           >
             <Download className="w-4 h-4 mr-2" />
             Download
           </Button>
         </div>
+
+        {/* Article Viewer */}
+        <ArticleViewer
+          article={article}
+          isOpen={showPreview}
+          onClose={() => setShowPreview(false)}
+        />
       </CardContent>
     </Card>
   );

@@ -10,6 +10,9 @@ export const mockArticles: Article[] = [
     publish_date: "2024-01-15",
     download_count: 245,
     pdf_url: "/articles/educacao-fisica-formacao-integral.pdf",
+    file_path: null,
+    file_size: null,
+    file_type: null,
     tags: ["Educação Física", "Desenvolvimento Cognitivo", "Ensino Fundamental", "Formação Integral"]
   },
   {
@@ -21,6 +24,9 @@ export const mockArticles: Article[] = [
     publish_date: "2024-02-20",
     download_count: 189,
     pdf_url: "/articles/metodologias-ativas-ef.pdf",
+    file_path: null,
+    file_size: null,
+    file_type: null,
     tags: ["Metodologias Ativas", "Gamificação", "Ensino", "Inovação Pedagógica"]
   },
   {
@@ -32,6 +38,9 @@ export const mockArticles: Article[] = [
     publish_date: "2024-03-10",
     download_count: 312,
     pdf_url: "/articles/inclusao-educacao-fisica.pdf",
+    file_path: null,
+    file_size: null,
+    file_type: null,
     tags: ["Inclusão", "Educação Especial", "Estratégias Pedagógicas", "Acessibilidade"]
   },
   {
@@ -43,6 +52,9 @@ export const mockArticles: Article[] = [
     publish_date: "2024-01-28",
     download_count: 198,
     pdf_url: "/articles/jogo-aprendizagem-motora.pdf",
+    file_path: null,
+    file_size: null,
+    file_type: null,
     tags: ["Aprendizagem Motora", "Construtivismo", "Jogos Pedagógicos", "Desenvolvimento Motor"]
   },
   {
@@ -54,6 +66,9 @@ export const mockArticles: Article[] = [
     publish_date: "2024-02-05",
     download_count: 156,
     pdf_url: "/articles/avaliacao-educacao-fisica.pdf",
+    file_path: null,
+    file_size: null,
+    file_type: null,
     tags: ["Avaliação", "Métodos Qualitativos", "Desenvolvimento Estudantil", "Práticas Pedagógicas"]
   },
   {
@@ -65,6 +80,9 @@ export const mockArticles: Article[] = [
     publish_date: "2024-03-22",
     download_count: 278,
     pdf_url: "/articles/ef-saude-mental.pdf",
+    file_path: null,
+    file_size: null,
+    file_type: null,
     tags: ["Saúde Mental", "Adolescentes", "Atividade Física", "Bem-estar", "Autoestima"]
   }
 ];

@@ -17,6 +17,9 @@ interface Article {
   publish_date: string;
   download_count: number;
   pdf_url: string | null;
+  file_path: string | null;
+  file_size: number | null;
+  file_type: string | null;
   tags: string[];
   created_at: string;
   updated_at: string;
