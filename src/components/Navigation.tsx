@@ -63,9 +63,6 @@ export const Navigation = ({ onSearch, onCategoryFilter }: NavigationProps) => {
     navigate("/");
   };
 
-  const handleCategoryClick = (path: string) => {
-    navigate(path);
-  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,19 +94,23 @@ export const Navigation = ({ onSearch, onCategoryFilter }: NavigationProps) => {
                 key={category.name}
                 variant={location.pathname === category.path ? "default" : "ghost"}
                 size="sm"
-                onClick={() => handleCategoryClick(category.path)}
+                asChild
                 className="text-sm"
               >
-                {category.name}
+                <Link to={category.path}>
+                  {category.name}
+                </Link>
               </Button>
             ))}
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate("/sobre")}
+              asChild
               className="text-sm"
             >
-              Sobre
+              <Link to="/sobre">
+                Sobre
+              </Link>
             </Button>
           </div>
 
@@ -136,11 +137,13 @@ export const Navigation = ({ onSearch, onCategoryFilter }: NavigationProps) => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => navigate("/favoritos")}
+                    asChild
                     className="flex items-center gap-2"
                   >
-                    <Heart className="h-4 w-4" />
-                    <span className="hidden sm:inline">Favoritos</span>
+                    <Link to="/favoritos">
+                      <Heart className="h-4 w-4" />
+                      <span className="hidden sm:inline">Favoritos</span>
+                    </Link>
                   </Button>
 
                    {/* User menu */}
@@ -154,18 +157,22 @@ export const Navigation = ({ onSearch, onCategoryFilter }: NavigationProps) => {
                        </Button>
                      </DropdownMenuTrigger>
                      <DropdownMenuContent align="end">
-                       <DropdownMenuItem onClick={() => navigate("/profile")}>
-                         <User className="h-4 w-4 mr-2" />
-                         Meu Perfil
-                       </DropdownMenuItem>
-                       {isAdmin && (
-                         <>
-                           <DropdownMenuItem onClick={() => navigate("/admin")}>
-                             <User className="h-4 w-4 mr-2" />
-                             Painel Admin
-                           </DropdownMenuItem>
-                         </>
-                       )}
+                        <DropdownMenuItem asChild>
+                          <Link to="/profile">
+                            <User className="h-4 w-4 mr-2" />
+                            Meu Perfil
+                          </Link>
+                        </DropdownMenuItem>
+                        {isAdmin && (
+                          <>
+                            <DropdownMenuItem asChild>
+                              <Link to="/admin">
+                                <User className="h-4 w-4 mr-2" />
+                                Painel Admin
+                              </Link>
+                            </DropdownMenuItem>
+                          </>
+                        )}
                        <DropdownMenuSeparator />
                        <DropdownMenuItem onClick={handleSignOut}>
                          <LogOut className="h-4 w-4 mr-2" />
@@ -211,70 +218,82 @@ export const Navigation = ({ onSearch, onCategoryFilter }: NavigationProps) => {
                     <Button
                       key={category.name}
                       variant={location.pathname === category.path ? "default" : "ghost"}
-                      onClick={() => handleCategoryClick(category.path)}
+                      asChild
                       className="justify-start"
                     >
-                      {category.name}
+                      <Link to={category.path}>
+                        {category.name}
+                      </Link>
                     </Button>
                   ))}
                   
                   <Button
                     variant="ghost"
-                    onClick={() => navigate("/sobre")}
+                    asChild
                     className="justify-start"
                   >
-                    Sobre
+                    <Link to="/sobre">
+                      Sobre
+                    </Link>
                   </Button>
 
                   {user && (
                     <Button
                       variant="ghost"
-                      onClick={() => navigate("/favoritos")}
+                      asChild
                       className="justify-start"
                     >
-                      <Heart className="h-4 w-4 mr-2" />
-                      Favoritos
+                      <Link to="/favoritos">
+                        <Heart className="h-4 w-4 mr-2" />
+                        Favoritos
+                      </Link>
                     </Button>
                   )}
                    
                    {user ? (
                      <>
-                       <Button
-                         variant="ghost"
-                         onClick={() => navigate("/profile")}
-                         className="justify-start"
-                       >
-                         <User className="h-4 w-4 mr-2" />
-                         Meu Perfil
-                       </Button>
-                       {isAdmin && (
-                         <Button
-                           variant="ghost"
-                           onClick={() => navigate("/admin")}
-                           className="justify-start"
-                         >
-                           <User className="h-4 w-4 mr-2" />
-                           Painel Admin
-                         </Button>
-                       )}
-                       <Button
-                         variant="ghost"
-                         onClick={handleSignOut}
-                         className="justify-start text-destructive"
-                       >
-                         <LogOut className="h-4 w-4 mr-2" />
-                         Sair
-                       </Button>
-                     </>
-                   ) : (
-                    <Button
-                      variant="ghost"
-                      onClick={() => navigate("/auth")}
-                      className="justify-start"
-                    >
-                      <LogIn className="h-4 w-4 mr-2" />
-                      Entrar
-                    </Button>
+                        <Button
+                          variant="ghost"
+                          asChild
+                          className="justify-start"
+                        >
+                          <Link to="/profile">
+                            <User className="h-4 w-4 mr-2" />
+                            Meu Perfil
+                          </Link>
+                        </Button>
+                        {isAdmin && (
+                          <Button
+                            variant="ghost"
+                            asChild
+                            className="justify-start"
+                          >
+                            <Link to="/admin">
+                              <User className="h-4 w-4 mr-2" />
+                              Painel Admin
+                            </Link>
+                          </Button>
+                        )}
+                        <Button
+                          variant="ghost"
+                          onClick={handleSignOut}
+                          className="justify-start text-destructive"
+                        >
+                          <LogOut className="h-4 w-4 mr-2" />
+                          Sair
+                        </Button>
+                      </>
+                    ) : (
+                     <Button
+                       variant="ghost"
+                       asChild
+                       className="justify-start"
+                     >
+                       <Link to="/auth">
+                         <LogIn className="h-4 w-4 mr-2" />
+                         Entrar
+                       </Link>
+                     </Button>
                   )}
                 </div>
               </SheetContent>
