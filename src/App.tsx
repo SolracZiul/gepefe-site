@@ -15,6 +15,7 @@ import Todos from "./pages/Todos";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import Profile from "./pages/Profile";
+import EmailConfirmation from "./pages/EmailConfirmation";
 import Favoritos from "./pages/Favoritos";
 
 console.log("App.tsx: All imports loaded successfully - Updated");
@@ -41,6 +42,7 @@ const App = () => {
               <Route path="/dissertacoes" element={<Dissertacoes />} />
               <Route path="/favoritos" element={<Favoritos />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/email-confirmation" element={<EmailConfirmation />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/admin" element={<Admin />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

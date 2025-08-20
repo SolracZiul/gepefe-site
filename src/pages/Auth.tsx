@@ -67,7 +67,7 @@ export default function Auth() {
     setLoading(true);
 
     try {
-      const redirectUrl = `${window.location.origin}/`;
+      const redirectUrl = `${window.location.origin}/email-confirmation`;
       
       const { error } = await supabase.auth.signUp({
         email,
