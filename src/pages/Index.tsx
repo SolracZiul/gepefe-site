@@ -6,7 +6,10 @@ import { Footer } from "@/components/Footer";
 import { useArticles } from "@/hooks/useArticles";
 import { useState, useMemo } from "react";
 
+console.log("Index.tsx: Starting imports...");
+
 const Index = () => {
+  console.log("Index component rendering...");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const { articles, loading, error } = useArticles();

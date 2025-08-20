@@ -14,30 +14,36 @@ import Todos from "./pages/Todos";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 
+console.log("App.tsx: All imports loaded successfully");
+console.log("Components check:", { Index, NotFound, Sobre, ArtigosCompletos, TextosAcademicos, Pesquisas, Dissertacoes, Todos, Auth, Admin });
+
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/todos" element={<Todos />} />
-          <Route path="/sobre" element={<Sobre />} />
-          <Route path="/artigos-completos" element={<ArtigosCompletos />} />
-          <Route path="/textos-academicos" element={<TextosAcademicos />} />
-          <Route path="/pesquisas" element={<Pesquisas />} />
-          <Route path="/dissertacoes" element={<Dissertacoes />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/admin" element={<Admin />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  console.log("App component rendering...");
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/todos" element={<Todos />} />
+            <Route path="/sobre" element={<Sobre />} />
+            <Route path="/artigos-completos" element={<ArtigosCompletos />} />
+            <Route path="/textos-academicos" element={<TextosAcademicos />} />
+            <Route path="/pesquisas" element={<Pesquisas />} />
+            <Route path="/dissertacoes" element={<Dissertacoes />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/admin" element={<Admin />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
