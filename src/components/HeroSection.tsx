@@ -13,7 +13,7 @@ export const HeroSection = () => {
         <div className="max-w-4xl mx-auto text-center text-primary-foreground">
           <h1 className="text-5xl md:text-6xl font-bold mb-6">
             Grupo de Estudos e Pesquisas em 
-            <span className="block bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
+            <span className="block bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent py-[10px]">
               Educação Física e Escola
             </span>
           </h1>
