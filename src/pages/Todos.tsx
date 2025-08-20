@@ -17,7 +17,7 @@ export default function Todos() {
         article.abstract.toLowerCase().includes(searchQuery.toLowerCase()) ||
         article.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
 
-      const matchesCategory = selectedCategory === "Todos" || article.category === selectedCategory;
+      const matchesCategory = selectedCategory === "" || selectedCategory === "Todos" || article.category === selectedCategory;
       
       return matchesSearch && matchesCategory;
     });

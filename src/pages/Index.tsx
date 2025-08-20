@@ -18,8 +18,8 @@ const Index = () => {
   const filteredArticles = useMemo(() => {
     let filtered = articles;
 
-    // Filter by category
-    if (selectedCategory !== "Todos") {
+    // Filter by category - se não há categoria selecionada ou é "Todos", mostra todos
+    if (selectedCategory && selectedCategory !== "Todos") {
       filtered = filtered.filter(article => article.category === selectedCategory);
     }
 
