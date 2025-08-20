@@ -18,6 +18,7 @@ import Profile from "./pages/Profile";
 import EmailConfirmation from "./pages/EmailConfirmation";
 import ResetPassword from "./pages/ResetPassword";
 import Favoritos from "./pages/Favoritos";
+import ArticleDetail from "./pages/ArticleDetail";
 
 console.log("App.tsx: All imports loaded successfully - Updated");
 console.log("Components check:", { Index, NotFound, Sobre, ArtigosCompletos, TextosAcademicos, Pesquisas, Dissertacoes, Todos, Auth, Admin });
@@ -47,6 +48,7 @@ const App = () => {
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/article/:id" element={<ArticleDetail />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

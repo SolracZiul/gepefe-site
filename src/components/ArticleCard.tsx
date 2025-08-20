@@ -7,6 +7,7 @@ import { useFavorites } from "@/hooks/useFavorites";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { ArticleViewer } from "./ArticleViewer";
+import { useNavigate } from "react-router-dom";
 
 // Component for displaying article information with favorites functionality
 
@@ -33,6 +34,7 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
   const { user } = useAuth();
   const { toggleFavorite, isFavorited } = useFavorites(user?.id || null);
   const [showPreview, setShowPreview] = useState(false);
+  const navigate = useNavigate();
 
   const handleDownload = async () => {
     try {
@@ -100,7 +102,10 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
           </div>
         </div>
         
-        <h3 className="text-lg font-semibold line-clamp-2 group-hover:text-primary transition-colors">
+        <h3 
+          className="text-lg font-semibold line-clamp-2 group-hover:text-primary transition-colors cursor-pointer"
+          onClick={() => navigate(`/article/${article.id}`)}
+        >
           {article.title}
         </h3>
         
