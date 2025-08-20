@@ -211,12 +211,11 @@ export default function Auth() {
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Google Sign In Button */}
-          {/* Temporariamente desabilitado até configurar Google OAuth */}
           <Button
             onClick={handleGoogleSignIn}
-            disabled={true}
+            disabled={googleLoading}
             variant="outline"
-            className="w-full h-12 text-base font-medium border-2 hover:bg-muted/20 focus:bg-muted/20 active:bg-muted/30 text-muted-foreground hover:text-muted-foreground focus:text-muted-foreground active:text-muted-foreground transition-all duration-200 opacity-50 cursor-not-allowed"
+            className="w-full h-12 text-base font-medium border-2 hover:bg-muted/20 focus:bg-muted/20 active:bg-muted/30 text-foreground hover:text-foreground focus:text-foreground active:text-foreground transition-all duration-200"
           >
             {googleLoading ? (
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
