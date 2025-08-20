@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { BookOpen, Users, Download } from "lucide-react";
+import { Link } from "react-router-dom";
 export const HeroSection = () => {
   return <section className="relative py-20 px-4 bg-gradient-hero overflow-hidden">
       {/* Background decorative elements */}
@@ -23,14 +24,18 @@ export const HeroSection = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button size="lg" variant="secondary" className="bg-white/90 text-primary hover:bg-white shadow-elegant">
-              <BookOpen className="mr-2 h-5 w-5" />
-              Explorar Publicações
-            </Button>
-            <Button size="lg" variant="secondary" className="bg-white/90 text-primary hover:bg-white shadow-elegant">
-              <Users className="mr-2 h-5 w-5" />
-              Sobre o GEPEFE
-            </Button>
+            <Link to="/artigos-completos">
+              <Button size="lg" variant="secondary" className="bg-white/90 text-primary hover:bg-white shadow-elegant">
+                <BookOpen className="mr-2 h-5 w-5" />
+                Explorar Publicações
+              </Button>
+            </Link>
+            <Link to="/sobre">
+              <Button size="lg" variant="secondary" className="bg-white/90 text-primary hover:bg-white shadow-elegant">
+                <Users className="mr-2 h-5 w-5" />
+                Sobre o GEPEFE
+              </Button>
+            </Link>
           </div>
 
           {/* Stats */}
