@@ -14,6 +14,7 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
+import logoImage from "/lovable-uploads/24fb75f9-0b2a-410a-8f90-d6d3efcf52e4.png";
 
 interface NavigationProps {
   onSearch: (query: string) => void;
@@ -77,7 +78,7 @@ export const Navigation = ({ onSearch, onCategoryFilter }: NavigationProps) => {
           <Link to="/" className="flex items-center space-x-2">
             <div className="h-8">
               <img 
-                src="/lovable-uploads/24fb75f9-0b2a-410a-8f90-d6d3efcf52e4.png" 
+                src={logoImage}
                 alt="GEPEFE Logo" 
                 className="h-8 w-auto object-contain" 
               />
