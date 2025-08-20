@@ -98,8 +98,8 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[95vh] w-[95vw] sm:max-w-[95vw] sm:w-[95vw] sm:h-[95vh] sm:max-h-[95vh] p-2 sm:p-6">
-        <DialogHeader className="pb-2 sm:pb-4">
+      <DialogContent className="max-w-6xl max-h-[95vh] w-[95vw] sm:max-w-[95vw] sm:w-[95vw] sm:h-[95vh] sm:max-h-[95vh] p-0 overflow-hidden flex flex-col">
+        <DialogHeader className="pb-2 sm:pb-4 px-2 sm:px-6 pt-2 sm:pt-6 flex-shrink-0">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
             <DialogTitle className="text-sm sm:text-lg leading-tight sm:pr-8">{article.title}</DialogTitle>
             <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
@@ -125,24 +125,25 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
           </div>
         </DialogHeader>
         
-        {/* Seção do Resumo */}
-        {article.abstract && (
-          <div className="bg-card border rounded-lg p-4 mb-4">
-            <h3 className="text-base sm:text-lg font-semibold mb-3 text-foreground">Resumo</h3>
-            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-              {article.abstract}
-            </p>
-          </div>
-        )}
-
-        <div className="flex-1 min-h-[60vh] sm:min-h-[75vh] bg-muted/30 rounded-lg overflow-hidden">
-          {loading ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                <p className="text-muted-foreground">Carregando visualização...</p>
-              </div>
+        <div className="flex-1 overflow-y-auto px-2 sm:px-6 pb-2 sm:pb-6">
+          {/* Seção do Resumo */}
+          {article.abstract && (
+            <div className="bg-card border rounded-lg p-3 sm:p-4 mb-4">
+              <h3 className="text-base sm:text-lg font-semibold mb-3 text-foreground">Resumo</h3>
+              <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                {article.abstract}
+              </p>
             </div>
+          )}
+
+          <div className="bg-muted/30 rounded-lg overflow-hidden" style={{ height: 'calc(100vh - 400px)', minHeight: '400px' }}>
+            {loading ? (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                  <p className="text-muted-foreground">Carregando visualização...</p>
+                </div>
+              </div>
           ) : fileUrl ? (
             isPDF ? (
               <iframe
@@ -177,7 +178,8 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
                 Nenhum arquivo foi encontrado para este artigo.
               </p>
             </div>
-          )}
+            )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
