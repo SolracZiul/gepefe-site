@@ -318,19 +318,18 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label>Arquivo do Documento</Label>
-                  <div className="flex items-center gap-4">
-                    <div className="flex-1">
-                      <Input
-                        type="file"
-                        accept=".pdf,.doc,.docx"
-                        onChange={handleFileSelect}
-                        className="file:mr-4 file:py-3 file:px-6 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 file:cursor-pointer file:whitespace-nowrap"
-                      />
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Aceita arquivos PDF, DOC e DOCX (máx. 10MB)
-                      </p>
-                    </div>
+                  <div className="w-full">
+                    <Input
+                      type="file"
+                      accept=".pdf,.doc,.docx"
+                      onChange={handleFileSelect}
+                      className="w-full h-12 file:mr-6 file:py-2.5 file:px-8 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 file:cursor-pointer"
+                    />
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Aceita arquivos PDF, DOC e DOCX (máx. 10MB)
+                    </p>
                   </div>
+                </div>
                   
                   {selectedFile && (
                     <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
@@ -359,7 +358,6 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
                       </span>
                     </div>
                   )}
-                </div>
 
                 <div className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg">
                   <strong>Ou</strong> use uma URL externa (compatibilidade com links antigos):
