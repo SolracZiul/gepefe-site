@@ -319,12 +319,23 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
                 <div className="space-y-2">
                   <Label>Arquivo do Documento</Label>
                   <div className="w-full">
-                    <Input
-                      type="file"
-                      accept=".pdf,.doc,.docx"
-                      onChange={handleFileSelect}
-                      className="w-full h-12 file:mr-6 file:py-2.5 file:px-8 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 file:cursor-pointer"
-                    />
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept=".pdf,.doc,.docx"
+                        onChange={handleFileSelect}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        id="file-upload"
+                      />
+                      <div className="flex items-center justify-center w-full h-12 px-4 py-2 border-2 border-dashed border-border rounded-lg bg-background hover:bg-muted/50 transition-colors cursor-pointer">
+                        <div className="flex items-center gap-2">
+                          <FileText className="h-5 w-5 text-muted-foreground" />
+                          <span className="text-sm font-medium">
+                            {selectedFile ? selectedFile.name : "Escolher arquivo"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                     <p className="text-sm text-muted-foreground mt-2">
                       Aceita arquivos PDF, DOC e DOCX (máx. 10MB)
                     </p>
