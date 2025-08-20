@@ -1,8 +1,6 @@
 import { Mail, ExternalLink, MapPin } from "lucide-react";
-
 export const Footer = () => {
-  return (
-    <footer className="bg-foreground text-background py-12 px-4">
+  return <footer className="bg-foreground text-background py-12 px-4">
       <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* About */}
@@ -12,7 +10,7 @@ export const Footer = () => {
                 <span className="text-primary-foreground font-bold text-lg">G</span>
               </div>
               <div>
-                <h3 className="font-bold text-lg">GEPEFE</h3>
+                
                 <p className="text-sm text-background/70">Repositório Acadêmico</p>
               </div>
             </div>
@@ -36,10 +34,7 @@ export const Footer = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <ExternalLink className="w-4 h-4 text-primary" />
-                <a 
-                  href="#" 
-                  className="text-background/80 hover:text-primary transition-colors"
-                >
+                <a href="#" className="text-background/80 hover:text-primary transition-colors">
                   Site Institucional
                 </a>
               </div>
@@ -79,6 +74,5 @@ export const Footer = () => {
           </p>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
