@@ -40,9 +40,7 @@ export const Footer = () => {
           <div>
             <h4 className="font-semibold mb-4">Links Rápidos</h4>
             <div className="space-y-2 text-sm">
-              <a href="/sobre" className="block text-background/80 hover:text-primary transition-colors">
-                Sobre o Grupo
-              </a>
+              
               <a href="/todos" className="block text-background/80 hover:text-primary transition-colors">
                 Todas as Publicações
               </a>
