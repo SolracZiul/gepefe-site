@@ -18,20 +18,44 @@ export default function Auth() {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check if user is already logged in
-    const checkUser = async () => {
+    // Check if user is already logged in and redirect based on role
+    const checkUserAndRedirect = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
-        navigate("/admin");
+        // Fetch user profile to check role
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('user_id', session.user.id)
+          .single();
+        
+        // Redirect based on role
+        if (profile?.role === 'admin') {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
       }
     };
     
-    checkUser();
+    checkUserAndRedirect();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
-        navigate("/admin");
+        // Fetch user profile to check role
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('user_id', session.user.id)
+          .single();
+        
+        // Redirect based on role
+        if (profile?.role === 'admin') {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
       }
     });
 
@@ -111,9 +135,9 @@ export default function Auth() {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">GEPEFE Admin</CardTitle>
+          <CardTitle className="text-2xl">GEPEFE</CardTitle>
           <CardDescription>
-            Acesso administrativo para gerenciar publicações
+            Acesse sua conta para gerenciar seus favoritos e ver conteúdo exclusivo
           </CardDescription>
         </CardHeader>
         <CardContent>

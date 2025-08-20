@@ -118,32 +118,36 @@ export const Navigation = ({ onSearch, onCategoryFilter }: NavigationProps) => {
                     <span className="hidden sm:inline">Favoritos</span>
                   </Button>
 
-                  {/* User menu */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm" className="flex items-center gap-2">
-                        <User className="h-4 w-4" />
-                        <span className="hidden sm:inline">
-                          {user.email?.split('@')[0] || 'Usuário'}
-                        </span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      {isAdmin && (
-                        <>
-                          <DropdownMenuItem onClick={() => navigate("/admin")}>
-                            <User className="h-4 w-4 mr-2" />
-                            Painel Admin
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                        </>
-                      )}
-                      <DropdownMenuItem onClick={handleSignOut}>
-                        <LogOut className="h-4 w-4 mr-2" />
-                        Sair
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                   {/* User menu */}
+                   <DropdownMenu>
+                     <DropdownMenuTrigger asChild>
+                       <Button variant="outline" size="sm" className="flex items-center gap-2">
+                         <User className="h-4 w-4" />
+                         <span className="hidden sm:inline">
+                           {user.email?.split('@')[0] || 'Usuário'}
+                         </span>
+                       </Button>
+                     </DropdownMenuTrigger>
+                     <DropdownMenuContent align="end">
+                       <DropdownMenuItem onClick={() => navigate("/profile")}>
+                         <User className="h-4 w-4 mr-2" />
+                         Meu Perfil
+                       </DropdownMenuItem>
+                       {isAdmin && (
+                         <>
+                           <DropdownMenuItem onClick={() => navigate("/admin")}>
+                             <User className="h-4 w-4 mr-2" />
+                             Painel Admin
+                           </DropdownMenuItem>
+                         </>
+                       )}
+                       <DropdownMenuSeparator />
+                       <DropdownMenuItem onClick={handleSignOut}>
+                         <LogOut className="h-4 w-4 mr-2" />
+                         Sair
+                       </DropdownMenuItem>
+                     </DropdownMenuContent>
+                   </DropdownMenu>
                 </>
               ) : (
                 <Link to="/auth">
@@ -207,29 +211,37 @@ export const Navigation = ({ onSearch, onCategoryFilter }: NavigationProps) => {
                       Favoritos
                     </Button>
                   )}
-                  
-                  {user ? (
-                    <>
-                      {isAdmin && (
-                        <Button
-                          variant="ghost"
-                          onClick={() => navigate("/admin")}
-                          className="justify-start"
-                        >
-                          <User className="h-4 w-4 mr-2" />
-                          Painel Admin
-                        </Button>
-                      )}
-                      <Button
-                        variant="ghost"
-                        onClick={handleSignOut}
-                        className="justify-start text-destructive"
-                      >
-                        <LogOut className="h-4 w-4 mr-2" />
-                        Sair
-                      </Button>
-                    </>
-                  ) : (
+                   
+                   {user ? (
+                     <>
+                       <Button
+                         variant="ghost"
+                         onClick={() => navigate("/profile")}
+                         className="justify-start"
+                       >
+                         <User className="h-4 w-4 mr-2" />
+                         Meu Perfil
+                       </Button>
+                       {isAdmin && (
+                         <Button
+                           variant="ghost"
+                           onClick={() => navigate("/admin")}
+                           className="justify-start"
+                         >
+                           <User className="h-4 w-4 mr-2" />
+                           Painel Admin
+                         </Button>
+                       )}
+                       <Button
+                         variant="ghost"
+                         onClick={handleSignOut}
+                         className="justify-start text-destructive"
+                       >
+                         <LogOut className="h-4 w-4 mr-2" />
+                         Sair
+                       </Button>
+                     </>
+                   ) : (
                     <Button
                       variant="ghost"
                       onClick={() => navigate("/auth")}
