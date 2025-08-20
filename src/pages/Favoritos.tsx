@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { ArticleCard } from "@/components/ArticleCard";
-import { useArticles } from "@/hooks/useArticles";
+import { useArticlesContext } from "@/contexts/ArticlesContext";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 
 const Favoritos = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const { articles, loading: articlesLoading } = useArticles();
+  const { articles, loading: articlesLoading } = useArticlesContext();
   const { user, loading: authLoading } = useAuth();
   const { favorites, loading: favoritesLoading } = useFavorites(user?.id || null);
 

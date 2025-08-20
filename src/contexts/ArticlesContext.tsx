@@ -12,6 +12,7 @@ interface ArticlesContextType {
 const ArticlesContext = createContext<ArticlesContextType | undefined>(undefined);
 
 export const ArticlesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  console.log("ArticlesProvider: Provider initialized");
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -42,7 +43,7 @@ export const ArticlesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   useEffect(() => {
-    console.log("ArticlesProvider: Initial fetch triggered");
+    console.log("ArticlesProvider: useEffect triggered - fetching articles only once");
     fetchArticles();
   }, []);
 
@@ -65,5 +66,6 @@ export const useArticlesContext = (): ArticlesContextType => {
   if (context === undefined) {
     throw new Error('useArticlesContext must be used within an ArticlesProvider');
   }
+  console.log("useArticlesContext: Context accessed, articles count:", context.articles.length);
   return context;
 };
