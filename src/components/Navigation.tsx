@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Search, Menu, User, Heart, LogOut, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,7 +21,7 @@ interface NavigationProps {
   onCategoryFilter: (category: string) => void;
 }
 
-export const Navigation = ({ onSearch, onCategoryFilter }: NavigationProps) => {
+const NavigationComponent = ({ onSearch, onCategoryFilter }: NavigationProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [displayName, setDisplayName] = useState<string>("");
   const navigate = useNavigate();
@@ -314,3 +314,6 @@ export const Navigation = ({ onSearch, onCategoryFilter }: NavigationProps) => {
     </nav>
   );
 };
+
+// Memoize o componente para evitar re-renders desnecessários
+export const Navigation = React.memo(NavigationComponent);
