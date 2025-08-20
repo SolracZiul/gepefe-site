@@ -1,92 +1,76 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { ArticleCard } from "@/components/ArticleCard";
-import React, { useState } from "react";
+import { AppSidebar } from "@/components/AppSidebar";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useState, useMemo } from "react";
 import { useArticles } from "@/hooks/useArticles";
 
 export default function Pesquisas() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("Pesquisas");
   const { articles, loading, error } = useArticles();
-  const [filteredArticles, setFilteredArticles] = useState<any[]>([]);
 
-  // Filter articles by category on load
-  React.useEffect(() => {
-    if (articles.length > 0) {
-      setFilteredArticles(articles.filter(article => article.category === "Pesquisas"));
-    }
-  }, [articles]);
+  const filteredArticles = useMemo(() => {
+    return articles.filter(article => {
+      const matchesCategory = article.category === "Pesquisas";
+      const matchesSearch = searchQuery === "" || 
+        article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        article.authors.some(author => author.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        article.abstract.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        article.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
 
-  const handleSearch = (query: string) => {
-    const filtered = articles.filter(article => 
-      article.category === "Pesquisas" &&
-      (article.title.toLowerCase().includes(query.toLowerCase()) ||
-       article.authors.some(author => author.toLowerCase().includes(query.toLowerCase())) ||
-       article.abstract.toLowerCase().includes(query.toLowerCase()))
-    );
-    setFilteredArticles(filtered);
-  };
-
-  const handleCategoryFilter = (category: string) => {
-    if (category === "Todos") {
-      setFilteredArticles(articles.filter(article => article.category === "Pesquisas"));
-    } else {
-      setFilteredArticles(articles.filter(article => article.category === category));
-    }
-  };
+      return matchesCategory && matchesSearch;
+    });
+  }, [articles, searchQuery]);
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation onSearch={handleSearch} onCategoryFilter={handleCategoryFilter} />
-      
-      <main className="container mx-auto px-4 py-12">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-primary mb-4">
-            Pesquisas
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Resultados de pesquisas desenvolvidas pelo GEPEFE, incluindo estudos empíricos, 
-            análises qualitativas e quantitativas na área de Educação Física Escolar.
-          </p>
-          <div className="mt-6 text-lg text-primary font-semibold">
-            {filteredArticles.length} pesquisas encontradas
+    <>
+      <AppSidebar onCategoryFilter={setSelectedCategory} />
+      <div className="flex-1 flex flex-col min-h-screen">
+        <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-border">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between h-16">
+              <div className="flex items-center gap-4">
+                <SidebarTrigger className="md:hidden" />
+                <div className="flex items-center space-x-2">
+                  <div className="h-8">
+                    <img src="/lovable-uploads/24fb75f9-0b2a-410a-8f90-d6d3efcf52e4.png" alt="GEPEFE Logo" className="h-8 w-auto object-contain" />
+                  </div>
+                  <div><p className="text-xs text-muted-foreground">Repositório Acadêmico</p></div>
+                </div>
+              </div>
+              <Navigation onSearch={setSearchQuery} onCategoryFilter={setSelectedCategory} />
+            </div>
           </div>
-        </div>
-
-        {/* Articles Grid */}
-        {loading ? (
-          <div className="text-center py-16">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Carregando pesquisas...</p>
+        </header>
+        <main className="flex-1 py-8">
+          <div className="container mx-auto px-4">
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-primary mb-2">Pesquisas</h1>
+              <p className="text-muted-foreground">Trabalhos de pesquisa desenvolvidos pelo GEPEFE</p>
+            </div>
+            {loading ? (
+              <div className="flex justify-center items-center py-16">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              </div>
+            ) : filteredArticles.length === 0 ? (
+              <div className="text-center py-16">
+                <p className="text-muted-foreground">
+                  {searchQuery ? "Nenhuma pesquisa encontrada." : "Nenhuma pesquisa disponível."}
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredArticles.map((article) => (
+                  <ArticleCard key={article.id} article={article} />
+                ))}
+              </div>
+            )}
           </div>
-        ) : error ? (
-          <div className="text-center py-16">
-            <h3 className="text-2xl font-semibold text-destructive mb-4">
-              Erro ao carregar pesquisas
-            </h3>
-            <p className="text-muted-foreground">{error}</p>
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-            {filteredArticles.map((article) => (
-              <ArticleCard key={article.id} article={article} />
-            ))}
-          </div>
-        )}
-
-        {/* Empty State */}
-        {filteredArticles.length === 0 && (
-          <div className="text-center py-16">
-            <h3 className="text-2xl font-semibold text-primary mb-4">
-              Nenhuma pesquisa encontrada
-            </h3>
-            <p className="text-muted-foreground">
-              Tente ajustar os filtros ou termos de busca para encontrar mais conteúdo.
-            </p>
-          </div>
-        )}
-      </main>
-
-      <Footer />
-    </div>
+        </main>
+        <Footer />
+      </div>
+    </>
   );
 }

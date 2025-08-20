@@ -3,6 +3,8 @@ import { HeroSection } from "@/components/HeroSection";
 import { AboutSection } from "@/components/AboutSection";
 import { ArticleCard } from "@/components/ArticleCard";
 import { Footer } from "@/components/Footer";
+import { AppSidebar } from "@/components/AppSidebar";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useArticles } from "@/hooks/useArticles";
 import { useState, useMemo } from "react";
 
@@ -38,90 +40,94 @@ const Index = () => {
   }, [articles, searchQuery, selectedCategory]);
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation 
-        onSearch={setSearchQuery}
-        onCategoryFilter={setSelectedCategory}
-      />
+    <>
+      <AppSidebar onCategoryFilter={setSelectedCategory} />
       
-      <HeroSection />
-      
-      <AboutSection />
-      
-      {/* Articles Section */}
-      <section className="py-16 px-4">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Publicações Recentes
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Explore nossa coleção de artigos, textos acadêmicos e pesquisas 
-              em Educação Física escolar.
-            </p>
+      <div className="flex-1 flex flex-col min-h-screen">
+        <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-border">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between h-16">
+              <div className="flex items-center gap-4">
+                <SidebarTrigger className="md:hidden" />
+                <div className="flex items-center space-x-2">
+                  <div className="h-8">
+                    <img 
+                      src="/lovable-uploads/24fb75f9-0b2a-410a-8f90-d6d3efcf52e4.png" 
+                      alt="GEPEFE Logo" 
+                      className="h-8 w-auto object-contain" 
+                    />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Repositório Acadêmico</p>
+                  </div>
+                </div>
+              </div>
+              
+              <Navigation 
+                onSearch={setSearchQuery}
+                onCategoryFilter={setSelectedCategory}
+              />
+            </div>
           </div>
+        </header>
+        
+        <main className="flex-1">
+          <HeroSection />
+          
+          <AboutSection />
+          
+          {/* Articles Section */}
+          <section className="py-16 bg-background">
+            <div className="container mx-auto px-4">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-bold text-primary mb-4">
+                  Publicações Recentes
+                </h2>
+                <p className="text-muted-foreground max-w-2xl mx-auto">
+                  Explore os trabalhos mais recentes do GEPEFE em Educação Física e Escola
+                </p>
+              </div>
 
-          {/* Filter Results Info */}
-          <div className="mb-6 text-center">
-            <p className="text-muted-foreground">
-              {loading ? "Carregando publicações..." : 
-               filteredArticles.length === articles.length 
-                 ? `${filteredArticles.length} publicações disponíveis`
-                 : `${filteredArticles.length} de ${articles.length} publicações encontradas`
-              }
-              {selectedCategory !== "Todos" && (
-                <span className="ml-2">
-                  na categoria "{selectedCategory}"
-                </span>
+              {loading ? (
+                <div className="flex justify-center items-center py-16">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                </div>
+              ) : error ? (
+                <div className="text-center py-16">
+                  <p className="text-destructive mb-4">Erro ao carregar artigos: {error}</p>
+                  <p className="text-muted-foreground">Tente recarregar a página</p>
+                </div>
+              ) : filteredArticles.length === 0 ? (
+                <div className="text-center py-16">
+                  <p className="text-muted-foreground">
+                    {searchQuery ? "Nenhum artigo encontrado para sua busca." : "Nenhum artigo disponível no momento."}
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredArticles.slice(0, 6).map((article) => (
+                    <ArticleCard key={article.id} article={article} />
+                  ))}
+                </div>
               )}
-              {searchQuery && (
-                <span className="ml-2">
-                  para "{searchQuery}"
-                </span>
+
+              {filteredArticles.length > 6 && (
+                <div className="text-center mt-8">
+                  <p className="text-muted-foreground">
+                    Mostrando 6 de {filteredArticles.length} artigos.{" "}
+                    <a href="/todos" className="text-primary hover:underline">
+                      Ver todos os artigos
+                    </a>
+                  </p>
+                </div>
               )}
-            </p>
-          </div>
-
-          {/* Articles Grid */}
-          {loading ? (
-            <div className="text-center py-16">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-              <p className="text-muted-foreground">Carregando publicações...</p>
             </div>
-          ) : error ? (
-            <div className="text-center py-16">
-              <h3 className="text-2xl font-semibold text-destructive mb-4">
-                Erro ao carregar publicações
-              </h3>
-              <p className="text-muted-foreground">{error}</p>
-            </div>
-          ) : filteredArticles.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredArticles.map((article) => (
-                <ArticleCard key={article.id} article={article} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground mb-4">
-                Nenhuma publicação encontrada com os critérios selecionados.
-              </p>
-              <button 
-                onClick={() => {
-                  setSearchQuery("");
-                  setSelectedCategory("Todos");
-                }}
-                className="text-primary hover:underline"
-              >
-                Limpar filtros
-              </button>
-            </div>
-          )}
-        </div>
-      </section>
-
-      <Footer />
-    </div>
+          </section>
+        </main>
+        
+        <Footer />
+      </div>
+    </>
   );
 };
 

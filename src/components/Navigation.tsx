@@ -65,19 +65,7 @@ export const Navigation = ({ onSearch, onCategoryFilter }: NavigationProps) => {
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
-            {categories.map((category) => (
-              <Button
-                key={category.name}
-                variant={location.pathname === category.path ? "default" : "ghost"}
-                onClick={() => handleCategoryClick(category.path)}
-                className="text-foreground hover:text-primary hover:bg-primary/10"
-              >
-                {category.name}
-              </Button>
-            ))}
-          </div>
+          {/* Desktop Navigation - Categories removed, now in sidebar */}
 
           {/* Search and User Actions */}
           <div className="flex items-center space-x-2">
@@ -236,22 +224,7 @@ export const Navigation = ({ onSearch, onCategoryFilter }: NavigationProps) => {
           </div>
         </div>
 
-        {/* Mobile Categories */}
-        <div className="md:hidden py-4 overflow-x-auto">
-          <div className="flex space-x-2">
-            {categories.map((category) => (
-              <Button
-                key={category.name}
-                variant={location.pathname === category.path ? "default" : "outline"}
-                size="sm"
-                onClick={() => handleCategoryClick(category.path)}
-                className="whitespace-nowrap"
-              >
-                {category.name}
-              </Button>
-            ))}
-          </div>
-        </div>
+        {/* Mobile Categories - now handled by sidebar */}
       </div>
     </nav>
   );
