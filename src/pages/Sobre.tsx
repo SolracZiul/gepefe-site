@@ -2,18 +2,14 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { BookOpen, Users, Award, Globe } from "lucide-react";
-
 export default function Sobre() {
   const handleSearch = (query: string) => {
     console.log("Search:", query);
   };
-
   const handleCategoryFilter = (category: string) => {
     console.log("Filter:", category);
   };
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <Navigation onSearch={handleSearch} onCategoryFilter={handleCategoryFilter} />
       
       <main className="container mx-auto px-4 py-12">
@@ -108,24 +104,7 @@ export default function Sobre() {
         </div>
 
         {/* Statistics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
-          <div className="text-center">
-            <div className="text-3xl font-bold text-primary mb-2">15+</div>
-            <div className="text-muted-foreground">Pesquisadores</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-primary mb-2">50+</div>
-            <div className="text-muted-foreground">Publicações</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-primary mb-2">10+</div>
-            <div className="text-muted-foreground">Anos de Pesquisa</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-primary mb-2">100+</div>
-            <div className="text-muted-foreground">Downloads</div>
-          </div>
-        </div>
+        
 
         {/* CTA */}
         <div className="text-center">
@@ -143,6 +122,5 @@ export default function Sobre() {
       </main>
 
       <Footer />
-    </div>
-  );
+    </div>;
 }
