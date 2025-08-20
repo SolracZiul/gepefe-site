@@ -14,19 +14,14 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
+import { useSearch } from "@/contexts/SearchContext";
 
-
-interface NavigationProps {
-  onSearch: (query: string) => void;
-  onCategoryFilter: (category: string) => void;
-}
-
-const NavigationComponent = ({ onSearch, onCategoryFilter }: NavigationProps) => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [displayName, setDisplayName] = useState<string>("");
+const NavigationComponent = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, signOut, isAdmin } = useAuth();
+  const [displayName, setDisplayName] = useState<string>("");
+  const { searchQuery, setSearchQuery } = useSearch();
 
   const categories = [
     { name: "Todos", path: "/todos" },
@@ -67,7 +62,7 @@ const NavigationComponent = ({ onSearch, onCategoryFilter }: NavigationProps) =>
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    onSearch(searchQuery);
+    // Search query is now handled by context
   };
 
   console.log("Navigation: Component rendering, location:", location.pathname);
@@ -315,5 +310,5 @@ const NavigationComponent = ({ onSearch, onCategoryFilter }: NavigationProps) =>
   );
 };
 
-// Memoize o componente para evitar re-renders desnecessários
+// Memoize o componente - agora sem props que mudam
 export const Navigation = React.memo(NavigationComponent);

@@ -4,14 +4,14 @@ import { AboutSection } from "@/components/AboutSection";
 import { ArticleCard } from "@/components/ArticleCard";
 import { Footer } from "@/components/Footer";
 import { useArticlesContext } from "@/contexts/ArticlesContext";
+import { useSearch } from "@/contexts/SearchContext";
 import { useState, useMemo } from "react";
 
 console.log("Index.tsx: Starting imports...");
 
 const Index = () => {
   console.log("Index component rendering...");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("Todos");
+  const { searchQuery, selectedCategory } = useSearch();
   const { articles, loading, error } = useArticlesContext();
 
   // Filter articles based on search and category
@@ -39,10 +39,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navigation 
-        onSearch={setSearchQuery}
-        onCategoryFilter={setSelectedCategory}
-      />
+      <Navigation />
       
       <main className="flex-1">
         <HeroSection />

@@ -3,10 +3,10 @@ import { Footer } from "@/components/Footer";
 import { ArticleCard } from "@/components/ArticleCard";
 import { useState, useMemo } from "react";
 import { useArticlesContext } from "@/contexts/ArticlesContext";
+import { useSearch } from "@/contexts/SearchContext";
 
 export default function Todos() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("Todos");
+  const { searchQuery, selectedCategory } = useSearch();
   const { articles, loading, error } = useArticlesContext();
 
   const filteredArticles = useMemo(() => {
@@ -25,10 +25,7 @@ export default function Todos() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navigation 
-        onSearch={setSearchQuery}
-        onCategoryFilter={setSelectedCategory}
-      />
+      <Navigation />
       
       <main className="flex-1">
         {/* Page header */}

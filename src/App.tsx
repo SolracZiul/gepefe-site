@@ -20,6 +20,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Favoritos from "./pages/Favoritos";
 import ArticleDetail from "./pages/ArticleDetail";
 import { ArticlesProvider } from "./contexts/ArticlesContext";
+import { SearchProvider } from "./contexts/SearchContext";
 
 console.log("App.tsx: All imports loaded successfully - Updated");
 console.log("Components check:", { Index, NotFound, Sobre, ArtigosCompletos, TextosAcademicos, Pesquisas, Dissertacoes, Todos, Auth, Admin });
@@ -31,7 +32,8 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ArticlesProvider>
-        <TooltipProvider>
+        <SearchProvider>
+          <TooltipProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter>
@@ -57,7 +59,8 @@ const App = () => {
             </div>
           </BrowserRouter>
         </TooltipProvider>
-      </ArticlesProvider>
+      </SearchProvider>
+    </ArticlesProvider>
     </QueryClientProvider>
   );
 };

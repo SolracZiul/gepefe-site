@@ -10,7 +10,7 @@ export default function Sobre() {
     console.log("Filter:", category);
   };
   return <div className="min-h-screen bg-background">
-      <Navigation onSearch={handleSearch} onCategoryFilter={handleCategoryFilter} />
+      <Navigation />
       
       <main className="container mx-auto px-4 py-12">
         {/* Hero Section */}

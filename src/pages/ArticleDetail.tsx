@@ -100,7 +100,7 @@ export default function ArticleDetail() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <Navigation onSearch={() => {}} onCategoryFilter={() => {}} />
+        <Navigation />
         <div className="flex items-center justify-center h-[50vh]">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
@@ -115,7 +115,7 @@ export default function ArticleDetail() {
   if (!article) {
     return (
       <div className="min-h-screen bg-background">
-        <Navigation onSearch={() => {}} onCategoryFilter={() => {}} />
+        <Navigation />
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">Artigo não encontrado</h1>
@@ -135,7 +135,7 @@ export default function ArticleDetail() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation onSearch={() => {}} onCategoryFilter={() => {}} />
+      <Navigation />
       
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
