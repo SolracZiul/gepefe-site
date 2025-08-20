@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
@@ -6,14 +6,35 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { User, Heart, Download } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Profile() {
   const { user, userRole, loading } = useAuth();
   const navigate = useNavigate();
+  const [displayName, setDisplayName] = useState<string>("");
 
   useEffect(() => {
     if (!loading && !user) {
       navigate("/auth");
+    }
+    
+    // Fetch user display name from profile
+    if (user) {
+      const fetchDisplayName = async () => {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('display_name')
+          .eq('user_id', user.id)
+          .single();
+        
+        if (profile?.display_name) {
+          setDisplayName(profile.display_name);
+        } else {
+          setDisplayName(user.email?.split('@')[0] || 'Usuário');
+        }
+      };
+      
+      fetchDisplayName();
     }
   }, [user, loading, navigate]);
 
@@ -120,7 +141,7 @@ export default function Profile() {
             <CardContent className="pt-6">
               <div className="text-center">
                 <h3 className="text-lg font-semibold mb-2">
-                  Bem-vindo ao GEPEFE, {user.email?.split('@')[0]}!
+                  Bem-vindo ao GEPEFE, {displayName}!
                 </h3>
                 <p className="text-muted-foreground">
                   Explore nosso repositório acadêmico com artigos, textos e pesquisas 
