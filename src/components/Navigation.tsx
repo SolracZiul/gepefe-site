@@ -15,7 +15,7 @@ export const Navigation = ({
   const navigate = useNavigate();
   const categories = [{
     name: "Todos",
-    path: "/"
+    path: "/todos"
   }, {
     name: "Artigos Completos",
     path: "/artigos-completos"
@@ -33,11 +33,7 @@ export const Navigation = ({
     name: string;
     path: string;
   }) => {
-    if (category.name === "Todos") {
-      navigate("/");
-    } else {
-      navigate(category.path);
-    }
+    navigate(category.path);
   };
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

@@ -10,6 +10,7 @@ import ArtigosCompletos from "./pages/ArtigosCompletos";
 import TextosAcademicos from "./pages/TextosAcademicos";
 import Pesquisas from "./pages/Pesquisas";
 import Dissertacoes from "./pages/Dissertacoes";
+import Todos from "./pages/Todos";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/todos" element={<Todos />} />
           <Route path="/sobre" element={<Sobre />} />
           <Route path="/artigos-completos" element={<ArtigosCompletos />} />
           <Route path="/textos-academicos" element={<TextosAcademicos />} />
