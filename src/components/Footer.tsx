@@ -6,20 +6,13 @@ export const Footer = () => {
           {/* About */}
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <img 
-                src="/lovable-uploads/24fb75f9-0b2a-410a-8f90-d6d3efcf52e4.png" 
-                alt="GEPEFE Logo" 
-                className="w-8 h-8 object-contain"
-              />
+              <img src="/lovable-uploads/24fb75f9-0b2a-410a-8f90-d6d3efcf52e4.png" alt="GEPEFE Logo" className="w-8 h-8 object-contain" />
               <div>
                 
                 <p className="text-sm text-background/70">Repositório Acadêmico</p>
               </div>
             </div>
-            <p className="text-background/80 text-sm">
-              Grupo de Estudos e Pesquisas em Educação Física e Escola - 
-              Promovendo o conhecimento científico em Educação Física escolar.
-            </p>
+            <p className="text-background/80 text-sm">Grupo de Estudos e Pesquisas em Educação Física e Escola - Promovendo o conhecimento científico em Educação Física escolar.</p>
           </div>
 
           {/* Contact */}
