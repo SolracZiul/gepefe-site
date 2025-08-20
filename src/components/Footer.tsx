@@ -6,9 +6,11 @@ export const Footer = () => {
           {/* About */}
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-lg">G</span>
-              </div>
+              <img 
+                src="/lovable-uploads/24fb75f9-0b2a-410a-8f90-d6d3efcf52e4.png" 
+                alt="GEPEFE Logo" 
+                className="w-8 h-8 object-contain"
+              />
               <div>
                 
                 <p className="text-sm text-background/70">Repositório Acadêmico</p>
