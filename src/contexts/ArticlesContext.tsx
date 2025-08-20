@@ -21,6 +21,7 @@ export const ArticlesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     console.log("ArticlesProvider: Fetching articles...");
     try {
       setLoading(true);
+      setError(null);
       const { data, error } = await supabase
         .from('articles')
         .select('*')
@@ -31,6 +32,7 @@ export const ArticlesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }
 
       console.log("ArticlesProvider: Articles fetched successfully", data);
+      console.log("ArticlesProvider: Total articles:", data?.length || 0);
       setArticles(data || []);
       setError(null);
     } catch (err: any) {

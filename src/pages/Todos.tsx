@@ -14,9 +14,11 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
+import { Button } from "@/components/ui/button";
+
 export default function Todos() {
   const { searchQuery, selectedCategory } = useSearch();
-  const { articles, loading, error } = useArticlesContext();
+  const { articles, loading, error, refetch } = useArticlesContext();
   const [currentPage, setCurrentPage] = useState(1);
   const articlesPerPage = 9;
 
@@ -59,6 +61,11 @@ export default function Todos() {
               <p className="text-muted-foreground max-w-2xl mx-auto">
                 Explore todo o acervo de publicações do GEPEFE em Educação Física e Escola
               </p>
+              <div className="mt-4">
+                <Button onClick={refetch} variant="outline" disabled={loading}>
+                  {loading ? "Carregando..." : "Atualizar"}
+                </Button>
+              </div>
             </div>
           </div>
         </section>
