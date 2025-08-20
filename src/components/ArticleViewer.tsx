@@ -8,6 +8,7 @@ interface ArticleViewerProps {
   article: {
     id: string;
     title: string;
+    abstract: string;
     file_path: string | null;
     file_type: string | null;
     pdf_url: string | null;
@@ -124,6 +125,16 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
           </div>
         </DialogHeader>
         
+        {/* Seção do Resumo */}
+        {article.abstract && (
+          <div className="bg-card border rounded-lg p-4 mb-4">
+            <h3 className="text-base sm:text-lg font-semibold mb-3 text-foreground">Resumo</h3>
+            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+              {article.abstract}
+            </p>
+          </div>
+        )}
+
         <div className="flex-1 min-h-[60vh] sm:min-h-[75vh] bg-muted/30 rounded-lg overflow-hidden">
           {loading ? (
             <div className="flex items-center justify-center h-full">
