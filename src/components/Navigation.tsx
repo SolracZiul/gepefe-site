@@ -46,7 +46,9 @@ export const Navigation = ({ onSearch, onCategoryFilter }: NavigationProps) => {
           .single();
         
         if (profile?.display_name) {
-          setDisplayName(profile.display_name);
+          // Pegar apenas o primeiro nome
+          const firstName = profile.display_name.split(' ')[0];
+          setDisplayName(firstName);
         } else {
           setDisplayName(user.email?.split('@')[0] || 'Usuário');
         }
