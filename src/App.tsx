@@ -11,6 +11,8 @@ import TextosAcademicos from "./pages/TextosAcademicos";
 import Pesquisas from "./pages/Pesquisas";
 import Dissertacoes from "./pages/Dissertacoes";
 import Todos from "./pages/Todos";
+import Auth from "./pages/Auth";
+import Admin from "./pages/Admin";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +30,8 @@ const App = () => (
           <Route path="/textos-academicos" element={<TextosAcademicos />} />
           <Route path="/pesquisas" element={<Pesquisas />} />
           <Route path="/dissertacoes" element={<Dissertacoes />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/admin" element={<Admin />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

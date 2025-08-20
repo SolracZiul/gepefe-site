@@ -1,16 +1,22 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { ArticleCard } from "@/components/ArticleCard";
-import { useState } from "react";
-import { mockArticles } from "@/data/articles";
+import React, { useState } from "react";
+import { useArticles } from "@/hooks/useArticles";
 
 export default function Pesquisas() {
-  const [filteredArticles, setFilteredArticles] = useState(
-    mockArticles.filter(article => article.category === "Pesquisas")
-  );
+  const { articles, loading, error } = useArticles();
+  const [filteredArticles, setFilteredArticles] = useState<any[]>([]);
+
+  // Filter articles by category on load
+  React.useEffect(() => {
+    if (articles.length > 0) {
+      setFilteredArticles(articles.filter(article => article.category === "Pesquisas"));
+    }
+  }, [articles]);
 
   const handleSearch = (query: string) => {
-    const filtered = mockArticles.filter(article => 
+    const filtered = articles.filter(article => 
       article.category === "Pesquisas" &&
       (article.title.toLowerCase().includes(query.toLowerCase()) ||
        article.authors.some(author => author.toLowerCase().includes(query.toLowerCase())) ||
@@ -21,9 +27,9 @@ export default function Pesquisas() {
 
   const handleCategoryFilter = (category: string) => {
     if (category === "Todos") {
-      setFilteredArticles(mockArticles.filter(article => article.category === "Pesquisas"));
+      setFilteredArticles(articles.filter(article => article.category === "Pesquisas"));
     } else {
-      setFilteredArticles(mockArticles.filter(article => article.category === category));
+      setFilteredArticles(articles.filter(article => article.category === category));
     }
   };
 
@@ -47,11 +53,25 @@ export default function Pesquisas() {
         </div>
 
         {/* Articles Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-          {filteredArticles.map((article) => (
-            <ArticleCard key={article.id} article={article} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="text-center py-16">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Carregando pesquisas...</p>
+          </div>
+        ) : error ? (
+          <div className="text-center py-16">
+            <h3 className="text-2xl font-semibold text-destructive mb-4">
+              Erro ao carregar pesquisas
+            </h3>
+            <p className="text-muted-foreground">{error}</p>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+            {filteredArticles.map((article) => (
+              <ArticleCard key={article.id} article={article} />
+            ))}
+          </div>
+        )}
 
         {/* Empty State */}
         {filteredArticles.length === 0 && (

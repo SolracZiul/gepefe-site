@@ -2,14 +2,15 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { ArticleCard } from "@/components/ArticleCard";
 import { useState, useMemo } from "react";
-import { mockArticles } from "@/data/articles";
+import { useArticles } from "@/hooks/useArticles";
 
 export default function Todos() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todos");
+  const { articles, loading, error } = useArticles();
 
   const filteredArticles = useMemo(() => {
-    return mockArticles.filter(article => {
+    return articles.filter(article => {
       const matchesSearch = searchQuery === "" || 
         article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         article.authors.some(author => author.toLowerCase().includes(searchQuery.toLowerCase())) ||
@@ -20,7 +21,7 @@ export default function Todos() {
       
       return matchesSearch && matchesCategory;
     });
-  }, [searchQuery, selectedCategory]);
+  }, [articles, searchQuery, selectedCategory]);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -50,11 +51,25 @@ export default function Todos() {
         </div>
 
         {/* Articles Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-          {filteredArticles.map((article) => (
-            <ArticleCard key={article.id} article={article} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="text-center py-16">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Carregando publicações...</p>
+          </div>
+        ) : error ? (
+          <div className="text-center py-16">
+            <h3 className="text-2xl font-semibold text-destructive mb-4">
+              Erro ao carregar publicações
+            </h3>
+            <p className="text-muted-foreground">{error}</p>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+            {filteredArticles.map((article) => (
+              <ArticleCard key={article.id} article={article} />
+            ))}
+          </div>
+        )}
 
         {/* Empty State */}
         {filteredArticles.length === 0 && (

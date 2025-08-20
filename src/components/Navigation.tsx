@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Search, Menu } from "lucide-react";
+import { Search, Menu, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -60,7 +60,7 @@ export const Navigation = ({
               </Button>)}
           </div>
 
-          {/* Search */}
+          {/* Search and Admin */}
           <div className="flex items-center space-x-2">
             <form onSubmit={handleSearch} className="hidden md:flex items-center space-x-2">
               <div className="relative">
@@ -68,6 +68,12 @@ export const Navigation = ({
                 <Input placeholder="Buscar publicações..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-10 w-64" />
               </div>
             </form>
+            <Link to="/auth">
+              <Button variant="ghost" size="sm" className="hidden md:flex">
+                <User className="h-4 w-4 mr-2" />
+                Admin
+              </Button>
+            </Link>
             <Button variant="ghost" size="icon" className="md:hidden">
               <Menu className="h-5 w-5" />
             </Button>

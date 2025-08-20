@@ -9,9 +9,9 @@ export interface Article {
   authors: string[];
   abstract: string;
   category: string;
-  publishDate: string;
-  downloadCount: number;
-  pdfUrl: string;
+  publish_date: string;
+  download_count: number;
+  pdf_url: string | null;
   tags: string[];
 }
 
@@ -21,13 +21,19 @@ interface ArticleCardProps {
 
 export const ArticleCard = ({ article }: ArticleCardProps) => {
   const handleDownload = () => {
-    // Em uma implementação real, isso faria o download do PDF
-    console.log(`Downloading: ${article.title}`);
+    if (article.pdf_url) {
+      window.open(article.pdf_url, '_blank');
+    } else {
+      console.log(`PDF não disponível para: ${article.title}`);
+    }
   };
 
   const handlePreview = () => {
-    // Em uma implementação real, isso abriria o PDF em uma nova aba
-    console.log(`Previewing: ${article.title}`);
+    if (article.pdf_url) {
+      window.open(article.pdf_url, '_blank');
+    } else {
+      console.log(`PDF não disponível para: ${article.title}`);
+    }
   };
 
   return (
@@ -39,7 +45,7 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
           </Badge>
           <div className="flex items-center text-sm text-muted-foreground">
             <Download className="w-4 h-4 mr-1" />
-            {article.downloadCount}
+            {article.download_count}
           </div>
         </div>
         
@@ -54,7 +60,7 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
           </div>
           <div className="flex items-center">
             <Calendar className="w-4 h-4 mr-1" />
-            {new Date(article.publishDate).toLocaleDateString('pt-BR')}
+            {new Date(article.publish_date).toLocaleDateString('pt-BR')}
           </div>
         </div>
       </CardHeader>
@@ -78,6 +84,7 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
             variant="outline" 
             size="sm" 
             className="flex-1"
+            disabled={!article.pdf_url}
           >
             <Eye className="w-4 h-4 mr-2" />
             Visualizar
@@ -86,6 +93,7 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
             onClick={handleDownload}
             size="sm" 
             className="flex-1 bg-gradient-primary hover:shadow-glow"
+            disabled={!article.pdf_url}
           >
             <Download className="w-4 h-4 mr-2" />
             Download
