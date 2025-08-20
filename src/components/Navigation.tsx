@@ -70,24 +70,28 @@ export const Navigation = ({ onSearch, onCategoryFilter }: NavigationProps) => {
     onSearch(searchQuery);
   };
 
+  console.log("Navigation: Component rendering, location:", location.pathname);
+  
   return (
-    <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
-      <div className="container mx-auto px-4">
+    <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border min-h-[64px]">
+      <div className="container mx-auto px-4 min-h-[64px]">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="h-8">
+          <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
+            <div className="h-8 flex-shrink-0">
               <img 
                 src="/lovable-uploads/24fb75f9-0b2a-410a-8f90-d6d3efcf52e4.png"
                 alt="GEPEFE Logo" 
-                className="h-8 w-auto object-contain"
+                className="h-8 w-auto object-contain block"
                 loading="eager"
                 decoding="async"
                 fetchPriority="high"
+                onLoad={() => console.log("Logo loaded successfully")}
+                onError={() => console.log("Logo failed to load")}
               />
             </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Repositório Acadêmico</p>
+            <div className="flex-shrink-0">
+              <p className="text-xs text-muted-foreground whitespace-nowrap">Repositório Acadêmico</p>
             </div>
           </Link>
 
