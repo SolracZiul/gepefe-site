@@ -2,7 +2,6 @@ import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { SidebarProvider } from "@/components/ui/sidebar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
@@ -30,24 +29,22 @@ const App = () => {
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <SidebarProvider defaultOpen={true}>
-            <div className="min-h-screen flex w-full">
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/todos" element={<Todos />} />
-                <Route path="/sobre" element={<Sobre />} />
-                <Route path="/artigos-completos" element={<ArtigosCompletos />} />
-                <Route path="/textos-academicos" element={<TextosAcademicos />} />
-                <Route path="/pesquisas" element={<Pesquisas />} />
-                <Route path="/dissertacoes" element={<Dissertacoes />} />
-                <Route path="/favoritos" element={<Favoritos />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/admin" element={<Admin />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </div>
-          </SidebarProvider>
+          <div className="min-h-screen w-full">
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/todos" element={<Todos />} />
+              <Route path="/sobre" element={<Sobre />} />
+              <Route path="/artigos-completos" element={<ArtigosCompletos />} />
+              <Route path="/textos-academicos" element={<TextosAcademicos />} />
+              <Route path="/pesquisas" element={<Pesquisas />} />
+              <Route path="/dissertacoes" element={<Dissertacoes />} />
+              <Route path="/favoritos" element={<Favoritos />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/admin" element={<Admin />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

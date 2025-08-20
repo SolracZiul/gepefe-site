@@ -65,7 +65,28 @@ export const Navigation = ({ onSearch, onCategoryFilter }: NavigationProps) => {
             </div>
           </Link>
 
-          {/* Desktop Navigation - Categories removed, now in sidebar */}
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-6">
+            {categories.map((category) => (
+              <Button
+                key={category.name}
+                variant={location.pathname === category.path ? "default" : "ghost"}
+                size="sm"
+                onClick={() => handleCategoryClick(category.path)}
+                className="text-sm"
+              >
+                {category.name}
+              </Button>
+            ))}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate("/sobre")}
+              className="text-sm"
+            >
+              Sobre
+            </Button>
+          </div>
 
           {/* Search and User Actions */}
           <div className="flex items-center space-x-2">
