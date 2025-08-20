@@ -24,7 +24,7 @@ export const HeroSection = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Link to="/artigos-completos">
+            <Link to="/todos">
               <Button size="lg" variant="secondary" className="bg-white/90 text-primary hover:bg-white shadow-elegant">
                 <BookOpen className="mr-2 h-5 w-5" />
                 Explorar Publicações
