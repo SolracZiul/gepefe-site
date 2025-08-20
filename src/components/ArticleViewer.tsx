@@ -126,17 +126,8 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
         </DialogHeader>
         
         <div className="flex-1 overflow-y-auto px-2 sm:px-6 pb-2 sm:pb-6">
-          {/* Seção do Resumo */}
-          {article.abstract && (
-            <div className="bg-card border rounded-lg p-3 sm:p-4 mb-4">
-              <h3 className="text-base sm:text-lg font-semibold mb-3 text-foreground">Resumo</h3>
-              <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                {article.abstract}
-              </p>
-            </div>
-          )}
 
-          <div className="bg-muted/30 rounded-lg overflow-hidden" style={{ height: 'calc(80vh - 350px)', minHeight: '300px' }}>
+          <div className="bg-muted/30 rounded-lg overflow-hidden h-full">
             {loading ? (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
