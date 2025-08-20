@@ -98,7 +98,7 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-7xl max-h-[80vh] w-[98vw] sm:max-w-[98vw] sm:w-[98vw] sm:h-[80vh] sm:max-h-[80vh] p-0 overflow-hidden flex flex-col">
+      <DialogContent className="max-w-7xl max-h-[90vh] w-[98vw] sm:max-w-[98vw] sm:w-[98vw] sm:h-[90vh] sm:max-h-[90vh] p-0 overflow-hidden flex flex-col">
         <DialogHeader className="pb-2 sm:pb-4 px-2 sm:px-6 pt-2 sm:pt-6 flex-shrink-0">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
             <DialogTitle className="text-sm sm:text-lg leading-tight sm:pr-8">{article.title}</DialogTitle>
