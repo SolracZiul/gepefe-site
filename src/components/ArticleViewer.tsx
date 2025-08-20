@@ -97,32 +97,34 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[95vh] w-[95vw]">
-        <DialogHeader className="pb-4">
-          <div className="flex items-center justify-between">
-            <DialogTitle className="text-lg pr-8">{article.title}</DialogTitle>
-            <div className="flex gap-2">
+      <DialogContent className="max-w-6xl max-h-[95vh] w-[95vw] sm:max-w-[95vw] sm:w-[95vw] sm:h-[95vh] sm:max-h-[95vh] p-2 sm:p-6">
+        <DialogHeader className="pb-2 sm:pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
+            <DialogTitle className="text-sm sm:text-lg leading-tight sm:pr-8">{article.title}</DialogTitle>
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleOpenExternal}
+                className="text-xs sm:text-sm"
               >
-                <ExternalLink className="w-4 h-4 mr-2" />
-                Abrir em nova aba
+                <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">Abrir em nova aba</span>
+                <span className="sm:hidden">Nova aba</span>
               </Button>
               <Button
                 size="sm"
                 onClick={handleDownload}
-                className="bg-gradient-primary hover:shadow-glow"
+                className="bg-gradient-primary hover:shadow-glow text-xs sm:text-sm"
               >
-                <Download className="w-4 h-4 mr-2" />
+                <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                 Download
               </Button>
             </div>
           </div>
         </DialogHeader>
         
-        <div className="flex-1 min-h-[75vh] bg-muted/30 rounded-lg overflow-hidden">
+        <div className="flex-1 min-h-[60vh] sm:min-h-[75vh] bg-muted/30 rounded-lg overflow-hidden">
           {loading ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
@@ -138,29 +140,29 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
                 title={`Preview: ${article.title}`}
               />
             ) : (
-              <div className="flex flex-col items-center justify-center h-full p-8 text-center">
-                <FileText className="w-16 h-16 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Visualização não disponível</h3>
-                <p className="text-muted-foreground mb-4">
+              <div className="flex flex-col items-center justify-center h-full p-4 sm:p-8 text-center">
+                <FileText className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground mb-4" />
+                <h3 className="text-base sm:text-lg font-semibold mb-2">Visualização não disponível</h3>
+                <p className="text-sm sm:text-base text-muted-foreground mb-4">
                   Este tipo de arquivo não pode ser visualizado diretamente no navegador.
                 </p>
-                <div className="flex gap-2">
-                  <Button onClick={handleDownload}>
-                    <Download className="w-4 h-4 mr-2" />
+                <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                  <Button onClick={handleDownload} size="sm" className="text-xs sm:text-sm">
+                    <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                     Baixar arquivo
                   </Button>
-                  <Button variant="outline" onClick={handleOpenExternal}>
-                    <ExternalLink className="w-4 h-4 mr-2" />
+                  <Button variant="outline" onClick={handleOpenExternal} size="sm" className="text-xs sm:text-sm">
+                    <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                     Abrir externamente
                   </Button>
                 </div>
               </div>
             )
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full p-8 text-center">
-              <FileText className="w-16 h-16 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Arquivo não disponível</h3>
-              <p className="text-muted-foreground">
+           ) : (
+            <div className="flex flex-col items-center justify-center h-full p-4 sm:p-8 text-center">
+              <FileText className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground mb-4" />
+              <h3 className="text-base sm:text-lg font-semibold mb-2">Arquivo não disponível</h3>
+              <p className="text-sm sm:text-base text-muted-foreground">
                 Nenhum arquivo foi encontrado para este artigo.
               </p>
             </div>
