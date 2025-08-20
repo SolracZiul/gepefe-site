@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Menu, User, Heart, LogOut, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { supabase } from "@/integrations/supabase/client";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { 
   DropdownMenu, 
@@ -21,6 +22,7 @@ interface NavigationProps {
 
 export const Navigation = ({ onSearch, onCategoryFilter }: NavigationProps) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [displayName, setDisplayName] = useState<string>("");
   const navigate = useNavigate();
   const location = useLocation();
   const { user, isAdmin, signOut } = useAuth();
@@ -32,6 +34,27 @@ export const Navigation = ({ onSearch, onCategoryFilter }: NavigationProps) => {
     { name: "Pesquisas", path: "/pesquisas" },
     { name: "Dissertações", path: "/dissertacoes" },
   ];
+
+  // Fetch user display name when user changes
+  useEffect(() => {
+    if (user) {
+      const fetchDisplayName = async () => {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('display_name')
+          .eq('user_id', user.id)
+          .single();
+        
+        if (profile?.display_name) {
+          setDisplayName(profile.display_name);
+        } else {
+          setDisplayName(user.email?.split('@')[0] || 'Usuário');
+        }
+      };
+      
+      fetchDisplayName();
+    }
+  }, [user]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -124,7 +147,7 @@ export const Navigation = ({ onSearch, onCategoryFilter }: NavigationProps) => {
                        <Button variant="outline" size="sm" className="flex items-center gap-2">
                          <User className="h-4 w-4" />
                          <span className="hidden sm:inline">
-                           {user.email?.split('@')[0] || 'Usuário'}
+                           {displayName || 'Usuário'}
                          </span>
                        </Button>
                      </DropdownMenuTrigger>
