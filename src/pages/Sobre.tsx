@@ -114,9 +114,11 @@ export default function Sobre() {
           <p className="text-muted-foreground mb-6">
             Explore nosso repositório de artigos, pesquisas e materiais acadêmicos.
           </p>
-          <Button size="lg" className="bg-primary hover:bg-primary/90">
-            <BookOpen className="mr-2 h-5 w-5" />
-            Ver Publicações
+          <Button size="lg" className="bg-primary hover:bg-primary/90" asChild>
+            <a href="/todos">
+              <BookOpen className="mr-2 h-5 w-5" />
+              Ver Publicações
+            </a>
           </Button>
         </div>
       </main>
