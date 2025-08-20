@@ -324,7 +324,7 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
                         type="file"
                         accept=".pdf,.doc,.docx"
                         onChange={handleFileSelect}
-                        className="file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                        className="file:mr-4 file:py-3 file:px-6 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 file:cursor-pointer file:whitespace-nowrap"
                       />
                       <p className="text-sm text-muted-foreground mt-1">
                         Aceita arquivos PDF, DOC e DOCX (máx. 10MB)
