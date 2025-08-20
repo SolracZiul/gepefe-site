@@ -19,6 +19,7 @@ import EmailConfirmation from "./pages/EmailConfirmation";
 import ResetPassword from "./pages/ResetPassword";
 import Favoritos from "./pages/Favoritos";
 import ArticleDetail from "./pages/ArticleDetail";
+import { ArticlesProvider } from "./contexts/ArticlesContext";
 
 console.log("App.tsx: All imports loaded successfully - Updated");
 console.log("Components check:", { Index, NotFound, Sobre, ArtigosCompletos, TextosAcademicos, Pesquisas, Dissertacoes, Todos, Auth, Admin });
@@ -29,32 +30,34 @@ const App = () => {
   console.log("App component rendering...");
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <div className="min-h-screen w-full">
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/todos" element={<Todos />} />
-              <Route path="/sobre" element={<Sobre />} />
-              <Route path="/artigos-completos" element={<ArtigosCompletos />} />
-              <Route path="/textos-academicos" element={<TextosAcademicos />} />
-              <Route path="/pesquisas" element={<Pesquisas />} />
-              <Route path="/dissertacoes" element={<Dissertacoes />} />
-              <Route path="/favoritos" element={<Favoritos />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/email-confirmation" element={<EmailConfirmation />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/article/:id" element={<ArticleDetail />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </div>
-        </BrowserRouter>
-      </TooltipProvider>
+      <ArticlesProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <div className="min-h-screen w-full">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/todos" element={<Todos />} />
+                <Route path="/sobre" element={<Sobre />} />
+                <Route path="/artigos-completos" element={<ArtigosCompletos />} />
+                <Route path="/textos-academicos" element={<TextosAcademicos />} />
+                <Route path="/pesquisas" element={<Pesquisas />} />
+                <Route path="/dissertacoes" element={<Dissertacoes />} />
+                <Route path="/favoritos" element={<Favoritos />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/email-confirmation" element={<EmailConfirmation />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/article/:id" element={<ArticleDetail />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
+          </BrowserRouter>
+        </TooltipProvider>
+      </ArticlesProvider>
     </QueryClientProvider>
   );
 };

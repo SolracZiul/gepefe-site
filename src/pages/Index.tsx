@@ -3,7 +3,7 @@ import { HeroSection } from "@/components/HeroSection";
 import { AboutSection } from "@/components/AboutSection";
 import { ArticleCard } from "@/components/ArticleCard";
 import { Footer } from "@/components/Footer";
-import { useArticles } from "@/hooks/useArticles";
+import { useArticlesContext } from "@/contexts/ArticlesContext";
 import { useState, useMemo } from "react";
 
 console.log("Index.tsx: Starting imports...");
@@ -12,7 +12,7 @@ const Index = () => {
   console.log("Index component rendering...");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todos");
-  const { articles, loading, error } = useArticles();
+  const { articles, loading, error } = useArticlesContext();
 
   // Filter articles based on search and category
   const filteredArticles = useMemo(() => {

@@ -8,7 +8,7 @@ import { Footer } from "@/components/Footer";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
 import { supabase } from "@/integrations/supabase/client";
-import { useArticles } from "@/hooks/useArticles";
+import { useArticlesContext } from "@/contexts/ArticlesContext";
 import type { Article } from "@/components/ArticleCard";
 
 export default function ArticleDetail() {
@@ -16,7 +16,7 @@ export default function ArticleDetail() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toggleFavorite, isFavorited } = useFavorites(user?.id || null);
-  const { articles, loading } = useArticles();
+  const { articles, loading } = useArticlesContext();
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [loadingPreview, setLoadingPreview] = useState(false);
 

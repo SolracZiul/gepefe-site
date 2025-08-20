@@ -2,12 +2,12 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { ArticleCard } from "@/components/ArticleCard";
 import { useState, useMemo } from "react";
-import { useArticles } from "@/hooks/useArticles";
+import { useArticlesContext } from "@/contexts/ArticlesContext";
 
 export default function Dissertacoes() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Dissertações");
-  const { articles, loading, error } = useArticles();
+  const { articles, loading, error } = useArticlesContext();
 
   const filteredArticles = useMemo(() => {
     return articles.filter(article => {
