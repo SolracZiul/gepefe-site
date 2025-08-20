@@ -16,7 +16,7 @@ import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import Favoritos from "./pages/Favoritos";
 
-console.log("App.tsx: All imports loaded successfully");
+console.log("App.tsx: All imports loaded successfully - Updated");
 console.log("Components check:", { Index, NotFound, Sobre, ArtigosCompletos, TextosAcademicos, Pesquisas, Dissertacoes, Todos, Auth, Admin });
 
 const queryClient = new QueryClient();
