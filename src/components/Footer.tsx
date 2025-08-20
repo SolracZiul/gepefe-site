@@ -8,7 +8,7 @@ export const Footer = () => {
             <div className="flex items-center space-x-2 mb-4">
               <img src="/lovable-uploads/24fb75f9-0b2a-410a-8f90-d6d3efcf52e4.png" alt="GEPEFE Logo" className="h-8 w-auto object-contain" />
               <div>
-                
+                <h3 className="font-semibold">GEPEFE</h3>
                 <p className="text-sm text-background/70">Repositório Acadêmico</p>
               </div>
             </div>
@@ -29,8 +29,8 @@ export const Footer = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <ExternalLink className="w-4 h-4 text-primary" />
-                <a href="#" className="text-background/80 hover:text-primary transition-colors">
-                  Site Institucional
+                <a href="/sobre" className="text-background/80 hover:text-primary transition-colors">
+                  Sobre Nós
                 </a>
               </div>
             </div>
@@ -40,20 +40,23 @@ export const Footer = () => {
           <div>
             <h4 className="font-semibold mb-4">Links Rápidos</h4>
             <div className="space-y-2 text-sm">
-              <a href="#" className="block text-background/80 hover:text-primary transition-colors">
+              <a href="/sobre" className="block text-background/80 hover:text-primary transition-colors">
                 Sobre o Grupo
               </a>
-              <a href="#" className="block text-background/80 hover:text-primary transition-colors">
-                Pesquisadores
+              <a href="/todos" className="block text-background/80 hover:text-primary transition-colors">
+                Todas as Publicações
               </a>
-              <a href="#" className="block text-background/80 hover:text-primary transition-colors">
-                Projetos em Andamento
+              <a href="/pesquisas" className="block text-background/80 hover:text-primary transition-colors">
+                Pesquisas
               </a>
-              <a href="#" className="block text-background/80 hover:text-primary transition-colors">
-                Como Publicar
+              <a href="/dissertacoes" className="block text-background/80 hover:text-primary transition-colors">
+                Dissertações
               </a>
-              <a href="#" className="block text-background/80 hover:text-primary transition-colors">
-                Políticas de Acesso
+              <a href="/artigos-completos" className="block text-background/80 hover:text-primary transition-colors">
+                Artigos Completos
+              </a>
+              <a href="/textos-academicos" className="block text-background/80 hover:text-primary transition-colors">
+                Textos Acadêmicos
               </a>
             </div>
           </div>
