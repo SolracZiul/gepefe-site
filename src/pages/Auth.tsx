@@ -215,7 +215,7 @@ export default function Auth() {
             onClick={handleGoogleSignIn}
             disabled={googleLoading}
             variant="outline"
-            className="w-full h-12 text-base font-medium border-2 hover:bg-muted/50 transition-all duration-200"
+            className="w-full h-12 text-base font-medium border-2 hover:bg-muted/20 focus:bg-muted/20 active:bg-muted/30 text-foreground hover:text-foreground focus:text-foreground active:text-foreground transition-all duration-200"
           >
             {googleLoading ? (
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
