@@ -98,7 +98,7 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[95vh] w-[95vw] sm:max-w-[95vw] sm:w-[95vw] sm:h-[95vh] sm:max-h-[95vh] p-0 overflow-hidden flex flex-col">
+      <DialogContent className="max-w-6xl max-h-[80vh] w-[95vw] sm:max-w-[95vw] sm:w-[95vw] sm:h-[80vh] sm:max-h-[80vh] p-0 overflow-hidden flex flex-col">
         <DialogHeader className="pb-2 sm:pb-4 px-2 sm:px-6 pt-2 sm:pt-6 flex-shrink-0">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
             <DialogTitle className="text-sm sm:text-lg leading-tight sm:pr-8">{article.title}</DialogTitle>
@@ -136,7 +136,7 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
             </div>
           )}
 
-          <div className="bg-muted/30 rounded-lg overflow-hidden" style={{ height: 'calc(100vh - 400px)', minHeight: '400px' }}>
+          <div className="bg-muted/30 rounded-lg overflow-hidden" style={{ height: 'calc(80vh - 350px)', minHeight: '300px' }}>
             {loading ? (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
