@@ -45,8 +45,32 @@ export const ArticlesProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   useEffect(() => {
-    console.log("ArticlesProvider: useEffect triggered - fetching articles only once");
+    console.log("ArticlesProvider: useEffect triggered - fetching articles and setting up real-time");
     fetchArticles();
+
+    // Configurar real-time updates
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*', // Escuta INSERT, UPDATE, DELETE
+          schema: 'public',
+          table: 'articles'
+        },
+        (payload) => {
+          console.log('ArticlesProvider: Real-time update received', payload);
+          // Atualizar dados quando houver mudanças
+          fetchArticles();
+        }
+      )
+      .subscribe();
+
+    // Cleanup function
+    return () => {
+      console.log("ArticlesProvider: Removing real-time subscription");
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const value: ArticlesContextType = {
