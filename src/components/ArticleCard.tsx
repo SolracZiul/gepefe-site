@@ -5,6 +5,8 @@ import { Download, Eye, Calendar, User, Heart } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
 
+// Component for displaying article information with favorites functionality
+
 export interface Article {
   id: string;
   title: string;
