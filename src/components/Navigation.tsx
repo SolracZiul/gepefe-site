@@ -109,7 +109,7 @@ const NavigationComponent = () => {
               variant="ghost"
               size="sm"
               asChild
-              className="text-sm mr-8"
+              className="text-sm mr-12"
             >
               <Link to="/sobre">
                 Sobre
