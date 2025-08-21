@@ -36,11 +36,7 @@ export default function EmailConfirmation() {
             .single();
           
           setTimeout(() => {
-            if (profile?.role === 'admin') {
-              navigate("/admin");
-            } else {
-              navigate("/");
-            }
+            navigate("/");
           }, 2000);
           return;
         }
@@ -77,11 +73,7 @@ export default function EmailConfirmation() {
               .single();
             
             setTimeout(() => {
-              if (profile?.role === 'admin') {
-                navigate("/admin");
-              } else {
-                navigate("/");
-              }
+              navigate("/");
             }, 2000);
           }
           return;
@@ -113,11 +105,7 @@ export default function EmailConfirmation() {
               .single();
             
             setTimeout(() => {
-              if (profile?.role === 'admin') {
-                navigate("/admin");
-              } else {
-                navigate("/");
-              }
+              navigate("/");
             }, 2000);
           }
           return;
