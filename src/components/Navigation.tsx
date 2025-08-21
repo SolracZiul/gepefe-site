@@ -127,7 +127,7 @@ const NavigationComponent = () => {
                   placeholder="Buscar publicações..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 w-64 ml-4"
+                  className="pl-10 w-56"
                 />
               </div>
             </form>
