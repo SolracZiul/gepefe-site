@@ -196,30 +196,7 @@ export default function Admin() {
 
         {/* Actions */}
         <div className="flex justify-between items-center mb-6">
-          <div className="flex gap-2 items-center">
-            <h2 className="text-xl font-semibold">Publicações</h2>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={async () => {
-                try {
-                  const { error } = await supabase
-                    .from('articles')
-                    .update({ download_count: 0 })
-                    .neq('id', '00000000-0000-0000-0000-000000000000'); // Update all articles
-                  
-                  if (error) throw error;
-                  
-                  // Refresh the articles data
-                  window.location.reload();
-                } catch (error) {
-                  console.error('Erro ao resetar downloads:', error);
-                }
-              }}
-            >
-              Resetar Downloads
-            </Button>
-          </div>
+          <h2 className="text-xl font-semibold">Publicações</h2>
           <Button onClick={() => setShowForm(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Nova Publicação
