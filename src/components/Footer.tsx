@@ -23,10 +23,7 @@ export const Footer = () => {
                 <Mail className="w-4 h-4 text-primary" />
                 <span className="text-background/80">gepefe@universidade.edu.br</span>
               </div>
-              <div className="flex items-center space-x-2">
-                <MapPin className="w-4 h-4 text-primary" />
-                <span className="text-background/80">Universidade Federal - Campus Principal</span>
-              </div>
+              
               <div className="flex items-center space-x-2">
                 <ExternalLink className="w-4 h-4 text-primary" />
                 <a href="/sobre" className="text-background/80 hover:text-primary transition-colors">
