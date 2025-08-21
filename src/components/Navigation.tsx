@@ -91,7 +91,7 @@ const NavigationComponent = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6 ml-8">
+          <div className="hidden md:flex items-center space-x-4 ml-8">
             {categories.map((category) => (
               <Button
                 key={category.name}
