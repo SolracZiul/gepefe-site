@@ -17,10 +17,77 @@ export default function EmailConfirmation() {
   useEffect(() => {
     const handleEmailConfirmation = async () => {
       try {
-        // Get tokens from URL parameters
+        // Check if user is already logged in (for OAuth redirects)
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user) {
+          // User is already authenticated (OAuth flow)
+          setConfirmed(true);
+          toast({
+            title: "Login realizado!",
+            description: "Você foi autenticado com sucesso.",
+          });
+          
+          // Fetch user profile to check role and redirect accordingly
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('user_id', session.user.id)
+            .single();
+          
+          setTimeout(() => {
+            if (profile?.role === 'admin') {
+              navigate("/admin");
+            } else {
+              navigate("/");
+            }
+          }, 2000);
+          return;
+        }
+
+        // Check for email confirmation parameters
         const token_hash = searchParams.get('token_hash');
         const type = searchParams.get('type');
+        const access_token = searchParams.get('access_token');
+        const refresh_token = searchParams.get('refresh_token');
         
+        // Handle OAuth tokens
+        if (access_token && refresh_token) {
+          const { data, error } = await supabase.auth.setSession({
+            access_token,
+            refresh_token
+          });
+          
+          if (error) {
+            throw error;
+          }
+          
+          if (data.user) {
+            setConfirmed(true);
+            toast({
+              title: "Login realizado!",
+              description: "Você foi autenticado com sucesso.",
+            });
+            
+            // Fetch user profile to check role and redirect accordingly
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('role')
+              .eq('user_id', data.user.id)
+              .single();
+            
+            setTimeout(() => {
+              if (profile?.role === 'admin') {
+                navigate("/admin");
+              } else {
+                navigate("/");
+              }
+            }, 2000);
+          }
+          return;
+        }
+        
+        // Handle email confirmation tokens
         if (token_hash && type) {
           const { data, error } = await supabase.auth.verifyOtp({
             token_hash,
@@ -38,21 +105,34 @@ export default function EmailConfirmation() {
               description: "Sua conta foi verificada com sucesso.",
             });
             
-            // Redirect to profile after a delay
+            // Fetch user profile to check role and redirect accordingly
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('role')
+              .eq('user_id', data.user.id)
+              .single();
+            
             setTimeout(() => {
-              navigate("/profile");
+              if (profile?.role === 'admin') {
+                navigate("/admin");
+              } else {
+                navigate("/");
+              }
             }, 2000);
           }
-        } else {
-          throw new Error("Parâmetros de confirmação inválidos");
+          return;
         }
+        
+        // If no valid parameters found, redirect to home
+        navigate("/");
+        
       } catch (error: any) {
         console.error("Error confirming email:", error);
-        setError(error.message || "Erro ao confirmar email");
+        setError(error.message || "Erro ao processar confirmação");
         toast({
           variant: "destructive",
           title: "Erro na confirmação",
-          description: error.message || "Não foi possível confirmar seu email.",
+          description: error.message || "Não foi possível processar a confirmação.",
         });
       } finally {
         setLoading(false);
