@@ -1,6 +1,5 @@
 import { Navigation } from "@/components/Navigation";
 import { HeroSection } from "@/components/HeroSection";
-import { AboutSection } from "@/components/AboutSection";
 import { ArticleCard } from "@/components/ArticleCard";
 import { Footer } from "@/components/Footer";
 import { useArticlesContext } from "@/contexts/ArticlesContext";
@@ -43,8 +42,6 @@ const Index = () => {
       
       <main className="flex-1">
         <HeroSection />
-        
-        <AboutSection />
         
         {/* Articles Section */}
         <section className="py-16 bg-background">

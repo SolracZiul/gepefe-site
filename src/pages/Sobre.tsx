@@ -1,5 +1,6 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import { AboutSection } from "@/components/AboutSection";
 import { Button } from "@/components/ui/button";
 import { BookOpen, Users, Award, Globe } from "lucide-react";
 export default function Sobre() {
@@ -11,6 +12,8 @@ export default function Sobre() {
   };
   return <div className="min-h-screen bg-background">
       <Navigation />
+      
+      <AboutSection />
       
       <main className="container mx-auto px-4 py-12">
         {/* Hero Section */}
