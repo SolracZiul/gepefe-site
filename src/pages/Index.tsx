@@ -131,7 +131,7 @@ const Index = () => {
                 }
               ].map((feature, index) => (
                 <Card key={index} className="text-center bg-gradient-card shadow-card hover:shadow-elegant transition-all duration-300">
-                  <CardContent className="p-6">
+                  <CardContent className="p-4 pt-6">
                     <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-4">
                       <feature.icon className="w-6 h-6 text-primary-foreground" />
                     </div>
