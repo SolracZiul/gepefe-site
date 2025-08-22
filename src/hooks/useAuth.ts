@@ -64,13 +64,26 @@ export const useAuth = () => {
   }, []);
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (!error) {
+    try {
+      // Limpar estado local primeiro
       setUser(null);
       setSession(null);
       setUserRole(null);
+      
+      // Tentar fazer logout no Supabase
+      const { error } = await supabase.auth.signOut();
+      
+      // Mesmo se houver erro (como session not found), considerar logout como sucesso
+      // porque o estado local já foi limpo
+      if (error && !error.message.includes('Session not found')) {
+        console.warn('Logout warning:', error.message);
+      }
+      
+      return { error: null }; // Sempre retornar sucesso para evitar loops
+    } catch (err) {
+      console.error('Logout error:', err);
+      return { error: null }; // Retornar sucesso mesmo em caso de erro
     }
-    return { error };
   };
 
   return {
