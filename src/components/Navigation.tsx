@@ -212,6 +212,13 @@ const NavigationComponent = () => {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="pl-10"
+                        autoFocus={false}
+                        onFocus={(e) => {
+                          // Prevent auto-focus on sheet open, only focus when user actually clicks
+                          if (document.activeElement !== e.target) {
+                            e.target.blur();
+                          }
+                        }}
                       />
                     </div>
                   </form>
