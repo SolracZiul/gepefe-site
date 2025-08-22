@@ -4,7 +4,7 @@ CREATE TABLE public.articles (
   title TEXT NOT NULL,
   authors TEXT[] NOT NULL,
   abstract TEXT NOT NULL,
-  category TEXT NOT NULL CHECK (category IN ('Artigos Completos', 'Textos Acadêmicos', 'Pesquisas', 'Dissertações', 'Teses')),
+  category TEXT NOT NULL CHECK (category IN ('Artigos Completos', 'Textos Acadêmicos', 'Pesquisas', 'Dissertações')),
   publish_date DATE NOT NULL DEFAULT CURRENT_DATE,
   download_count INTEGER NOT NULL DEFAULT 0,
   pdf_url TEXT,
