@@ -88,18 +88,22 @@ export default function Admin() {
       return;
     }
 
+    console.log("Tentando excluir artigo:", articleId);
+    
     const { error } = await supabase
       .from('articles')
       .delete()
       .eq('id', articleId);
 
     if (error) {
+      console.error("Erro ao excluir artigo:", error);
       toast({
         variant: "destructive",
         title: "Erro ao excluir artigo",
         description: error.message,
       });
     } else {
+      console.log("Artigo excluído com sucesso:", articleId);
       toast({
         title: "Artigo excluído",
         description: "O artigo foi removido com sucesso.",
