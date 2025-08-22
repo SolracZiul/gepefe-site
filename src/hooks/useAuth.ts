@@ -70,8 +70,8 @@ export const useAuth = () => {
       setSession(null);
       setUserRole(null);
       
-      // Tentar fazer logout no Supabase
-      const { error } = await supabase.auth.signOut();
+      // Fazer logout no Supabase com escopo global para limpar também o Google OAuth
+      const { error } = await supabase.auth.signOut({ scope: 'global' });
       
       // Mesmo se houver erro (como session not found), considerar logout como sucesso
       // porque o estado local já foi limpo
