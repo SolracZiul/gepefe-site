@@ -106,16 +106,6 @@ const NavigationComponent = () => {
                 </Link>
               </Button>
             ))}
-            <Button
-              variant="ghost"
-              size="sm"
-              asChild
-              className="text-sm mr-12"
-            >
-              <Link to="/sobre">
-                Sobre
-              </Link>
-            </Button>
           </div>
 
           {/* Search and User Actions */}
@@ -238,15 +228,6 @@ const NavigationComponent = () => {
                     </Button>
                   ))}
                   
-                  <Button
-                    variant="ghost"
-                    asChild
-                    className="justify-start"
-                  >
-                    <Link to="/sobre">
-                      Sobre
-                    </Link>
-                  </Button>
 
                   {user && (
                     <Button
