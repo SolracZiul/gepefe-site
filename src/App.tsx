@@ -11,6 +11,7 @@ import ArtigosCompletos from "./pages/ArtigosCompletos";
 import TextosAcademicos from "./pages/TextosAcademicos";
 import Pesquisas from "./pages/Pesquisas";
 import Dissertacoes from "./pages/Dissertacoes";
+import Teses from "./pages/Teses";
 import Todos from "./pages/Todos";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
@@ -46,6 +47,7 @@ const App = () => {
                 <Route path="/textos-academicos" element={<TextosAcademicos />} />
                 <Route path="/pesquisas" element={<Pesquisas />} />
                 <Route path="/dissertacoes" element={<Dissertacoes />} />
+                <Route path="/teses" element={<Teses />} />
                 <Route path="/favoritos" element={<Favoritos />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/email-confirmation" element={<EmailConfirmation />} />

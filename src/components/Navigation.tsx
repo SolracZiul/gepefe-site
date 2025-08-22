@@ -29,6 +29,7 @@ const NavigationComponent = () => {
     { name: "Textos Acadêmicos", path: "/textos-academicos" },
     { name: "Pesquisas", path: "/pesquisas" },
     { name: "Dissertações", path: "/dissertacoes" },
+    { name: "Teses", path: "/teses" },
   ];
 
   // Fetch user display name when user changes

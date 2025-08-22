@@ -165,7 +165,7 @@ export default function Admin() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
           <Card>
             <CardHeader className="pb-2">
               <CardDescription>Total de Artigos</CardDescription>
@@ -190,9 +190,17 @@ export default function Admin() {
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription>Downloads Totais</CardDescription>
+              <CardDescription>Dissertações</CardDescription>
               <CardTitle className="text-2xl">
-                {articles.reduce((sum, a) => sum + a.download_count, 0)}
+                {articles.filter(a => a.category === "Dissertações").length}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardDescription>Teses</CardDescription>
+              <CardTitle className="text-2xl">
+                {articles.filter(a => a.category === "Teses").length}
               </CardTitle>
             </CardHeader>
           </Card>

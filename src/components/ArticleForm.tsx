@@ -47,9 +47,10 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
 
   const categories = [
     "Artigos Completos",
-    "Textos Acadêmicos",
+    "Textos Acadêmicos", 
     "Pesquisas",
-    "Dissertações"
+    "Dissertações",
+    "Teses"
   ];
 
   useEffect(() => {
