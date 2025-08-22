@@ -47,6 +47,9 @@ export const Footer = () => {
               <a href="/dissertacoes" className="block text-background/80 hover:text-primary transition-colors">
                 Dissertações
               </a>
+              <a href="/teses" className="block text-background/80 hover:text-primary transition-colors">
+                Teses
+              </a>
               <a href="/artigos-completos" className="block text-background/80 hover:text-primary transition-colors">
                 Artigos Completos
               </a>
