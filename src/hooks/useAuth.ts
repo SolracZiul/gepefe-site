@@ -73,6 +73,19 @@ export const useAuth = () => {
       // Fazer logout no Supabase com escopo global para limpar também o Google OAuth
       const { error } = await supabase.auth.signOut({ scope: 'global' });
       
+      // Limpar qualquer session persistente no browser
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      // Limpar cookies do Google OAuth (se existirem)
+      if (typeof document !== 'undefined') {
+        document.cookie.split(";").forEach((c) => {
+          document.cookie = c
+            .replace(/^ +/, "")
+            .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
+      }
+      
       // Mesmo se houver erro (como session not found), considerar logout como sucesso
       // porque o estado local já foi limpo
       if (error && !error.message.includes('Session not found')) {
