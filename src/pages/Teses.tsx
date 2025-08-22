@@ -52,7 +52,7 @@ const Teses = () => {
       <header className="mb-8">
         <h1 className="text-3xl font-bold text-primary mb-2">Teses</h1>
         <p className="text-muted-foreground">
-          Teses de doutorado em Educação Física e Escola desenvolvidas pelo GEPEFE
+          Teses de mestrado em Educação Física e Escola desenvolvidas pelo GEPEFE
         </p>
       </header>
 
