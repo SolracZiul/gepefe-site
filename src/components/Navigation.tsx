@@ -12,6 +12,14 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
@@ -91,26 +99,31 @@ const NavigationComponent = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center ml-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="flex items-center gap-2">
-                  Repositório
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-48 bg-popover/95 backdrop-blur-md border border-border">
-                {categories.map((category) => (
-                  <DropdownMenuItem key={category.name} asChild>
-                    <Link 
-                      to={category.path}
-                      className={`w-full ${location.pathname === category.path ? 'bg-accent text-accent-foreground' : ''}`}
-                    >
-                      {category.name}
-                    </Link>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="h-9 px-4 py-2">
+                    Repositório
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent className="w-48 bg-popover/95 backdrop-blur-md border border-border p-2">
+                    <div className="grid gap-1">
+                      {categories.map((category) => (
+                        <NavigationMenuLink key={category.name} asChild>
+                          <Link 
+                            to={category.path}
+                            className={`block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground ${
+                              location.pathname === category.path ? 'bg-accent text-accent-foreground' : ''
+                            }`}
+                          >
+                            <div className="text-sm font-medium leading-none">{category.name}</div>
+                          </Link>
+                        </NavigationMenuLink>
+                      ))}
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
           </div>
 
           {/* Search and User Actions */}
