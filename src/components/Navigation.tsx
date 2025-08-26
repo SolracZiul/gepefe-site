@@ -111,8 +111,6 @@ const NavigationComponent = () => {
 
           {/* Search and User Actions */}
           <div className="flex items-center space-x-2">
-            {/* Theme Toggle */}
-            <ThemeToggle />
             {/* Search form */}
             <form onSubmit={handleSearch} className="hidden md:flex items-center space-x-2">
               <div className="relative">
@@ -188,6 +186,11 @@ const NavigationComponent = () => {
               )}
             </div>
 
+            {/* Theme Toggle - far right on desktop */}
+            <div className="hidden md:block">
+              <ThemeToggle />
+            </div>
+
             {/* Mobile menu */}
             <Sheet>
               <SheetTrigger asChild>
@@ -216,6 +219,12 @@ const NavigationComponent = () => {
                       />
                     </div>
                   </form>
+
+                  {/* Theme Toggle - mobile */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Alternar Tema</span>
+                    <ThemeToggle />
+                  </div>
 
                   {/* Mobile categories */}
                   {categories.map((category) => (
