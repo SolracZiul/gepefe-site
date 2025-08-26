@@ -97,7 +97,7 @@ const NavigationComponent = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="flex items-center gap-2">
-                  Acervo Digital
+                  Biblioteca
                   <ChevronDown className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -233,7 +233,7 @@ const NavigationComponent = () => {
 
                   {/* Mobile categories */}
                   <div className="space-y-2">
-                    <h3 className="font-medium text-sm text-muted-foreground px-2">Acervo Digital</h3>
+                    <h3 className="font-medium text-sm text-muted-foreground px-2">Biblioteca</h3>
                     {categories.map((category) => (
                       <Button
                         key={category.name}
