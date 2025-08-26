@@ -128,19 +128,6 @@ const NavigationComponent = () => {
             <div className="hidden md:flex items-center gap-2">
               {user ? (
                 <>
-                  {/* Favoritos button - only for logged users */}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    asChild
-                    className="flex items-center gap-2"
-                  >
-                    <Link to="/favoritos">
-                      <Heart className="h-4 w-4" />
-                      <span className="hidden sm:inline">Favoritos</span>
-                    </Link>
-                  </Button>
-
                    {/* User menu */}
                    <DropdownMenu>
                      <DropdownMenuTrigger asChild>
@@ -175,6 +162,17 @@ const NavigationComponent = () => {
                        </DropdownMenuItem>
                      </DropdownMenuContent>
                    </DropdownMenu>
+
+                  {/* Favoritos button - only for logged users */}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    asChild
+                  >
+                    <Link to="/favoritos">
+                      <Heart className="h-4 w-4" />
+                    </Link>
+                  </Button>
                 </>
               ) : (
                 <Link to="/auth">
