@@ -87,9 +87,6 @@ const NavigationComponent = () => {
                 onError={() => console.log("Logo failed to load")}
               />
             </div>
-            <div className="flex-shrink-0">
-              <p className="text-xs text-muted-foreground whitespace-nowrap">Repositório Acadêmico</p>
-            </div>
           </Link>
 
           {/* Desktop Navigation */}
