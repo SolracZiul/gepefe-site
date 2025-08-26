@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Sobre from "./pages/Sobre";
@@ -32,9 +33,15 @@ const App = () => {
   console.log("App component rendering...");
   return (
     <QueryClientProvider client={queryClient}>
-      <ArticlesProvider>
-        <SearchProvider>
-          <TooltipProvider>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="light"
+        enableSystem={false}
+        disableTransitionOnChange={false}
+      >
+        <ArticlesProvider>
+          <SearchProvider>
+            <TooltipProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter>
@@ -60,9 +67,10 @@ const App = () => {
               </Routes>
             </div>
           </BrowserRouter>
-        </TooltipProvider>
-      </SearchProvider>
-    </ArticlesProvider>
+          </TooltipProvider>
+        </SearchProvider>
+      </ArticlesProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 };

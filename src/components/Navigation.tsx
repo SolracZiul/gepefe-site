@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Search, Menu, User, Heart, LogOut, LogIn } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
@@ -110,6 +111,8 @@ const NavigationComponent = () => {
 
           {/* Search and User Actions */}
           <div className="flex items-center space-x-2">
+            {/* Theme Toggle */}
+            <ThemeToggle />
             {/* Search form */}
             <form onSubmit={handleSearch} className="hidden md:flex items-center space-x-2">
               <div className="relative">
