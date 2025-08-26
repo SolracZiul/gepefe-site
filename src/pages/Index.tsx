@@ -7,13 +7,18 @@ import { Users, Target, BookOpen, Award } from "lucide-react";
 import { useArticlesContext } from "@/contexts/ArticlesContext";
 import { useSearch } from "@/contexts/SearchContext";
 import { useState, useMemo } from "react";
-
 console.log("Index.tsx: Starting imports...");
-
 const Index = () => {
   console.log("Index component rendering...");
-  const { searchQuery, selectedCategory } = useSearch();
-  const { articles, loading, error } = useArticlesContext();
+  const {
+    searchQuery,
+    selectedCategory
+  } = useSearch();
+  const {
+    articles,
+    loading,
+    error
+  } = useArticlesContext();
 
   // Filter articles based on search and category
   const filteredArticles = useMemo(() => {
@@ -27,19 +32,11 @@ const Index = () => {
     // Filter by search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(article => 
-        article.title.toLowerCase().includes(query) ||
-        article.authors.some(author => author.toLowerCase().includes(query)) ||
-        article.abstract.toLowerCase().includes(query) ||
-        article.tags.some(tag => tag.toLowerCase().includes(query))
-      );
+      filtered = filtered.filter(article => article.title.toLowerCase().includes(query) || article.authors.some(author => author.toLowerCase().includes(query)) || article.abstract.toLowerCase().includes(query) || article.tags.some(tag => tag.toLowerCase().includes(query)));
     }
-
     return filtered;
   }, [articles, searchQuery, selectedCategory]);
-
-  return (
-    <div className="min-h-screen flex flex-col">
+  return <div className="min-h-screen flex flex-col">
       <Navigation />
       
       <main className="flex-1">
@@ -57,97 +54,35 @@ const Index = () => {
               </p>
             </div>
 
-            {loading ? (
-              <div className="flex justify-center items-center py-16">
+            {loading ? <div className="flex justify-center items-center py-16">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-              </div>
-            ) : error ? (
-              <div className="text-center py-16">
+              </div> : error ? <div className="text-center py-16">
                 <p className="text-destructive mb-4">Erro ao carregar artigos: {error}</p>
                 <p className="text-muted-foreground">Tente recarregar a página</p>
-              </div>
-            ) : filteredArticles.length === 0 ? (
-              <div className="text-center py-16">
+              </div> : filteredArticles.length === 0 ? <div className="text-center py-16">
                 <p className="text-muted-foreground">
                   {searchQuery ? "Nenhum artigo encontrado para sua busca." : "Nenhum artigo disponível no momento."}
                 </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredArticles.slice(0, 6).map((article) => (
-                  <ArticleCard key={article.id} article={article} />
-                ))}
-              </div>
-            )}
+              </div> : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredArticles.slice(0, 6).map(article => <ArticleCard key={article.id} article={article} />)}
+              </div>}
 
-            {filteredArticles.length > 6 && (
-              <div className="text-center mt-8">
+            {filteredArticles.length > 6 && <div className="text-center mt-8">
                 <p className="text-muted-foreground">
                   Mostrando 6 de {filteredArticles.length} artigos.{" "}
                   <a href="/todos" className="text-primary hover:underline">
                     Ver todos os artigos
                   </a>
                 </p>
-              </div>
-            )}
+              </div>}
           </div>
         </section>
 
         {/* Features Section */}
-        <section className="pt-8 pb-16 px-4 bg-secondary/30">
-          <div className="container mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Sobre o GEPEFE
-              </h2>
-              <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                O Grupo de Estudos e Pesquisas em Educação Física e Escola é um coletivo 
-                de pesquisadores dedicados ao avanço do conhecimento científico na área 
-                da Educação Física escolar.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[
-                {
-                  icon: Users,
-                  title: "Comunidade Acadêmica",
-                  description: "Conectamos pesquisadores, professores e estudantes interessados em Educação Física escolar."
-                },
-                {
-                  icon: Target,
-                  title: "Pesquisa Aplicada",
-                  description: "Desenvolvemos estudos que contribuem diretamente para a prática pedagógica na escola."
-                },
-                {
-                  icon: BookOpen,
-                  title: "Acesso Aberto",
-                  description: "Todos os materiais são disponibilizados gratuitamente para democratizar o conhecimento."
-                },
-                {
-                  icon: Award,
-                  title: "Qualidade Científica",
-                  description: "Publicações rigorosamente revisadas seguindo os mais altos padrões acadêmicos."
-                }
-              ].map((feature, index) => (
-                <Card key={index} className="text-center bg-gradient-card shadow-card hover:shadow-elegant transition-all duration-300">
-                  <CardContent className="p-4">
-                    <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                      <feature.icon className="w-6 h-6 text-primary-foreground" />
-                    </div>
-                    <h3 className="font-semibold mb-2">{feature.title}</h3>
-                    <p className="text-sm text-muted-foreground">{feature.description}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
+        
       </main>
       
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
