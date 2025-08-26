@@ -62,7 +62,7 @@ export const Footer = () => {
 
         <div className="border-t border-background/20 mt-8 pt-8 text-center">
           <p className="text-sm text-background/60">
-            © 2024 GEPEFE - Grupo de Estudos e Pesquisas em Educação Física e Escola. 
+            © 2025 GEPEFE - Grupo de Estudos e Pesquisas em Educação Física e Escola. 
             Todos os direitos reservados.
           </p>
           <p className="text-xs text-background/50 mt-2">
