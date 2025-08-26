@@ -27,10 +27,10 @@ const NavigationComponent = () => {
   const categories = [
     { name: "Todos", path: "/todos" },
     { name: "Artigos Completos", path: "/artigos-completos" },
-    { name: "Textos Acadêmicos", path: "/textos-academicos" },
-    { name: "Pesquisas", path: "/pesquisas" },
     { name: "Dissertações", path: "/dissertacoes" },
+    { name: "Pesquisas", path: "/pesquisas" },
     { name: "Teses", path: "/teses" },
+    { name: "Textos Acadêmicos", path: "/textos-academicos" },
   ];
 
   // Fetch user display name when user changes
