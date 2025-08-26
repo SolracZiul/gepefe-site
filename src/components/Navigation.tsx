@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, Menu, User, Heart, LogOut, LogIn } from "lucide-react";
+import { Search, Menu, User, Heart, LogOut, LogIn, ChevronDown } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -93,20 +93,27 @@ const NavigationComponent = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1 ml-4">
-            {categories.map((category) => (
-              <Button
-                key={category.name}
-                variant={location.pathname === category.path ? "default" : "ghost"}
-                size="sm"
-                asChild
-                className="text-sm"
-              >
-                <Link to={category.path}>
-                  {category.name}
-                </Link>
-              </Button>
-            ))}
+          <div className="hidden md:flex items-center ml-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="flex items-center gap-2">
+                  Categorias
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48 bg-popover/95 backdrop-blur-md border border-border">
+                {categories.map((category) => (
+                  <DropdownMenuItem key={category.name} asChild>
+                    <Link 
+                      to={category.path}
+                      className={`w-full ${location.pathname === category.path ? 'bg-accent text-accent-foreground' : ''}`}
+                    >
+                      {category.name}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {/* Search and User Actions */}
@@ -225,18 +232,21 @@ const NavigationComponent = () => {
                   </div>
 
                   {/* Mobile categories */}
-                  {categories.map((category) => (
-                    <Button
-                      key={category.name}
-                      variant={location.pathname === category.path ? "default" : "ghost"}
-                      asChild
-                      className="justify-start"
-                    >
-                      <Link to={category.path}>
-                        {category.name}
-                      </Link>
-                    </Button>
-                  ))}
+                  <div className="space-y-2">
+                    <h3 className="font-medium text-sm text-muted-foreground px-2">Categorias</h3>
+                    {categories.map((category) => (
+                      <Button
+                        key={category.name}
+                        variant={location.pathname === category.path ? "default" : "ghost"}
+                        asChild
+                        className="justify-start w-full"
+                      >
+                        <Link to={category.path}>
+                          {category.name}
+                        </Link>
+                      </Button>
+                    ))}
+                  </div>
                   
 
                   {user && (
