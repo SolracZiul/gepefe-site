@@ -111,8 +111,8 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
         
         <div className="flex flex-col space-y-2 text-sm text-muted-foreground">
           <div className="flex items-center min-w-0">
-            <User className="w-4 h-4 mr-1 flex-shrink-0" />
             {article.authors.length === 1 && article.authors[0] === "Integrantes do Grupo de Estudos e Pesquisas em Educação Física e Escola" ? (
+              // Criação coletiva do GEPEFE - apenas o selo, sem ícone
               <div className="flex items-center gap-2 min-w-0">
                 <span className="bg-gradient-primary text-primary-foreground px-2 py-1 rounded-full text-xs font-semibold flex-shrink-0">
                   GEPEFE
@@ -122,27 +122,35 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
                 </span>
               </div>
             ) : article.authors.some(author => author.includes(" (GEPEFE)")) ? (
-              <div className="flex flex-wrap items-center gap-1 min-w-0">
-                {article.authors.map((author, index) => (
-                  <div key={index} className="flex items-center gap-1">
-                    {author.includes(" (GEPEFE)") ? (
-                      <>
-                        <span className="bg-gradient-primary text-primary-foreground px-1.5 py-0.5 rounded-full text-xs font-semibold">
-                          GEPEFE
-                        </span>
-                        <span className="font-medium text-primary">
-                          {author.replace(" (GEPEFE)", "")}
-                        </span>
-                      </>
-                    ) : (
-                      <span>{author}</span>
-                    )}
-                    {index < article.authors.length - 1 && <span>, </span>}
-                  </div>
-                ))}
-              </div>
+              // Integrantes individuais do GEPEFE - ícone amarelo
+              <>
+                <User className="w-4 h-4 mr-1 flex-shrink-0 text-yellow-500" />
+                <div className="flex flex-wrap items-center gap-1 min-w-0">
+                  {article.authors.map((author, index) => (
+                    <div key={index} className="flex items-center gap-1">
+                      {author.includes(" (GEPEFE)") ? (
+                        <>
+                          <span className="bg-gradient-primary text-primary-foreground px-1.5 py-0.5 rounded-full text-xs font-semibold">
+                            GEPEFE
+                          </span>
+                          <span className="font-medium text-primary">
+                            {author.replace(" (GEPEFE)", "")}
+                          </span>
+                        </>
+                      ) : (
+                        <span>{author}</span>
+                      )}
+                      {index < article.authors.length - 1 && <span>, </span>}
+                    </div>
+                  ))}
+                </div>
+              </>
             ) : (
-              <span className="truncate">{article.authors.join(", ")}</span>
+              // Autores externos - ícone cinza normal
+              <>
+                <User className="w-4 h-4 mr-1 flex-shrink-0" />
+                <span className="truncate">{article.authors.join(", ")}</span>
+              </>
             )}
           </div>
           <div className="flex items-center">
