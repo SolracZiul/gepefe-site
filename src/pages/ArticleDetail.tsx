@@ -164,11 +164,12 @@ export default function ArticleDetail() {
               <div className="flex flex-col sm:flex-row sm:items-center gap-4 text-sm text-muted-foreground mb-6">
                 <div className="flex items-center">
                   {article.authors.length === 1 && article.authors[0] === "Integrantes do Grupo de Estudos e Pesquisas em Educação Física e Escola" ? (
-                    // Criação coletiva do GEPEFE - apenas o selo, sem ícone
+                    // Criação coletiva do GEPEFE - dois ícones amarelos
                     <div className="flex items-center gap-2">
-                      <span className="bg-gradient-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold">
-                        GEPEFE
-                      </span>
+                      <div className="flex items-center">
+                        <User className="w-4 h-4 text-yellow-500" />
+                        <User className="w-4 h-4 text-yellow-500 -ml-1" />
+                      </div>
                       <span className="font-medium text-primary">
                         {article.authors[0]}
                       </span>
