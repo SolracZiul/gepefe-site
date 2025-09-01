@@ -186,7 +186,7 @@ export default function NoticiaDetail() {
                         <img
                           src={imageUrl}
                           alt={`${news.title} - Imagem ${index + 1}`}
-                          className="w-full h-64 md:h-96 object-cover"
+                          className="w-full h-80 md:h-[500px] object-cover"
                         />
                       </div>
                     ))}
@@ -236,7 +236,7 @@ export default function NoticiaDetail() {
               <img
                 src={news.image_url}
                 alt={news.title}
-                className="w-full h-64 md:h-96 object-cover rounded-lg shadow-lg"
+                className="w-full h-80 md:h-[500px] object-cover rounded-lg shadow-lg"
               />
             </div>
           )}
