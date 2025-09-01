@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Download, ExternalLink, FileText, Calendar, User, Heart } from "lucide-react";
+import { ArrowLeft, Download, ExternalLink, FileText, Calendar, User, Heart, Users } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { useAuth } from "@/hooks/useAuth";
@@ -164,12 +164,9 @@ export default function ArticleDetail() {
               <div className="flex flex-col sm:flex-row sm:items-center gap-4 text-sm text-muted-foreground mb-6">
                 <div className="flex items-center">
                   {article.authors.length === 1 && article.authors[0] === "Integrantes do Grupo de Estudos e Pesquisas em Educação Física e Escola" ? (
-                    // Criação coletiva do GEPEFE - dois ícones amarelos
+                    // Criação coletiva do GEPEFE - ícone de grupo amarelo
                     <div className="flex items-center gap-2">
-                      <div className="flex items-center">
-                        <User className="w-4 h-4 text-yellow-500" />
-                        <User className="w-4 h-4 text-yellow-500 -ml-1" />
-                      </div>
+                      <Users className="w-4 h-4 text-yellow-500" />
                       <span className="font-medium text-primary">
                         {article.authors[0]}
                       </span>

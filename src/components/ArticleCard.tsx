@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, Eye, Calendar, User, Heart } from "lucide-react";
+import { Download, Eye, Calendar, User, Heart, Users } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
 import { supabase } from "@/integrations/supabase/client";
@@ -112,12 +112,9 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
         <div className="flex flex-col space-y-2 text-sm text-muted-foreground">
           <div className="flex items-center min-w-0">
             {article.authors.length === 1 && article.authors[0] === "Integrantes do Grupo de Estudos e Pesquisas em Educação Física e Escola" ? (
-              // Criação coletiva do GEPEFE - dois ícones amarelos
+              // Criação coletiva do GEPEFE - ícone de grupo amarelo
               <div className="flex items-center gap-2 min-w-0">
-                <div className="flex items-center">
-                  <User className="w-4 h-4 text-yellow-500" />
-                  <User className="w-4 h-4 text-yellow-500 -ml-1" />
-                </div>
+                <Users className="w-4 h-4 text-yellow-500" />
                 <span className="font-medium text-primary truncate">
                   {article.authors[0]}
                 </span>
