@@ -19,6 +19,8 @@ export type Database = {
           abstract: string
           authors: string[]
           category: string
+          content: string | null
+          content_type: string
           created_at: string
           created_by: string | null
           download_count: number
@@ -26,8 +28,10 @@ export type Database = {
           file_size: number | null
           file_type: string | null
           id: string
+          image_url: string | null
           pdf_url: string | null
           publish_date: string
+          summary: string | null
           tags: string[]
           title: string
           updated_at: string
@@ -36,6 +40,8 @@ export type Database = {
           abstract: string
           authors: string[]
           category: string
+          content?: string | null
+          content_type?: string
           created_at?: string
           created_by?: string | null
           download_count?: number
@@ -43,8 +49,10 @@ export type Database = {
           file_size?: number | null
           file_type?: string | null
           id?: string
+          image_url?: string | null
           pdf_url?: string | null
           publish_date?: string
+          summary?: string | null
           tags?: string[]
           title: string
           updated_at?: string
@@ -53,6 +61,8 @@ export type Database = {
           abstract?: string
           authors?: string[]
           category?: string
+          content?: string | null
+          content_type?: string
           created_at?: string
           created_by?: string | null
           download_count?: number
@@ -60,8 +70,10 @@ export type Database = {
           file_size?: number | null
           file_type?: string | null
           id?: string
+          image_url?: string | null
           pdf_url?: string | null
           publish_date?: string
+          summary?: string | null
           tags?: string[]
           title?: string
           updated_at?: string

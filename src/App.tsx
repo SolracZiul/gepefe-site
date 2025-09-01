@@ -21,11 +21,13 @@ import EmailConfirmation from "./pages/EmailConfirmation";
 import ResetPassword from "./pages/ResetPassword";
 import Favoritos from "./pages/Favoritos";
 import ArticleDetail from "./pages/ArticleDetail";
+import Noticias from "./pages/Noticias";
+import NoticiaDetail from "./pages/NoticiaDetail";
 import { ArticlesProvider } from "./contexts/ArticlesContext";
 import { SearchProvider } from "./contexts/SearchContext";
 
 console.log("App.tsx: All imports loaded successfully - Updated");
-console.log("Components check:", { Index, NotFound, Sobre, ArtigosCompletos, TextosAcademicos, Pesquisas, Dissertacoes, Todos, Auth, Admin });
+console.log("Components check:", { Index, NotFound, Sobre, ArtigosCompletos, TextosAcademicos, Pesquisas, Dissertacoes, Todos, Auth, Admin, Noticias, NoticiaDetail });
 
 const queryClient = new QueryClient();
 
@@ -62,6 +64,8 @@ const App = () => {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/article/:id" element={<ArticleDetail />} />
+                <Route path="/noticias" element={<Noticias />} />
+                <Route path="/noticia/:id" element={<NoticiaDetail />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

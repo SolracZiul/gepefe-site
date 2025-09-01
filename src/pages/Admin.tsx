@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Plus, LogOut, Edit, Trash2 } from "lucide-react";
 import { ArticleForm } from "@/components/ArticleForm";
 import { ArticleList } from "@/components/ArticleList";
+import { NewsForm } from "@/components/NewsForm";
 
 interface Article {
   id: string;
@@ -23,6 +24,10 @@ interface Article {
   tags: string[];
   created_at: string;
   updated_at: string;
+  content_type?: string;
+  summary?: string;
+  content?: string;
+  image_url?: string;
 }
 
 export default function Admin() {
@@ -31,6 +36,7 @@ export default function Admin() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingArticle, setEditingArticle] = useState<Article | null>(null);
+  const [contentType, setContentType] = useState<'article' | 'news'>('article');
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -66,7 +72,7 @@ export default function Admin() {
     if (error) {
       toast({
         variant: "destructive",
-        title: "Erro ao carregar artigos",
+        title: "Erro ao carregar conteúdo",
         description: error.message,
       });
     } else {
@@ -80,6 +86,7 @@ export default function Admin() {
 
   const handleEdit = (article: Article) => {
     setEditingArticle(article);
+    setContentType(article.content_type === 'news' ? 'news' : 'article');
     setShowForm(true);
   };
 
@@ -115,12 +122,20 @@ export default function Admin() {
   const handleFormSuccess = () => {
     setShowForm(false);
     setEditingArticle(null);
+    setContentType('article');
     fetchArticles();
   };
 
   const handleCancelForm = () => {
     setShowForm(false);
     setEditingArticle(null);
+    setContentType('article');
+  };
+
+  const handleCreateNew = (type: 'article' | 'news') => {
+    setContentType(type);
+    setEditingArticle(null);
+    setShowForm(true);
   };
 
   if (loading) {
@@ -135,13 +150,32 @@ export default function Admin() {
   }
 
   if (showForm) {
-    return (
-      <ArticleForm
-        article={editingArticle}
-        onSuccess={handleFormSuccess}
-        onCancel={handleCancelForm}
-      />
-    );
+    if (contentType === 'news') {
+      return (
+        <NewsForm
+          news={editingArticle ? {
+            id: editingArticle.id,
+            title: editingArticle.title,
+            summary: editingArticle.summary || '',
+            content: editingArticle.content || '',
+            authors: editingArticle.authors,
+            publish_date: editingArticle.publish_date,
+            image_url: editingArticle.image_url,
+            tags: editingArticle.tags
+          } : null}
+          onSuccess={handleFormSuccess}
+          onCancel={handleCancelForm}
+        />
+      );
+    } else {
+      return (
+        <ArticleForm
+          article={editingArticle}
+          onSuccess={handleFormSuccess}
+          onCancel={handleCancelForm}
+        />
+      );
+    }
   }
 
   return (
@@ -165,26 +199,26 @@ export default function Admin() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-6 mb-8">
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription>Total de Artigos</CardDescription>
+              <CardDescription>Total</CardDescription>
               <CardTitle className="text-2xl">{articles.length}</CardTitle>
             </CardHeader>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription>Artigos Completos</CardDescription>
+              <CardDescription>Artigos</CardDescription>
               <CardTitle className="text-2xl">
-                {articles.filter(a => a.category === "Artigos Completos").length}
+                {articles.filter(a => a.content_type === "article" || !a.content_type).length}
               </CardTitle>
             </CardHeader>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription>Pesquisas</CardDescription>
+              <CardDescription>Notícias</CardDescription>
               <CardTitle className="text-2xl">
-                {articles.filter(a => a.category === "Pesquisas").length}
+                {articles.filter(a => a.content_type === "news").length}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -204,15 +238,29 @@ export default function Admin() {
               </CardTitle>
             </CardHeader>
           </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardDescription>Pesquisas</CardDescription>
+              <CardTitle className="text-2xl">
+                {articles.filter(a => a.category === "Pesquisas").length}
+              </CardTitle>
+            </CardHeader>
+          </Card>
         </div>
 
         {/* Actions */}
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold">Publicações</h2>
-          <Button onClick={() => setShowForm(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Nova Publicação
-          </Button>
+          <h2 className="text-xl font-semibold">Conteúdo</h2>
+          <div className="flex gap-2">
+            <Button onClick={() => handleCreateNew('article')}>
+              <Plus className="h-4 w-4 mr-2" />
+              Nova Publicação
+            </Button>
+            <Button onClick={() => handleCreateNew('news')} variant="outline">
+              <Plus className="h-4 w-4 mr-2" />
+              Nova Notícia
+            </Button>
+          </div>
         </div>
 
         {/* Articles List */}

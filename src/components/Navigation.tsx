@@ -124,6 +124,18 @@ const NavigationComponent = () => {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
+            
+            {/* Notícias Link */}
+            <Link 
+              to="/noticias"
+              className={`ml-4 px-4 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground ${
+                location.pathname === '/noticias' || location.pathname.startsWith('/noticia/') 
+                  ? 'bg-accent text-accent-foreground' 
+                  : 'text-foreground'
+              }`}
+            >
+              Notícias
+            </Link>
           </div>
 
           {/* Search and User Actions */}
@@ -257,6 +269,17 @@ const NavigationComponent = () => {
                       </Button>
                     ))}
                   </div>
+                  
+                  {/* Notícias */}
+                  <Button
+                    variant={location.pathname === '/noticias' || location.pathname.startsWith('/noticia/') ? "default" : "ghost"}
+                    asChild
+                    className="justify-start w-full"
+                  >
+                    <Link to="/noticias">
+                      Notícias
+                    </Link>
+                  </Button>
                   
 
                   {user && (
