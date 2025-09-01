@@ -177,16 +177,9 @@ export default function ArticleDetail() {
                     // Integrantes individuais do GEPEFE - apenas ícone amarelo, sem badge
                     <>
                       <User className="w-4 h-4 mr-1 text-yellow-500" />
-                      <div className="flex flex-wrap items-center gap-2">
-                        {article.authors.map((author, index) => (
-                          <div key={index} className="flex items-center gap-1">
-                            <span className="font-medium text-primary">
-                              {author.replace(" (GEPEFE)", "")}
-                            </span>
-                            {index < article.authors.length - 1 && <span>, </span>}
-                          </div>
-                        ))}
-                      </div>
+                      <span className="font-medium text-primary">
+                        {article.authors.map(author => author.replace(" (GEPEFE)", "")).join(", ")}
+                      </span>
                     </>
                   ) : (
                     // Autores externos - ícone cinza normal
