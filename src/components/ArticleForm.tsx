@@ -240,17 +240,31 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
         console.log("Updating article with ID:", article.id);
         
         // Update existing article
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('articles')
           .update(articleData)
-          .eq('id', article.id);
+          .eq('id', article.id)
+          .select('*');
 
         if (error) {
           console.error("Update error:", error);
           throw error;
         }
 
-        console.log("Article updated successfully");
+        console.log("Article updated successfully. Updated data:", data);
+        
+        // Verify the update by querying the database directly
+        const { data: verifyData, error: verifyError } = await supabase
+          .from('articles')
+          .select('id, title, authors')
+          .eq('id', article.id)
+          .single();
+          
+        if (verifyError) {
+          console.error("Verification error:", verifyError);
+        } else {
+          console.log("Database verification - actual stored data:", verifyData);
+        }
         
         // Refresh the articles context
         await refetch();
