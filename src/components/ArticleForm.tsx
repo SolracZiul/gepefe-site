@@ -5,9 +5,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, ArrowLeft, Upload, FileText, Trash2 } from "lucide-react";
+import { Loader2, ArrowLeft, Upload, FileText, Trash2, Users } from "lucide-react";
 
 interface Article {
   id: string;
@@ -34,6 +35,7 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isGepefeCreation, setIsGepefeCreation] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     authors: "",
@@ -55,9 +57,14 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
 
   useEffect(() => {
     if (article) {
+      // Check if it's a GEPEFE creation by looking at the authors
+      const isGepefe = article.authors.length === 1 && 
+        article.authors[0] === "Integrantes do Grupo de Estudos e Pesquisas em Educação Física e Escola";
+      
+      setIsGepefeCreation(isGepefe);
       setFormData({
         title: article.title,
-        authors: article.authors.join(", "),
+        authors: isGepefe ? "" : article.authors.join(", "),
         abstract: article.abstract,
         category: article.category,
         publish_date: article.publish_date,
@@ -137,7 +144,11 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
     setLoading(true);
 
     try {
-      const authorsArray = formData.authors.split(",").map(author => author.trim()).filter(Boolean);
+      // Handle authors based on GEPEFE creation checkbox
+      const authorsArray = isGepefeCreation 
+        ? ["Integrantes do Grupo de Estudos e Pesquisas em Educação Física e Escola"]
+        : formData.authors.split(",").map(author => author.trim()).filter(Boolean);
+      
       const tagsArray = formData.tags.split(",").map(tag => tag.trim()).filter(Boolean);
 
       let fileData = null;
@@ -259,18 +270,37 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="authors">Autores *</Label>
-                <Input
-                  id="authors"
-                  value={formData.authors}
-                  onChange={(e) => setFormData({ ...formData, authors: e.target.value })}
-                  placeholder="Ex: Dr. João Silva, Profa. Maria Santos"
-                  required
-                />
-                <p className="text-sm text-muted-foreground">
-                  Separe os autores por vírgula
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="gepefe-creation" 
+                    checked={isGepefeCreation}
+                    onCheckedChange={(checked) => setIsGepefeCreation(checked as boolean)}
+                  />
+                  <Label htmlFor="gepefe-creation" className="flex items-center gap-2 text-sm font-medium cursor-pointer">
+                    <Users className="h-4 w-4 text-primary" />
+                    Criação do GEPEFE
+                  </Label>
+                </div>
+                <p className="text-xs text-muted-foreground ml-6">
+                  Marque esta opção se o artigo foi criado pelos "Integrantes do Grupo de Estudos e Pesquisas em Educação Física e Escola"
                 </p>
+
+                {!isGepefeCreation && (
+                  <>
+                    <Label htmlFor="authors">Autores *</Label>
+                    <Input
+                      id="authors"
+                      value={formData.authors}
+                      onChange={(e) => setFormData({ ...formData, authors: e.target.value })}
+                      placeholder="Ex: Dr. João Silva, Profa. Maria Santos"
+                      required
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      Separe os autores por vírgula
+                    </p>
+                  </>
+                )}
               </div>
 
               <div className="space-y-2">

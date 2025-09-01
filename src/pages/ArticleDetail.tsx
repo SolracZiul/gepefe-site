@@ -164,7 +164,18 @@ export default function ArticleDetail() {
               <div className="flex flex-col sm:flex-row sm:items-center gap-4 text-sm text-muted-foreground mb-6">
                 <div className="flex items-center">
                   <User className="w-4 h-4 mr-1" />
-                  {article.authors.join(", ")}
+                  {article.authors.length === 1 && article.authors[0] === "Integrantes do Grupo de Estudos e Pesquisas em Educação Física e Escola" ? (
+                    <div className="flex items-center gap-2">
+                      <span className="bg-gradient-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold">
+                        GEPEFE
+                      </span>
+                      <span className="font-medium text-primary">
+                        {article.authors[0]}
+                      </span>
+                    </div>
+                  ) : (
+                    article.authors.join(", ")
+                  )}
                 </div>
                 <div className="flex items-center">
                   <Calendar className="w-4 h-4 mr-1" />

@@ -112,7 +112,18 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
         <div className="flex items-center space-x-4 text-sm text-muted-foreground">
           <div className="flex items-center">
             <User className="w-4 h-4 mr-1" />
-            {article.authors.join(", ")}
+            {article.authors.length === 1 && article.authors[0] === "Integrantes do Grupo de Estudos e Pesquisas em Educação Física e Escola" ? (
+              <div className="flex items-center gap-2">
+                <span className="bg-gradient-primary text-primary-foreground px-2 py-1 rounded-full text-xs font-semibold">
+                  GEPEFE
+                </span>
+                <span className="font-medium text-primary truncate">
+                  {article.authors[0]}
+                </span>
+              </div>
+            ) : (
+              <span className="truncate">{article.authors.join(", ")}</span>
+            )}
           </div>
           <div className="flex items-center">
             <Calendar className="w-4 h-4 mr-1" />
