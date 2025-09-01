@@ -23,12 +23,18 @@ const Teses = () => {
       selectedCategory
     });
     return articles.filter(article => {
+      // Exclude news from repository pages
+      const isNotNews = article.content_type !== 'news';
       // Always filter by category first
       const matchesCategory = article.category === "Teses";
 
       // Then filter by search query if present
-      const matchesSearch = !searchQuery || article.title.toLowerCase().includes(searchQuery.toLowerCase()) || article.authors.some(author => author.toLowerCase().includes(searchQuery.toLowerCase())) || article.abstract.toLowerCase().includes(searchQuery.toLowerCase()) || article.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-      return matchesCategory && matchesSearch;
+      const matchesSearch = !searchQuery || 
+        article.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        article.authors.some(author => author.toLowerCase().includes(searchQuery.toLowerCase())) || 
+        article.abstract.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        article.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+      return isNotNews && matchesCategory && matchesSearch;
     });
   }, [articles, searchQuery, selectedCategory]);
   useEffect(() => {

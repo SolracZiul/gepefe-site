@@ -18,6 +18,11 @@ export interface Article {
   tags: string[];
   created_at: string;
   updated_at: string;
+  content_type?: string;
+  summary?: string;
+  content?: string;
+  image_url?: string;
+  images?: string[];
 }
 
 export const useArticles = () => {

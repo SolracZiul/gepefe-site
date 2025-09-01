@@ -22,6 +22,8 @@ export default function Pesquisas() {
 
   const filteredArticles = useMemo(() => {
     return articles.filter(article => {
+      // Exclude news from repository pages
+      const isNotNews = article.content_type !== 'news';
       const matchesCategory = article.category === "Pesquisas";
       const matchesSearch = searchQuery === "" || 
         article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -29,7 +31,7 @@ export default function Pesquisas() {
         article.abstract.toLowerCase().includes(searchQuery.toLowerCase()) ||
         article.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
 
-      return matchesCategory && matchesSearch;
+      return isNotNews && matchesCategory && matchesSearch;
     });
   }, [articles, searchQuery]);
 

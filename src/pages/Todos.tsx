@@ -22,6 +22,9 @@ export default function Todos() {
 
   const filteredArticles = useMemo(() => {
     return articles.filter(article => {
+      // Exclude news from repository pages
+      const isNotNews = article.content_type !== 'news';
+      
       const matchesSearch = searchQuery === "" || 
         article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         article.authors.some(author => author.toLowerCase().includes(searchQuery.toLowerCase())) ||
@@ -30,7 +33,7 @@ export default function Todos() {
 
       const matchesCategory = selectedCategory === "" || selectedCategory === "Todos" || article.category === selectedCategory;
       
-      return matchesSearch && matchesCategory;
+      return isNotNews && matchesSearch && matchesCategory;
     });
   }, [articles, searchQuery, selectedCategory]);
 
