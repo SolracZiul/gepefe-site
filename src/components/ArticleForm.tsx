@@ -100,7 +100,7 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
         tags: article.tags.join(", "),
       });
     }
-  }, [article]);
+  }, [article?.id, article?.authors?.join(",")]); // Monitor changes in article ID and authors
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
