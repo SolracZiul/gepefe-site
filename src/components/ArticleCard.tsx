@@ -109,12 +109,12 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
           {article.title}
         </h3>
         
-        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-          <div className="flex items-center">
-            <User className="w-4 h-4 mr-1" />
+        <div className="flex flex-col space-y-2 text-sm text-muted-foreground">
+          <div className="flex items-center min-w-0">
+            <User className="w-4 h-4 mr-1 flex-shrink-0" />
             {article.authors.length === 1 && article.authors[0] === "Integrantes do Grupo de Estudos e Pesquisas em Educação Física e Escola" ? (
-              <div className="flex items-center gap-2">
-                <span className="bg-gradient-primary text-primary-foreground px-2 py-1 rounded-full text-xs font-semibold">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="bg-gradient-primary text-primary-foreground px-2 py-1 rounded-full text-xs font-semibold flex-shrink-0">
                   GEPEFE
                 </span>
                 <span className="font-medium text-primary truncate">
@@ -126,8 +126,8 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
             )}
           </div>
           <div className="flex items-center">
-            <Calendar className="w-4 h-4 mr-1" />
-            {new Date(article.publish_date).toLocaleDateString('pt-BR')}
+            <Calendar className="w-4 h-4 mr-1 flex-shrink-0" />
+            <span>{new Date(article.publish_date).toLocaleDateString('pt-BR')}</span>
           </div>
         </div>
       </CardHeader>
