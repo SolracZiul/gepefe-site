@@ -169,6 +169,21 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check authentication before proceeding
+    const { data: { session } } = await supabase.auth.getSession();
+    console.log("Current session in ArticleForm:", session);
+    console.log("User ID:", session?.user?.id);
+    
+    if (!session?.user) {
+      toast({
+        variant: "destructive",
+        title: "Erro de autenticação",
+        description: "Você precisa estar logado para editar artigos.",
+      });
+      return;
+    }
+    
     console.log("Form submitted with:", { isGepefeCreation, isGepefeMember, authors: formData.authors });
     setLoading(true);
 
