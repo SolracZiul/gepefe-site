@@ -36,6 +36,7 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
   const [uploading, setUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isGepefeCreation, setIsGepefeCreation] = useState(false);
+  const [isGepefeMember, setIsGepefeMember] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     authors: "",
@@ -61,10 +62,22 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
       const isGepefe = article.authors.length === 1 && 
         article.authors[0] === "Integrantes do Grupo de Estudos e Pesquisas em Educação Física e Escola";
       
+      // Check if it's a GEPEFE member by looking for the prefix
+      const isGepefeMemberArticle = article.authors.some(author => 
+        author.includes(" (GEPEFE)")
+      );
+      
       setIsGepefeCreation(isGepefe);
+      setIsGepefeMember(isGepefeMemberArticle);
+      
+      // Clean the authors for display if they have GEPEFE suffix
+      const cleanAuthors = isGepefeMemberArticle 
+        ? article.authors.map(author => author.replace(" (GEPEFE)", "")).join(", ")
+        : article.authors.join(", ");
+      
       setFormData({
         title: article.title,
-        authors: isGepefe ? "" : article.authors.join(", "),
+        authors: (isGepefe || isGepefeMemberArticle) ? cleanAuthors : article.authors.join(", "),
         abstract: article.abstract,
         category: article.category,
         publish_date: article.publish_date,
@@ -144,10 +157,20 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
     setLoading(true);
 
     try {
-      // Handle authors based on GEPEFE creation checkbox
-      const authorsArray = isGepefeCreation 
-        ? ["Integrantes do Grupo de Estudos e Pesquisas em Educação Física e Escola"]
-        : formData.authors.split(",").map(author => author.trim()).filter(Boolean);
+      // Handle authors based on checkboxes
+      let authorsArray: string[];
+      
+      if (isGepefeCreation) {
+        authorsArray = ["Integrantes do Grupo de Estudos e Pesquisas em Educação Física e Escola"];
+      } else if (isGepefeMember) {
+        // Add (GEPEFE) suffix to indicate membership
+        authorsArray = formData.authors.split(",")
+          .map(author => author.trim())
+          .filter(Boolean)
+          .map(author => `${author} (GEPEFE)`);
+      } else {
+        authorsArray = formData.authors.split(",").map(author => author.trim()).filter(Boolean);
+      }
       
       const tagsArray = formData.tags.split(",").map(tag => tag.trim()).filter(Boolean);
 
@@ -275,7 +298,10 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
                   <Checkbox 
                     id="gepefe-creation" 
                     checked={isGepefeCreation}
-                    onCheckedChange={(checked) => setIsGepefeCreation(checked as boolean)}
+                    onCheckedChange={(checked) => {
+                      setIsGepefeCreation(checked as boolean);
+                      if (checked) setIsGepefeMember(false); // Mutual exclusive
+                    }}
                   />
                   <Label htmlFor="gepefe-creation" className="flex items-center gap-2 text-sm font-medium cursor-pointer">
                     <Users className="h-4 w-4 text-primary" />
@@ -286,7 +312,25 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
                   Marque esta opção se o artigo foi criado pelos "Integrantes do Grupo de Estudos e Pesquisas em Educação Física e Escola"
                 </p>
 
-                {!isGepefeCreation && (
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="gepefe-member" 
+                    checked={isGepefeMember}
+                    onCheckedChange={(checked) => {
+                      setIsGepefeMember(checked as boolean);
+                      if (checked) setIsGepefeCreation(false); // Mutual exclusive
+                    }}
+                  />
+                  <Label htmlFor="gepefe-member" className="flex items-center gap-2 text-sm font-medium cursor-pointer">
+                    <Users className="h-4 w-4 text-primary" />
+                    Integrante do GEPEFE
+                  </Label>
+                </div>
+                <p className="text-xs text-muted-foreground ml-6">
+                  Marque se o(s) autor(es) é(são) integrante(s) do GEPEFE, mas produziu o trabalho individualmente
+                </p>
+
+                {(!isGepefeCreation) && (
                   <>
                     <Label htmlFor="authors">Autores *</Label>
                     <Input
@@ -297,7 +341,7 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
                       required
                     />
                     <p className="text-sm text-muted-foreground">
-                      Separe os autores por vírgula
+                      Separe os autores por vírgula{isGepefeMember ? ". Será adicionado '(GEPEFE)' automaticamente." : ""}
                     </p>
                   </>
                 )}
