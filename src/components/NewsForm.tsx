@@ -16,6 +16,7 @@ interface News {
   authors: string[];
   publish_date: string;
   image_url?: string;
+  images?: string[];
   tags: string[];
 }
 
@@ -29,7 +30,8 @@ export function NewsForm({ news, onSuccess, onCancel }: NewsFormProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   
   const [formData, setFormData] = useState({
     title: "",
@@ -52,60 +54,91 @@ export function NewsForm({ news, onSuccess, onCancel }: NewsFormProps) {
         image_url: news.image_url || "",
         tags: news.tags?.join(", ") || "",
       });
+      
+      // Set existing images
+      if (news.images && news.images.length > 0) {
+        setUploadedImages(news.images);
+      } else if (news.image_url) {
+        setUploadedImages([news.image_url]);
+      }
     }
   }, [news]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
 
-    // Validate file type (images only)
-    if (!file.type.startsWith('image/')) {
-      toast({
-        variant: "destructive",
-        title: "Arquivo inválido",
-        description: "Por favor, selecione uma imagem (PNG, JPG, JPEG, etc.).",
-      });
-      return;
-    }
-
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      toast({
-        variant: "destructive",
-        title: "Arquivo muito grande",
-        description: "O arquivo deve ter no máximo 5MB.",
-      });
-      return;
-    }
-
-    setSelectedFile(file);
-  };
-
-  const uploadImage = async (file: File): Promise<string | null> => {
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-      const filePath = `news-images/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('academic-articles')
-        .upload(filePath, file);
-
-      if (uploadError) {
-        console.error('Upload error:', uploadError);
-        throw uploadError;
+    const validFiles: File[] = [];
+    
+    for (const file of files) {
+      // Validate file type (images only)
+      if (!file.type.startsWith('image/')) {
+        toast({
+          variant: "destructive",
+          title: "Arquivo inválido",
+          description: `${file.name} não é uma imagem válida.`,
+        });
+        continue;
       }
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('academic-articles')
-        .getPublicUrl(filePath);
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          variant: "destructive",
+          title: "Arquivo muito grande",
+          description: `${file.name} deve ter no máximo 5MB.`,
+        });
+        continue;
+      }
 
-      return publicUrl;
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      return null;
+      validFiles.push(file);
     }
+
+    setSelectedFiles(prev => [...prev, ...validFiles]);
+  };
+
+  const uploadImages = async (files: File[]): Promise<string[]> => {
+    const uploadedUrls: string[] = [];
+    
+    for (const file of files) {
+      try {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+        const filePath = `news-images/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('academic-articles')
+          .upload(filePath, file);
+
+        if (uploadError) {
+          console.error('Upload error:', uploadError);
+          throw uploadError;
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('academic-articles')
+          .getPublicUrl(filePath);
+
+        uploadedUrls.push(publicUrl);
+      } catch (error) {
+        console.error('Error uploading image:', error);
+        toast({
+          variant: "destructive",
+          title: "Erro no upload",
+          description: `Falha ao enviar ${file.name}`,
+        });
+      }
+    }
+    
+    return uploadedUrls;
+  };
+
+  const removeSelectedFile = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const removeUploadedImage = (index: number) => {
+    setUploadedImages(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -124,17 +157,13 @@ export function NewsForm({ news, onSuccess, onCancel }: NewsFormProps) {
         .map(tag => tag.trim())
         .filter(tag => tag);
 
-      let imageUrl = formData.image_url;
+      let allImages = [...uploadedImages];
 
-      // Upload image if selected
-      if (selectedFile) {
+      // Upload new selected files
+      if (selectedFiles.length > 0) {
         setUploading(true);
-        const uploadedUrl = await uploadImage(selectedFile);
-        if (uploadedUrl) {
-          imageUrl = uploadedUrl;
-        } else {
-          throw new Error('Falha no upload da imagem');
-        }
+        const newUploadedUrls = await uploadImages(selectedFiles);
+        allImages = [...allImages, ...newUploadedUrls];
         setUploading(false);
       }
 
@@ -144,7 +173,8 @@ export function NewsForm({ news, onSuccess, onCancel }: NewsFormProps) {
         content: formData.content,
         authors: authorsArray,
         publish_date: formData.publish_date,
-        image_url: imageUrl,
+        image_url: allImages[0] || null, // Keep first image for compatibility
+        images: allImages,
         tags: tagsArray,
         content_type: 'news',
         abstract: formData.summary, // Use summary as abstract for compatibility
@@ -268,29 +298,95 @@ export function NewsForm({ news, onSuccess, onCancel }: NewsFormProps) {
                   />
                 </div>
 
-                {/* Image Upload */}
+                {/* Multiple Images Upload */}
                 <div className="space-y-2">
-                  <Label htmlFor="image">Imagem da Notícia</Label>
+                  <Label htmlFor="images">Imagens da Notícia</Label>
                   <div className="space-y-4">
                     <Input
-                      id="image"
+                      id="images"
                       type="file"
                       accept="image/*"
+                      multiple
                       onChange={handleFileSelect}
                     />
                     <p className="text-sm text-muted-foreground">
-                      Formatos aceitos: PNG, JPG, JPEG. Tamanho máximo: 5MB
+                      Formatos aceitos: PNG, JPG, JPEG. Tamanho máximo: 5MB por imagem. Você pode selecionar múltiplas imagens.
                     </p>
+                    
+                    {/* Preview of selected files */}
+                    {selectedFiles.length > 0 && (
+                      <div className="space-y-2">
+                        <Label>Arquivos selecionados:</Label>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                          {selectedFiles.map((file, index) => (
+                            <div key={index} className="relative border rounded p-2 text-sm">
+                              <span className="block truncate">{file.name}</span>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => removeSelectedFile(index)}
+                                className="absolute top-1 right-1 h-6 w-6 p-0"
+                              >
+                                ×
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Preview of already uploaded images */}
+                    {uploadedImages.length > 0 && (
+                      <div className="space-y-2">
+                        <Label>Imagens atuais:</Label>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                          {uploadedImages.map((imageUrl, index) => (
+                            <div key={index} className="relative">
+                              <img
+                                src={imageUrl}
+                                alt={`Imagem ${index + 1}`}
+                                className="w-full h-24 object-cover rounded border"
+                              />
+                              <Button
+                                type="button"
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => removeUploadedImage(index)}
+                                className="absolute top-1 right-1 h-6 w-6 p-0"
+                              >
+                                ×
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     
                     {/* Image URL alternative */}
                     <div className="space-y-2">
-                      <Label htmlFor="image_url">Ou URL da Imagem</Label>
-                      <Input
-                        id="image_url"
-                        value={formData.image_url}
-                        onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                        placeholder="https://exemplo.com/imagem.jpg"
-                      />
+                      <Label htmlFor="image_url">Ou adicionar URL de Imagem</Label>
+                      <div className="flex gap-2">
+                        <Input
+                          id="image_url"
+                          value={formData.image_url}
+                          onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                          placeholder="https://exemplo.com/imagem.jpg"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => {
+                            if (formData.image_url) {
+                              setUploadedImages(prev => [...prev, formData.image_url]);
+                              setFormData({ ...formData, image_url: "" });
+                            }
+                          }}
+                          disabled={!formData.image_url}
+                        >
+                          Adicionar
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>

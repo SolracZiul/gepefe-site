@@ -16,6 +16,7 @@ interface News {
   title: string;
   summary: string;
   image_url: string;
+  images: string[];
   content: string;
   authors: string[];
   publish_date: string;
@@ -155,8 +156,20 @@ export default function NoticiaDetail() {
             <Separator className="mb-8" />
           </header>
 
-          {/* Featured image */}
-          {news.image_url && (
+          {/* Featured images */}
+          {news.images && news.images.length > 0 ? (
+            <div className="mb-8 space-y-4">
+              {news.images.map((imageUrl, index) => (
+                <div key={index}>
+                  <img
+                    src={imageUrl}
+                    alt={`${news.title} - Imagem ${index + 1}`}
+                    className="w-full h-64 md:h-96 object-cover rounded-lg shadow-lg"
+                  />
+                </div>
+              ))}
+            </div>
+          ) : news.image_url && (
             <div className="mb-8">
               <img
                 src={news.image_url}

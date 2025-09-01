@@ -29,6 +29,7 @@ export type Database = {
           file_type: string | null
           id: string
           image_url: string | null
+          images: string[] | null
           pdf_url: string | null
           publish_date: string
           summary: string | null
@@ -50,6 +51,7 @@ export type Database = {
           file_type?: string | null
           id?: string
           image_url?: string | null
+          images?: string[] | null
           pdf_url?: string | null
           publish_date?: string
           summary?: string | null
@@ -71,6 +73,7 @@ export type Database = {
           file_type?: string | null
           id?: string
           image_url?: string | null
+          images?: string[] | null
           pdf_url?: string | null
           publish_date?: string
           summary?: string | null

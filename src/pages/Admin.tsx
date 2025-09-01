@@ -28,6 +28,7 @@ interface Article {
   summary?: string;
   content?: string;
   image_url?: string;
+  images?: string[];
 }
 
 export default function Admin() {
@@ -161,6 +162,7 @@ export default function Admin() {
             authors: editingArticle.authors,
             publish_date: editingArticle.publish_date,
             image_url: editingArticle.image_url,
+            images: editingArticle.images || [],
             tags: editingArticle.tags
           } : null}
           onSuccess={handleFormSuccess}

@@ -11,6 +11,7 @@ interface News {
   title: string;
   summary: string;
   image_url: string;
+  images: string[];
   content: string;
   authors: string[];
   publish_date: string;

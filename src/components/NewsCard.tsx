@@ -10,6 +10,7 @@ interface News {
   title: string;
   summary: string;
   image_url: string;
+  images: string[];
   authors: string[];
   publish_date: string;
   tags: string[];
@@ -22,6 +23,11 @@ interface NewsCardProps {
 export function NewsCard({ news }: NewsCardProps) {
   const publishDate = new Date(news.publish_date);
   const formattedDate = format(publishDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
+  
+  // Use first image from images array, fallback to image_url, then placeholder
+  const displayImage = (news.images && news.images.length > 0) 
+    ? news.images[0] 
+    : news.image_url || '/placeholder.svg';
 
   return (
     <Link to={`/noticia/${news.id}`}>
@@ -30,7 +36,7 @@ export function NewsCard({ news }: NewsCardProps) {
           <div 
             className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-300"
             style={{ 
-              backgroundImage: `url(${news.image_url || '/placeholder.svg'})`,
+              backgroundImage: `url(${displayImage})`,
             }}
           />
           {/* Gradient overlay */}
