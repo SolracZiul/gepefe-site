@@ -154,6 +154,7 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Form submitted with:", { isGepefeCreation, isGepefeMember, authors: formData.authors });
     setLoading(true);
 
     try {
@@ -162,14 +163,28 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
       
       if (isGepefeCreation) {
         authorsArray = ["Integrantes do Grupo de Estudos e Pesquisas em Educação Física e Escola"];
+        console.log("GEPEFE Creation - authors:", authorsArray);
       } else if (isGepefeMember) {
+        // Validate that we have authors when GEPEFE member is checked
+        if (!formData.authors.trim()) {
+          toast({
+            variant: "destructive",
+            title: "Erro de validação",
+            description: "Você deve informar o nome do(s) autor(es) quando marcar 'Integrante do GEPEFE'.",
+          });
+          setLoading(false);
+          return;
+        }
+        
         // Add (GEPEFE) suffix to indicate membership
         authorsArray = formData.authors.split(",")
           .map(author => author.trim())
           .filter(Boolean)
           .map(author => `${author} (GEPEFE)`);
+        console.log("GEPEFE Member - authors:", authorsArray);
       } else {
         authorsArray = formData.authors.split(",").map(author => author.trim()).filter(Boolean);
+        console.log("Regular authors:", authorsArray);
       }
       
       const tagsArray = formData.tags.split(",").map(tag => tag.trim()).filter(Boolean);
@@ -338,7 +353,7 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
                       value={formData.authors}
                       onChange={(e) => setFormData({ ...formData, authors: e.target.value })}
                       placeholder="Ex: Dr. João Silva, Profa. Maria Santos"
-                      required
+                      required={!isGepefeMember && !isGepefeCreation}
                     />
                     <p className="text-sm text-muted-foreground">
                       Separe os autores por vírgula{isGepefeMember ? ". Será adicionado '(GEPEFE)' automaticamente." : ""}
