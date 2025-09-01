@@ -5,11 +5,12 @@ import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Calendar, User, Share2 } from "lucide-react";
+import { ArrowLeft, Calendar, User, Share2, ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
+import useEmblaCarousel from 'embla-carousel-react';
 
 interface News {
   id: string;
@@ -28,6 +29,9 @@ export default function NoticiaDetail() {
   const { id } = useParams<{ id: string }>();
   const [news, setNews] = useState<News | null>(null);
   const [loading, setLoading] = useState(true);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+  const [prevBtnEnabled, setPrevBtnEnabled] = useState(false);
+  const [nextBtnEnabled, setNextBtnEnabled] = useState(false);
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -50,6 +54,21 @@ export default function NoticiaDetail() {
 
     fetchNews();
   }, [id]);
+
+  const scrollPrev = () => emblaApi && emblaApi.scrollPrev();
+  const scrollNext = () => emblaApi && emblaApi.scrollNext();
+
+  const onSelect = () => {
+    if (!emblaApi) return;
+    setPrevBtnEnabled(emblaApi.canScrollPrev());
+    setNextBtnEnabled(emblaApi.canScrollNext());
+  };
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    onSelect();
+    emblaApi.on('select', onSelect);
+  }, [emblaApi]);
 
   const handleShare = () => {
     if (navigator.share) {
@@ -156,18 +175,61 @@ export default function NoticiaDetail() {
             <Separator className="mb-8" />
           </header>
 
-          {/* Featured images */}
+          {/* Featured images carousel */}
           {news.images && news.images.length > 0 ? (
-            <div className="mb-8 space-y-4">
-              {news.images.map((imageUrl, index) => (
-                <div key={index}>
-                  <img
-                    src={imageUrl}
-                    alt={`${news.title} - Imagem ${index + 1}`}
-                    className="w-full h-64 md:h-96 object-cover rounded-lg shadow-lg"
-                  />
+            <div className="mb-8">
+              <div className="relative">
+                <div className="overflow-hidden rounded-lg" ref={emblaRef}>
+                  <div className="flex">
+                    {news.images.map((imageUrl, index) => (
+                      <div key={index} className="relative flex-[0_0_100%]">
+                        <img
+                          src={imageUrl}
+                          alt={`${news.title} - Imagem ${index + 1}`}
+                          className="w-full h-64 md:h-96 object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ))}
+                
+                {/* Navigation buttons */}
+                {news.images.length > 1 && (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border-none shadow-lg"
+                      onClick={scrollPrev}
+                      disabled={!prevBtnEnabled}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border-none shadow-lg"
+                      onClick={scrollNext}
+                      disabled={!nextBtnEnabled}
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </>
+                )}
+                
+                {/* Dots indicator */}
+                {news.images.length > 1 && (
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                    {news.images.map((_, index) => (
+                      <button
+                        key={index}
+                        className="w-2 h-2 rounded-full bg-white/60 hover:bg-white/80 transition-colors"
+                        onClick={() => emblaApi && emblaApi.scrollTo(index)}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           ) : news.image_url && (
             <div className="mb-8">
