@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Users, Target, BookOpen, Award } from "lucide-react";
 import { useArticlesContext } from "@/contexts/ArticlesContext";
 import { useSearch } from "@/contexts/SearchContext";
+import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useState, useMemo, useEffect } from "react";
 console.log("Index.tsx: Starting imports...");
@@ -16,6 +17,7 @@ const Index = () => {
     searchQuery,
     selectedCategory
   } = useSearch();
+  const { user } = useAuth();
   const {
     articles,
     loading,
@@ -24,6 +26,22 @@ const Index = () => {
 
   const [news, setNews] = useState<any[]>([]);
   const [newsLoading, setNewsLoading] = useState(true);
+  const [userProfile, setUserProfile] = useState<any>(null);
+
+  // Fetch user profile to check if admin
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (user) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('user_id', user.id)
+          .single();
+        setUserProfile(data);
+      }
+    };
+    fetchUserProfile();
+  }, [user]);
 
   // Fetch news separately
   useEffect(() => {
@@ -39,13 +57,20 @@ const Index = () => {
       if (error) {
         console.error('Error fetching news:', error);
       } else {
-        setNews(data || []);
+        // Filter out admin tutorial unless user is admin
+        const filteredNews = (data || []).filter(item => {
+          if (item.title === 'Como Publicar Notícias no Portal GEPEFE') {
+            return userProfile?.role === 'admin';
+          }
+          return true;
+        });
+        setNews(filteredNews);
       }
       setNewsLoading(false);
     };
 
     fetchNews();
-  }, []);
+  }, [userProfile]);
 
   // Filter articles based on search and category (exclude news)
   const filteredArticles = useMemo(() => {
