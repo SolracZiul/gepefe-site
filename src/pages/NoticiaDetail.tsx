@@ -25,6 +25,45 @@ interface News {
   created_at: string;
 }
 
+// Simple markdown renderer
+const renderMarkdown = (text: string) => {
+  return text
+    .split('\n')
+    .map((line, index) => {
+      // Headers (## Title)
+      if (line.startsWith('## ')) {
+        return (
+          <h2 key={index} className="text-xl font-bold text-primary mt-6 mb-3 first:mt-0">
+            {line.slice(3)}
+          </h2>
+        );
+      }
+      
+      // Process inline formatting
+      let processedLine = line;
+      
+      // Bold text (**text**)
+      processedLine = processedLine.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      
+      // Italic text (*text*)
+      processedLine = processedLine.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      
+      // Empty lines
+      if (!processedLine.trim()) {
+        return <br key={index} />;
+      }
+      
+      // Regular paragraphs
+      return (
+        <p 
+          key={index} 
+          className="mb-4 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: processedLine }}
+        />
+      );
+    });
+};
+
 export default function NoticiaDetail() {
   const { id } = useParams<{ id: string }>();
   const [news, setNews] = useState<News | null>(null);
@@ -243,11 +282,8 @@ export default function NoticiaDetail() {
 
           {/* Content */}
           <article className="prose prose-lg max-w-none mb-8">
-            <div 
-              className="text-foreground leading-relaxed"
-              style={{ whiteSpace: 'pre-wrap' }}
-            >
-              {news.content}
+            <div className="text-foreground leading-relaxed">
+              {renderMarkdown(news.content)}
             </div>
           </article>
 

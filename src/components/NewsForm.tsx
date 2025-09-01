@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Upload } from "lucide-react";
+import { ArrowLeft, Upload, Bold, Italic, Type } from "lucide-react";
 
 interface News {
   id?: string;
@@ -32,6 +32,7 @@ export function NewsForm({ news, onSuccess, onCancel }: NewsFormProps) {
   const [uploading, setUploading] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [contentTextareaRef, setContentTextareaRef] = useState<HTMLTextAreaElement | null>(null);
   
   const [formData, setFormData] = useState({
     title: "",
@@ -139,6 +140,49 @@ export function NewsForm({ news, onSuccess, onCancel }: NewsFormProps) {
 
   const removeUploadedImage = (index: number) => {
     setUploadedImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  // Formatting functions for content
+  const insertFormatting = (format: string) => {
+    if (!contentTextareaRef) return;
+    
+    const start = contentTextareaRef.selectionStart;
+    const end = contentTextareaRef.selectionEnd;
+    const selectedText = contentTextareaRef.value.substring(start, end);
+    
+    let formattedText = '';
+    let cursorOffset = 0;
+    
+    switch (format) {
+      case 'bold':
+        formattedText = `**${selectedText}**`;
+        cursorOffset = selectedText ? 0 : 2;
+        break;
+      case 'italic':
+        formattedText = `*${selectedText}*`;
+        cursorOffset = selectedText ? 0 : 1;
+        break;
+      case 'heading':
+        formattedText = `## ${selectedText}`;
+        cursorOffset = selectedText ? 0 : 3;
+        break;
+    }
+    
+    const newContent = 
+      formData.content.substring(0, start) + 
+      formattedText + 
+      formData.content.substring(end);
+    
+    setFormData({ ...formData, content: newContent });
+    
+    // Restore cursor position
+    setTimeout(() => {
+      if (contentTextareaRef) {
+        const newPosition = start + formattedText.length - cursorOffset;
+        contentTextareaRef.setSelectionRange(newPosition, newPosition);
+        contentTextareaRef.focus();
+      }
+    }, 0);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -394,14 +438,53 @@ export function NewsForm({ news, onSuccess, onCancel }: NewsFormProps) {
                 {/* Content */}
                 <div className="space-y-2">
                   <Label htmlFor="content">Conteúdo da Notícia *</Label>
+                  
+                  {/* Formatting toolbar */}
+                  <div className="flex gap-2 p-2 border border-border rounded-t-md bg-muted/30">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => insertFormatting('heading')}
+                      className="h-8 px-2"
+                    >
+                      <Type className="h-3 w-3 mr-1" />
+                      Título
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => insertFormatting('bold')}
+                      className="h-8 px-2"
+                    >
+                      <Bold className="h-3 w-3 mr-1" />
+                      Negrito
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => insertFormatting('italic')}
+                      className="h-8 px-2"
+                    >
+                      <Italic className="h-3 w-3 mr-1" />
+                      Itálico
+                    </Button>
+                  </div>
+                  
                   <Textarea
                     id="content"
+                    ref={setContentTextareaRef}
                     value={formData.content}
                     onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                    placeholder="Digite o conteúdo completo da notícia"
-                    className="min-h-[300px]"
+                    placeholder="Digite o conteúdo completo da notícia&#10;&#10;Use:&#10;## Título da seção&#10;**texto em negrito**&#10;*texto em itálico*"
+                    className="min-h-[300px] rounded-t-none border-t-0"
                     required
                   />
+                  <p className="text-sm text-muted-foreground">
+                    Use a barra de ferramentas acima ou digite diretamente: **negrito**, *itálico*, ## título
+                  </p>
                 </div>
 
                 {/* Tags */}
