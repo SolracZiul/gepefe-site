@@ -78,7 +78,8 @@ export default function ArticleDetail() {
   };
 
   const loadPreview = async () => {
-    if (!fileUrl && article && (article.file_path || article.pdf_url)) {
+    // Only load preview for uploaded files (file_path), not external URLs (pdf_url only)
+    if (!fileUrl && article && article.file_path) {
       setLoadingPreview(true);
       try {
         const url = await getFileUrl();
@@ -231,55 +232,57 @@ export default function ArticleDetail() {
           </div>
         )}
 
-        {/* Visualização do Arquivo */}
-        <div className="bg-card border rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Visualização do Documento</h2>
-          
-          <div className="bg-muted/30 rounded-lg overflow-hidden" style={{ height: '70vh', minHeight: '500px' }}>
-            {loadingPreview ? (
-              <div className="flex items-center justify-center h-full">
-                <div className="text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                  <p className="text-muted-foreground">Carregando visualização...</p>
+        {/* Visualização do Arquivo - só aparece se tiver arquivo carregado */}
+        {article.file_path && (
+          <div className="bg-card border rounded-lg p-6">
+            <h2 className="text-xl font-semibold mb-4">Visualização do Documento</h2>
+            
+            <div className="bg-muted/30 rounded-lg overflow-hidden" style={{ height: '70vh', minHeight: '500px' }}>
+              {loadingPreview ? (
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p className="text-muted-foreground">Carregando visualização...</p>
+                  </div>
                 </div>
-              </div>
-            ) : fileUrl ? (
-              isPDF ? (
-                <iframe
-                  src={`${fileUrl}#view=FitH`}
-                  className="w-full h-full border-0"
-                  title={`Preview: ${article.title}`}
-                />
+              ) : fileUrl ? (
+                isPDF ? (
+                  <iframe
+                    src={`${fileUrl}#view=FitH`}
+                    className="w-full h-full border-0"
+                    title={`Preview: ${article.title}`}
+                  />
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full p-8 text-center">
+                    <FileText className="w-16 h-16 text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">Visualização não disponível</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Este tipo de arquivo não pode ser visualizado diretamente no navegador.
+                    </p>
+                    <div className="flex gap-2">
+                      <Button onClick={handleDownload}>
+                        <Download className="w-4 h-4 mr-2" />
+                        Baixar arquivo
+                      </Button>
+                      <Button variant="outline" onClick={handleOpenExternal}>
+                        <ExternalLink className="w-4 h-4 mr-2" />
+                        Abrir externamente
+                      </Button>
+                    </div>
+                  </div>
+                )
               ) : (
                 <div className="flex flex-col items-center justify-center h-full p-8 text-center">
                   <FileText className="w-16 h-16 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Visualização não disponível</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Este tipo de arquivo não pode ser visualizado diretamente no navegador.
+                  <h3 className="text-lg font-semibold mb-2">Arquivo não disponível</h3>
+                  <p className="text-muted-foreground">
+                    Nenhum arquivo foi encontrado para este artigo.
                   </p>
-                  <div className="flex gap-2">
-                    <Button onClick={handleDownload}>
-                      <Download className="w-4 h-4 mr-2" />
-                      Baixar arquivo
-                    </Button>
-                    <Button variant="outline" onClick={handleOpenExternal}>
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      Abrir externamente
-                    </Button>
-                  </div>
                 </div>
-              )
-            ) : (
-              <div className="flex flex-col items-center justify-center h-full p-8 text-center">
-                <FileText className="w-16 h-16 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Arquivo não disponível</h3>
-                <p className="text-muted-foreground">
-                  Nenhum arquivo foi encontrado para este artigo.
-                </p>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
       
       <Footer />
