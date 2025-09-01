@@ -122,24 +122,15 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
                 </span>
               </div>
             ) : article.authors.some(author => author.includes(" (GEPEFE)")) ? (
-              // Integrantes individuais do GEPEFE - ícone amarelo
+              // Integrantes individuais do GEPEFE - apenas ícone amarelo, sem badge
               <>
                 <User className="w-4 h-4 mr-1 flex-shrink-0 text-yellow-500" />
                 <div className="flex flex-wrap items-center gap-1 min-w-0">
                   {article.authors.map((author, index) => (
                     <div key={index} className="flex items-center gap-1">
-                      {author.includes(" (GEPEFE)") ? (
-                        <>
-                          <span className="bg-gradient-primary text-primary-foreground px-1.5 py-0.5 rounded-full text-xs font-semibold">
-                            GEPEFE
-                          </span>
-                          <span className="font-medium text-primary">
-                            {author.replace(" (GEPEFE)", "")}
-                          </span>
-                        </>
-                      ) : (
-                        <span>{author}</span>
-                      )}
+                      <span className="font-medium text-primary">
+                        {author.replace(" (GEPEFE)", "")}
+                      </span>
                       {index < article.authors.length - 1 && <span>, </span>}
                     </div>
                   ))}
