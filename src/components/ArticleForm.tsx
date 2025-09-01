@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useArticlesContext } from "@/contexts/ArticlesContext";
 import { Loader2, ArrowLeft, Upload, FileText, Trash2, Users } from "lucide-react";
 
 interface Article {
@@ -47,6 +48,7 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
     tags: "",
   });
   const { toast } = useToast();
+  const { refetch } = useArticlesContext();
 
   const categories = [
     "Artigos Completos",
@@ -57,7 +59,11 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
   ];
 
   useEffect(() => {
+    console.log("ArticleForm useEffect triggered - article changed:", article?.id);
     if (article) {
+      console.log("Loading article for edit:", article);
+      console.log("Article authors:", article.authors);
+      
       // Check if it's a GEPEFE creation by looking at the authors
       const isGepefe = article.authors.length === 1 && 
         article.authors[0] === "Integrantes do Grupo de Estudos e Pesquisas em Educação Física e Escola";
@@ -67,17 +73,26 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
         author.includes(" (GEPEFE)")
       );
       
+      console.log("Detected states:", { isGepefe, isGepefeMemberArticle });
+      
       setIsGepefeCreation(isGepefe);
       setIsGepefeMember(isGepefeMemberArticle);
       
       // Clean the authors for display if they have GEPEFE suffix
-      const cleanAuthors = isGepefeMemberArticle 
-        ? article.authors.map(author => author.replace(" (GEPEFE)", "")).join(", ")
-        : article.authors.join(", ");
+      let cleanAuthors: string;
+      if (isGepefe) {
+        cleanAuthors = "";
+      } else if (isGepefeMemberArticle) {
+        cleanAuthors = article.authors.map(author => author.replace(" (GEPEFE)", "")).join(", ");
+      } else {
+        cleanAuthors = article.authors.join(", ");
+      }
+      
+      console.log("Clean authors for form:", cleanAuthors);
       
       setFormData({
         title: article.title,
-        authors: (isGepefe || isGepefeMemberArticle) ? cleanAuthors : article.authors.join(", "),
+        authors: cleanAuthors,
         abstract: article.abstract,
         category: article.category,
         publish_date: article.publish_date,
@@ -214,20 +229,32 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
         file_type: fileData?.type || (article?.file_type || null),
       };
 
+      console.log("Article data to save:", articleData);
+
       if (article) {
         // If updating and there's a new file, delete the old one
         if (fileData && article.file_path) {
           await deleteUploadedFile(article.file_path);
         }
 
+        console.log("Updating article with ID:", article.id);
+        
         // Update existing article
         const { error } = await supabase
           .from('articles')
           .update(articleData)
           .eq('id', article.id);
 
-        if (error) throw error;
+        if (error) {
+          console.error("Update error:", error);
+          throw error;
+        }
 
+        console.log("Article updated successfully");
+        
+        // Refresh the articles context
+        await refetch();
+        
         toast({
           title: "Artigo atualizado",
           description: "As alterações foram salvas com sucesso.",
@@ -244,6 +271,9 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
           });
 
         if (error) throw error;
+
+        // Refresh the articles context
+        await refetch();
 
         toast({
           title: "Artigo criado",
