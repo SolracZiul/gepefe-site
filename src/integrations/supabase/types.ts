@@ -83,6 +83,24 @@ export type Database = {
         }
         Relationships: []
       }
+      atualizar: {
+        Row: {
+          created_at: string
+          id: number
+          numero: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          numero?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          numero?: number | null
+        }
+        Relationships: []
+      }
       favorites: {
         Row: {
           article_id: string
@@ -111,6 +129,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notpause: {
+        Row: {
+          created_at: string
+          id: number
+          number: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          number?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          number?: number | null
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
