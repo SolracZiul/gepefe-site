@@ -11,6 +11,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import useEmblaCarousel from 'embla-carousel-react';
+import DOMPurify from 'dompurify';
 
 interface News {
   id: string;
