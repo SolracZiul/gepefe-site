@@ -10,17 +10,16 @@ export const useAuth = () => {
 
   const fetchUserProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('user_id', userId)
-        .single();
+      const { data, error } = await supabase.rpc('has_role', {
+        _user_id: userId,
+        _role: 'admin',
+      });
 
       if (error) {
-        console.error('Error fetching user profile:', error);
-        setUserRole('member'); // default role
+        console.error('Error fetching user role:', error);
+        setUserRole('member');
       } else {
-        setUserRole(data?.role || 'member');
+        setUserRole(data === true ? 'admin' : 'member');
       }
     } catch (error) {
       console.error('Error in fetchUserProfile:', error);
