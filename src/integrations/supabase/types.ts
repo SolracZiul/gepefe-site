@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "13.0.4"
+    PostgrestVersion: "13.0.5"
   }
   public: {
     Tables: {
@@ -83,24 +83,6 @@ export type Database = {
         }
         Relationships: []
       }
-      atualizar: {
-        Row: {
-          created_at: string
-          id: number
-          numero: number | null
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          numero?: number | null
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          numero?: number | null
-        }
-        Relationships: []
-      }
       favorites: {
         Row: {
           article_id: string
@@ -134,17 +116,14 @@ export type Database = {
         Row: {
           created_at: string
           id: number
-          number: number | null
         }
         Insert: {
           created_at?: string
           id?: number
-          number?: number | null
         }
         Update: {
           created_at?: string
           id?: number
-          number?: number | null
         }
         Relationships: []
       }
@@ -180,7 +159,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      keep_alive: { Args: never; Returns: number }
     }
     Enums: {
       [_ in never]: never
