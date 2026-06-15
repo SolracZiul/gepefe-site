@@ -48,6 +48,23 @@ export default function Admin() {
         navigate("/auth");
         return;
       }
+
+      // Enforce admin role server-side via has_role RPC
+      const { data: isAdmin, error: roleErr } = await supabase.rpc('has_role', {
+        _user_id: session.user.id,
+        _role: 'admin',
+      });
+
+      if (roleErr || !isAdmin) {
+        toast({
+          variant: "destructive",
+          title: "Acesso negado",
+          description: "Você não tem permissão para acessar o painel administrativo.",
+        });
+        navigate("/");
+        return;
+      }
+
       setUser(session.user);
       await fetchArticles();
       setLoading(false);

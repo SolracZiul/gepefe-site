@@ -11,6 +11,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import useEmblaCarousel from 'embla-carousel-react';
+import DOMPurify from 'dompurify';
 
 interface News {
   id: string;
@@ -53,12 +54,17 @@ const renderMarkdown = (text: string) => {
         return <br key={index} />;
       }
       
-      // Regular paragraphs
+      // Regular paragraphs — sanitize HTML to prevent stored XSS
       return (
-        <p 
-          key={index} 
+        <p
+          key={index}
           className="mb-4 leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: processedLine }}
+          dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(processedLine, {
+              ALLOWED_TAGS: ['strong', 'em', 'b', 'i', 'br', 'a'],
+              ALLOWED_ATTR: ['href', 'title', 'target', 'rel'],
+            }),
+          }}
         />
       );
     });

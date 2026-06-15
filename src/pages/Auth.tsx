@@ -24,49 +24,33 @@ export default function Auth() {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check if user is already logged in and redirect based on role
+    const redirectByRole = async (userId: string) => {
+      const { data: isAdmin } = await supabase.rpc('has_role', {
+        _user_id: userId,
+        _role: 'admin',
+      });
+      navigate(isAdmin ? '/admin' : '/');
+    };
+
     const checkUserAndRedirect = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
-        // Fetch user profile to check role
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('user_id', session.user.id)
-          .single();
-        
-        // Redirect based on role
-        if (profile?.role === 'admin') {
-          navigate("/admin");
-        } else {
-          navigate("/");
-        }
+        await redirectByRole(session.user.id);
       }
     };
-    
+
     checkUserAndRedirect();
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
-        // Fetch user profile to check role
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('user_id', session.user.id)
-          .single();
-        
-        // Redirect based on role
-        if (profile?.role === 'admin') {
-          navigate("/admin");
-        } else {
-          navigate("/");
-        }
+        // Defer to avoid deadlock in auth callback
+        setTimeout(() => redirectByRole(session.user.id), 0);
       }
     });
 
     return () => subscription.unsubscribe();
   }, [navigate]);
+
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();

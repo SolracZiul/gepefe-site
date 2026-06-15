@@ -23,23 +23,24 @@ interface News {
 export default function Noticias() {
   const [news, setNews] = useState<News[]>([]);
   const [loading, setLoading] = useState(true);
-  const [userProfile, setUserProfile] = useState<any>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const { searchQuery } = useSearch();
   const { user } = useAuth();
 
-  // Fetch user profile to check if admin
+  // Check admin role via secure function
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      if (user) {
-        const { data } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('user_id', user.id)
-          .single();
-        setUserProfile(data);
+    const checkAdmin = async () => {
+      if (!user) {
+        setIsAdmin(false);
+        return;
       }
+      const { data } = await supabase.rpc('has_role', {
+        _user_id: user.id,
+        _role: 'admin',
+      });
+      setIsAdmin(data === true);
     };
-    fetchUserProfile();
+    checkAdmin();
   }, [user]);
 
   useEffect(() => {
@@ -57,7 +58,7 @@ export default function Noticias() {
         // Filter out admin tutorial unless user is admin
         const filteredNews = (data || []).filter(item => {
           if (item.title === 'Como Publicar Notícias no Portal GEPEFE') {
-            return userProfile?.role === 'admin';
+            return isAdmin;
           }
           return true;
         });
@@ -67,7 +68,8 @@ export default function Noticias() {
     };
 
     fetchNews();
-  }, [userProfile]);
+  }, [isAdmin]);
+
 
   const filteredNews = news.filter((item) => {
     if (!searchQuery) return true;
