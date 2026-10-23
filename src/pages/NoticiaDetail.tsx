@@ -176,7 +176,7 @@ export default function NoticiaDetail() {
       <main className="w-full py-0">
         <div className="w-full">
           {/* Header */}
-          <header className="mb-8">
+          <header className="mb-0">
             <h1 className="text-3xl sm:text-4xl font-semibold break-words text-foreground mb-4 leading-tight">
               {news.title}
             </h1>
@@ -207,21 +207,21 @@ export default function NoticiaDetail() {
               </Button>
             </div>
 
-            <Separator className="mb-8" />
+            <Separator />
           </header>
 
           {/* Featured images carousel */}
           {news.images && news.images.length > 0 ? (
-            <div className="mb-8">
+            <div className="my-6">
               <div className="relative">
-                <div className="overflow-hidden rounded-lg" ref={emblaRef}>
+                <div className="overflow-hidden rounded-xl" ref={emblaRef}>
                   <div className="flex">
                     {news.images.map((imageUrl, index) => (
                       <div key={index} className="relative flex-[0_0_100%]">
                         <img
                           src={imageUrl}
                           alt={`${news.title} - Imagem ${index + 1}`}
-                          className="w-full h-80 md:h-[500px] object-contain bg-muted"
+                          className="block w-full h-auto max-h-[300px] md:max-h-[480px] object-cover"
                         />
                       </div>
                     ))}
@@ -270,11 +270,11 @@ export default function NoticiaDetail() {
               </div>
             </div>
           ) : news.image_url && (
-            <div className="mb-8">
+            <div className="my-6">
               <img
                 src={news.image_url}
                 alt={news.title}
-                className="w-full h-80 md:h-[500px] object-contain bg-muted rounded-lg"
+                className="block w-full h-auto max-h-[300px] md:max-h-[480px] object-cover rounded-xl"
               />
             </div>
           )}
