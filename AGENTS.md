@@ -6,4 +6,5 @@
 - Institutional link ordering and mobile account shortcuts come from shared navigation definitions; the shell provides bottom navigation below the desktop breakpoint to prevent per-page drift.
 - RepositoryShell measures the fixed header height for content and full-height sidebar offsets; page wrappers stay fluid without centered max-width constraints to keep all routes edge-to-edge.
 - Collection routes and Home use RepositoryCollection with PublicationCard and repository utilities, so filters and bibliographic actions cannot drift between pages.
+- Mobile filter chips and the year/author bottom sheet share RepositoryCollection filter state with desktop controls, so changing presentation never changes academic filtering rules.
 - Article citations use only existing metadata; absent DOI, affiliation or translated abstract must never be invented.
