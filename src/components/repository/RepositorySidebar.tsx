@@ -13,7 +13,7 @@ export function RepositorySidebar({ collapsed = false, onNavigate }: { collapsed
   const { setSearchQuery, setSelectedCategory } = useSearch();
   const items = [
     ...institutionalLinks.map(item => ({ ...item, icon: icons[item.icon], active: item.href === '/todos' ? isCollectionRoute(location.pathname) : item.href === '/noticias' ? location.pathname.startsWith('/noticia') : location.pathname + location.hash === item.href })),
-    ...(user ? [{ label: 'Meus Favoritos', icon: Bookmark, href: '/favoritos' }, { label: 'Histórico de Leitura', icon: History, href: '/historico' }] : []),
+    ...(user ? [{ label: 'Meus Favoritos', icon: Bookmark, href: '/favoritos', active: location.pathname === '/favoritos' }, { label: 'Histórico de Leitura', icon: History, href: '/historico', active: location.pathname === '/historico' }] : []),
   ];
   return <>
     {!collapsed && <p className="mb-4 px-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Repositório</p>}
