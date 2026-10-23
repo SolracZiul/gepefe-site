@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BookOpen, ChevronLeft, ChevronRight, RotateCcw, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PublicationCard } from './PublicationCard';
 import { useArticlesContext } from '@/contexts/ArticlesContext';
@@ -14,7 +13,7 @@ import { collectiveAuthor, filterPublications, readHistory, recordReading, study
 function Filter({ label, value, options, onChange }: { label: string; value: string; options: string[]; onChange: (value: string) => void }) {
   return <div className="min-w-0"><label className="mb-2 block text-[11px] font-medium text-muted-foreground">{label}</label><Select value={value || 'all'} onValueChange={value => onChange(value === 'all' ? '' : value)}><SelectTrigger aria-label={label} className="h-11 bg-card"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Todos</SelectItem>{options.map(option => <SelectItem key={option} value={option}>{option}</SelectItem>)}</SelectContent></Select></div>;
 }
-export function RepositoryCollection({ title = 'Todas as Publicações', category = '', mode = 'collection', home = false }: { title?: string; category?: string; mode?: 'collection' | 'favorites' | 'history'; home?: boolean }) {
+export function RepositoryCollection({ title = 'Todas as Publicações', category = '', mode = 'collection' }: { title?: string; category?: string; mode?: 'collection' | 'favorites' | 'history'; home?: boolean }) {
   const { articles, loading, error, refetch } = useArticlesContext();
   const { searchQuery, setSearchQuery } = useSearch();
   const { user, loading: authLoading } = useAuth();
@@ -40,15 +39,14 @@ export function RepositoryCollection({ title = 'Todas as Publicações', categor
   const reset = () => { setSearchQuery(''); setArea(''); setType(''); setYear(''); setAuthor(''); };
   if (mode !== 'collection' && !authLoading && !user) return <section className="py-20 text-center"><BookOpen className="mx-auto mb-4 h-8 w-8 text-muted-foreground" /><h1 className="mb-3 text-2xl font-semibold">{title}</h1><p className="mb-5 text-sm text-muted-foreground">Entre na sua conta para acessar seus artigos.</p><Button asChild><Link to="/auth">Fazer Login</Link></Button></section>;
   return <>
-    {!home && <header className="mb-8 border-b border-border pb-7"><p className="mb-3 text-xs text-muted-foreground">GEPEFE / Repositório Institucional</p><h1 className="text-3xl font-semibold">{title}</h1><p className="mt-3 text-sm text-muted-foreground">{mode === 'history' ? 'Leituras recentes neste navegador.' : mode === 'favorites' ? 'Publicações salvas para leitura posterior.' : 'Produção acadêmica em Educação Física e Escola'}</p></header>}
-    <section aria-label="Filtros acadêmicos" className="mb-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    <section aria-label="Filtros acadêmicos" className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
       <Filter label="Área de Estudo" value={area} options={studyAreas} onChange={setArea} />
       <Filter label="Categoria / Tipo de Documento" value={type} options={category ? [category] : types} onChange={setType} />
       <Filter label="Ano" value={year} options={years} onChange={setYear} />
       <Filter label="Autor" value={author} options={authors} onChange={setAuthor} />
       <div><label className="mb-2 block text-[11px] font-medium text-muted-foreground">Ordenação</label><Select value={sort} onValueChange={setSort}><SelectTrigger aria-label="Ordenação" className="h-11 bg-card"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="recent">Mais Recentes</SelectItem><SelectItem value="downloads">Mais Baixados</SelectItem><SelectItem value="title">A–Z</SelectItem></SelectContent></Select></div>
     </section>
-    <section id="publications"><div className="mb-5 flex flex-wrap items-center justify-between gap-3"><div className="flex items-center gap-3"><h2 className="text-lg font-semibold">{active ? 'Resultados da busca' : home ? 'Publicações Recentes' : 'Publicações'}</h2><Badge variant="secondary" className="rounded-sm font-normal">{visible.length}</Badge></div>{active && <Button variant="ghost" size="sm" onClick={reset}><X />Limpar filtros</Button>}</div>
+    <section id="publications" aria-label={title}>{active && <div className="mb-4 flex justify-end"><Button variant="ghost" size="sm" onClick={reset}><X />Limpar filtros</Button></div>}
       {loading || (mode !== 'collection' && (authLoading || favoritesLoading)) ? <div role="status" className="py-16 text-center text-muted-foreground">Carregando publicações…</div> : error ? <div className="py-16 text-center"><p className="mb-4 text-destructive">Não foi possível carregar o acervo.</p><Button variant="outline" onClick={() => void refetch()}><RotateCcw />Tentar novamente</Button></div> : visible.length === 0 ? <div className="py-16 text-center"><BookOpen className="mx-auto mb-4 h-8 w-8 text-muted-foreground" /><p className="text-sm text-muted-foreground">Nenhuma publicação encontrada.</p>{active && <Button variant="outline" className="mt-5" onClick={reset}>Limpar filtros</Button>}</div> : <div className="grid gap-5 md:grid-cols-2 2xl:grid-cols-3">{visible.slice((current - 1) * 9, current * 9).map(article => <PublicationCard key={article.id} article={article} canSave={Boolean(user)} saved={isFavorited(article.id)} onSave={() => void toggleFavorite(article.id)} onRead={() => { if (user) setHistory(recordReading(user.id, article.id)); }} />)}</div>}
       {!loading && visible.length > 0 && <div className="mt-6 flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground"><p>{(current - 1) * 9 + 1}–{Math.min(current * 9, visible.length)} de {visible.length} publicações</p>{pages > 1 && <div className="flex items-center gap-3"><Button variant="outline" size="icon" aria-label="Página anterior" disabled={current === 1} onClick={() => setPage(current - 1)}><ChevronLeft /></Button><span>{current} / {pages}</span><Button variant="outline" size="icon" aria-label="Próxima página" disabled={current === pages} onClick={() => setPage(current + 1)}><ChevronRight /></Button></div>}</div>}
     </section>

@@ -170,7 +170,11 @@
   --input: 222 10% 27%;
   --shadow-card: 0 4px 16px -6px hsl(222 13% 5% / 0.3);
 }
-.repository #publications { scroll-margin-top: 155px; }
+.repository-shell { --repository-header-height: 77px; }
+.repository #publications { scroll-margin-top: calc(var(--repository-header-height) + 16px); }
+@media (max-width: 1023px) {
+  .repository-shell { --repository-header-height: 132px; }
+}
 @media (prefers-reduced-motion: reduce) {
   .repository *, .repository *::before, .repository *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
