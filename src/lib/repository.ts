@@ -54,14 +54,14 @@ export function formatCitation(article: Article, url: string) {
 
 /** Key that treats accent, case, spacing and the "(GEPEFE)" marker as the same researcher. */
 export function researcherKey(name: string) {
-  return name.replace(/\(GEPEFE\)/gi, '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
+  return name.replace(/\(GEPEFE\)/gi, '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[.,;]+$/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
 }
 
 /** One display name per researcher, sorted in Portuguese order. */
 export function uniqueResearchers(names: string[]) {
   const map = new Map<string, string>();
   for (const raw of names) {
-    const name = raw.replace(/\(GEPEFE\)/gi, '').replace(/\s+/g, ' ').trim();
+    const name = raw.replace(/\(GEPEFE\)/gi, '').replace(/\s+/g, ' ').trim().replace(/[.,;]+$/, '');
     const key = researcherKey(name);
     if (key && !map.has(key)) map.set(key, name);
   }
