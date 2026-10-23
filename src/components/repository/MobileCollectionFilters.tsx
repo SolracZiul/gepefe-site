@@ -38,7 +38,7 @@ export function MobileCollectionFilters(props: Props) {
   ];
   return <>
     <section aria-label="Filtros rápidos" className="mb-3 flex min-w-0 items-center gap-2 lg:hidden">
-      <div className="flex min-w-0 flex-1 flex-wrap gap-2 py-1">{chips.map(chip => <Button key={chip.key} variant={chip.selected ? 'secondary' : 'outline'} size="sm" aria-pressed={chip.selected} onClick={chip.action} className={`h-9 max-w-full rounded-full px-3 text-xs ${chip.selected ? 'bg-foreground text-background hover:bg-foreground/90 hover:text-background' : 'bg-card'}`}>{chip.label}</Button>)}</div>
+      <div className="repository-chip-scroll flex min-w-0 flex-1 flex-nowrap items-center gap-2 overflow-x-auto py-1">{chips.map(chip => <Button key={chip.key} variant={chip.selected ? 'secondary' : 'outline'} size="sm" aria-pressed={chip.selected} onClick={chip.action} className={`h-9 shrink-0 whitespace-nowrap rounded-full px-3 text-xs ${chip.selected ? 'bg-foreground text-background hover:bg-foreground/90 hover:text-background' : 'bg-card'}`}>{chip.label}</Button>)}</div>
       <Button variant="ghost" size="icon" aria-label="Filtros Avançados" title="Filtros Avançados" aria-expanded={open} onClick={() => setOpen(true)} className={`relative shrink-0 ${advanced ? 'text-primary' : ''}`}><SlidersHorizontal />{advanced && <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-primary" />}</Button>
     </section>
     <Sheet open={open} onOpenChange={setOpen}><SheetContent side="bottom" className="repository max-h-[85dvh] overflow-y-auto rounded-t-lg pb-[calc(24px+env(safe-area-inset-bottom))]"><SheetHeader><SheetTitle className="mb-5 text-left">Filtros Avançados</SheetTitle></SheetHeader>

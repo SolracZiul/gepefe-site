@@ -15,4 +15,5 @@
 - [x] Hide missing news photos, simplify saved/history, researcher avatars + dedup, compact admin metrics and filters, standardize admin forms with shared dropzone.
 - [x] Mobile "Filtros Avançados" sheet now holds all five filters (área, categoria, ano, autor, ordenação) with Limpar/Ver resultados pinned to the bottom; verified applying and clearing.
 - [x] Drop the "Mais Recentes" pill from the mobile quick-filter bar; sorting stays only in the advanced sheet and the desktop panel.
+- [x] Keep the chip bar on one continuous non-wrapping row with drag scrolling and a hidden scrollbar, advanced-filters icon pinned right; verified at 390 and 320px.
 - [ ] Verify signed-in favorites/history end-to-end — unavailable for externally managed Supabase without a test session.

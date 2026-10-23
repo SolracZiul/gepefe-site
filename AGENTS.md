@@ -13,3 +13,4 @@
 - Admin forms use FileDropzone/FormSection/FormPageHeader from `src/components/repository/FileDropzone.tsx` so PDF and image uploads share one drag & drop area and section layout.
 
 - Quick category chips derive from shared academic search matches before refinement; the full category selector remains independent of the quick-chip limit, and Tudo clears refinement without discarding search so advanced categories remain selectable.
+- The quick-filter chip bar renders one non-wrapping row through the shared `.repository-chip-scroll` class in `src/index.css` (nowrap, horizontal overflow, hidden scrollbar) with each chip shrink-0, so pills never stack and the advanced-filters icon stays on the same line.
