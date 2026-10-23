@@ -173,7 +173,7 @@
 .repository-shell { --repository-header-height: 77px; }
 .repository #publications { scroll-margin-top: calc(var(--repository-header-height) + 16px); }
 @media (max-width: 1023px) {
-  .repository-shell { --repository-header-height: 132px; }
+  .repository-shell { --repository-header-height: 57px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .repository *, .repository *::before, .repository *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
