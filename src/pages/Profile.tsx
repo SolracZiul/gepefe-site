@@ -52,15 +52,8 @@ export default function Profile() {
     <div className="min-h-0 flex flex-col">
       
       
-      <main className="flex-1 mx-auto py-0">
-        <div className="max-w-4xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-3xl font-semibold text-foreground mb-2">Meu Perfil</h1>
-            <p className="text-muted-foreground">
-              Gerencie suas informações e acompanhe sua atividade no repositório
-            </p>
-          </div>
-
+      <main className="w-full flex-1 py-0">
+        <div className="w-full">
           <div className="grid gap-6 md:grid-cols-2">
             {/* User Info Card */}
             <Card>

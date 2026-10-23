@@ -199,13 +199,9 @@ export default function Admin() {
 
   return (
     <div className="bg-background">
-      <div className="mx-auto">
+      <div className="w-full">
         {/* Header */}
         <div className="flex flex-wrap justify-between items-center gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-semibold text-foreground">Painel Administrativo</h1>
-            <p className="text-muted-foreground">Gerencie as publicações do GEPEFE</p>
-          </div>
           <div className="flex gap-2">
             <Button onClick={() => navigate("/")}>
               Ver Site
