@@ -191,3 +191,20 @@ html body[data-scroll-locked] {
   pointer-events: auto !important;
   --removed-body-scroll-bar-size: 0px !important;
 }
+/* Quick-filter chip bar: one continuous non-wrapping row, drag to scroll, no visible scrollbar. */
+.repository-chip-scroll {
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+.repository-chip-scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
