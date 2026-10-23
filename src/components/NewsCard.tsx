@@ -27,12 +27,12 @@ export function NewsCard({ news }: NewsCardProps) {
   // Use first image from images array, fallback to image_url, then placeholder
   const displayImage = (news.images && news.images.length > 0) 
     ? news.images[0] 
-    : news.image_url || '/placeholder.svg';
+    : news.image_url || '';
 
   return (
     <Link to={`/noticia/${news.id}`}>
       <Card className="group overflow-hidden h-full hover:shadow-card transition-all duration-300 cursor-pointer">
-        <div className="relative h-48 overflow-hidden">
+        {displayImage ? <div className="relative h-48 overflow-hidden">
           <div 
             className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-300"
             style={{ 
@@ -48,9 +48,10 @@ export function NewsCard({ news }: NewsCardProps) {
               {news.title}
             </h3>
           </div>
-        </div>
+        </div> : null}
 
         <CardContent className="p-4 space-y-3">
+          {!displayImage && <h3 className="font-semibold text-lg leading-tight line-clamp-2">{news.title}</h3>}
           {/* Summary */}
           {news.summary && (
             <p className="text-muted-foreground text-sm line-clamp-2">

@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useArticlesContext } from "@/contexts/ArticlesContext";
+import { FileDropzone, FormPageHeader, FormSection } from "@/components/repository/FileDropzone";
 import { Loader2, ArrowLeft, Upload, FileText, Trash2, Users } from "lucide-react";
 
 interface Article {
@@ -331,32 +332,14 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
   };
 
   return (
-    <div className="w-full bg-background">
-      <div className="w-full">
-        <div className="flex items-center gap-4 mb-6">
-          <Button variant="ghost" onClick={onCancel}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Voltar
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold text-primary">
-              {article ? "Editar Publicação" : "Nova Publicação"}
-            </h1>
-            <p className="text-muted-foreground">
-              {article ? "Atualize as informações da publicação" : "Adicione uma nova publicação ao repositório"}
-            </p>
-          </div>
-        </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Informações da Publicação</CardTitle>
-            <CardDescription>
-              Preencha todos os campos obrigatórios para publicar o artigo
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="mx-auto w-full max-w-4xl pb-8">
+      <FormPageHeader
+        title={article ? "Editar Publicação" : "Nova Publicação"}
+        subtitle={article ? "Atualize as informações da publicação." : "Adicione uma nova publicação ao repositório acadêmico."}
+        onBack={onCancel}
+      />
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <FormSection title="Informações Principais" description="Título, autoria, data e categoria do documento.">
               <div className="space-y-2">
                 <Label htmlFor="title">Título *</Label>
                 <Input
@@ -421,17 +404,6 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
                 )}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="abstract">Resumo *</Label>
-                <Textarea
-                  id="abstract"
-                  value={formData.abstract}
-                  onChange={(e) => setFormData({ ...formData, abstract: e.target.value })}
-                  rows={4}
-                  required
-                />
-              </div>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="category">Categoria *</Label>
@@ -464,33 +436,9 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Arquivo do Documento</Label>
-                  <div className="w-full">
-                    <div className="relative">
-                      <input
-                        type="file"
-                        accept=".pdf,.doc,.docx"
-                        onChange={handleFileSelect}
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                        id="file-upload"
-                      />
-                      <div className="flex items-center justify-center w-full h-12 px-4 py-2 border-2 border-dashed border-border rounded-lg bg-background hover:bg-muted/50 transition-colors cursor-pointer">
-                        <div className="flex items-center gap-2">
-                          <FileText className="h-5 w-5 text-muted-foreground" />
-                          <span className="text-sm font-medium">
-                            {selectedFile ? selectedFile.name : "Escolher arquivo"}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      Aceita arquivos PDF, DOC e DOCX (máx. 10MB)
-                    </p>
-                  </div>
-                </div>
-                  
+        </FormSection>
+        <FormSection title="Arquivos e Mídia" description="Envie o documento ou informe um link externo.">
+          <FileDropzone id="file-upload" accept=".pdf,.doc,.docx" label={selectedFile ? selectedFile.name : "Arraste o arquivo aqui ou clique para escolher"} hint="PDF, DOC ou DOCX (máx. 10MB)" onFiles={files => handleFileSelect({ target: { files } } as unknown as React.ChangeEvent<HTMLInputElement>)} />
                   {selectedFile && (
                     <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
                       <FileText className="h-4 w-4" />
@@ -536,6 +484,17 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
                     Apenas se não fizer upload do arquivo acima
                   </p>
                 </div>
+        </FormSection>
+        <FormSection title="Conteúdo e Tags" description="Resumo acadêmico e palavras-chave.">
+              <div className="space-y-2">
+                <Label htmlFor="abstract">Resumo *</Label>
+                <Textarea
+                  id="abstract"
+                  value={formData.abstract}
+                  onChange={(e) => setFormData({ ...formData, abstract: e.target.value })}
+                  rows={4}
+                  required
+                />
               </div>
 
               <div className="space-y-2">
@@ -552,6 +511,7 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
                 </p>
               </div>
 
+        </FormSection>
               <div className="flex gap-4 pt-4">
                 <Button type="submit" disabled={loading || uploading}>
                   {loading || uploading ? (
@@ -570,10 +530,7 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
                   Cancelar
                 </Button>
               </div>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
+      </form>
     </div>
   );
-};
+}

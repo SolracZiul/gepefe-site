@@ -10,3 +10,4 @@
 - The sidebar menu lists only collection and section destinations while institutional identity lives in the sidebar's institutional block, and each article page renders its citation once, so no destination or bibliographic string is offered twice.
 - Article citations use only existing metadata; absent DOI, affiliation or translated abstract must never be invented.
 - Institutional content lives on one page (`/linhas-de-pesquisa`) covering mission, objectives, research lines and researchers; former addresses (`/sobre`, `/integrantes`) redirect there keeping a known section anchor, so no destination is offered twice in navigation.
+- Admin forms use FileDropzone/FormSection/FormPageHeader from `src/components/repository/FileDropzone.tsx` so PDF and image uploads share one drag & drop area and section layout.

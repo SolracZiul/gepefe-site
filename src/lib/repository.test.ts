@@ -19,3 +19,12 @@ describe('Academic repository', () => {
   test('builds a bibliographic citation from available metadata', () => expect(formatCitation(base, 'https://example.org/article/1')).toBe('SILVA, V. A. Educação Física Escolar. Artigos Completos, 2025. Disponível em: https://example.org/article/1.'));
   test('formats academic surnames and initials', () => expect(formatAcademicAuthor('Vanessa Alves Silva (GEPEFE)')).toBe('SILVA, V. A.'));
 });
+import { researcherInitials, uniqueResearchers } from './repository';
+describe('researchers', () => {
+  test('shows one card per researcher despite accents, case, spacing and GEPEFE marker', () => {
+    expect(uniqueResearchers(['João Silva (GEPEFE)', 'joao  silva', 'João Silva.', 'Maria Souza (GEPEFE)'])).toEqual(['João Silva', 'Maria Souza']);
+  });
+  test('builds initials from first and last name, skipping titles', () => {
+    expect(researcherInitials('Profa. Maria da Costa Souza')).toBe('MS');
+  });
+});
