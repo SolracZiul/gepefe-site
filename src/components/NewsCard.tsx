@@ -31,7 +31,7 @@ export function NewsCard({ news }: NewsCardProps) {
 
   return (
     <Link to={`/noticia/${news.id}`}>
-      <Card className="group overflow-hidden h-full hover:shadow-lg transition-all duration-300 cursor-pointer">
+      <Card className="group overflow-hidden h-full hover:shadow-card transition-all duration-300 cursor-pointer">
         <div className="relative h-48 overflow-hidden">
           <div 
             className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-300"
@@ -40,11 +40,11 @@ export function NewsCard({ news }: NewsCardProps) {
             }}
           />
           {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+          <div className="absolute inset-0 bg-news-overlay" />
           
           {/* Title at bottom */}
           <div className="absolute bottom-0 left-0 right-0 p-4">
-            <h3 className="text-white font-semibold text-lg leading-tight line-clamp-2">
+            <h3 className="text-media-foreground font-semibold text-lg leading-tight line-clamp-2">
               {news.title}
             </h3>
           </div>

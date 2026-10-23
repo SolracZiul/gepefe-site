@@ -186,10 +186,10 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-2xl border-0 bg-white/95 backdrop-blur-sm">
+    <div className="min-h-[65vh] flex items-center justify-center py-8">
+      <Card className="w-full max-w-md border-border bg-card shadow-card">
         <CardHeader className="text-center space-y-2 pb-6">
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+          <CardTitle className="text-3xl font-bold text-foreground">
             GEPEFE
           </CardTitle>
           <CardDescription className="text-base text-muted-foreground">
@@ -234,7 +234,7 @@ export default function Auth() {
               <Separator className="w-full" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-muted-foreground">ou</span>
+              <span className="bg-card px-2 text-muted-foreground">ou</span>
             </div>
           </div>
 
@@ -274,20 +274,23 @@ export default function Auth() {
                       className="pl-10 pr-10 h-12"
                       required
                     />
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 text-muted-foreground hover:text-foreground"
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
+                    </Button>
                   </div>
                 </div>
                 
                 <div className="flex justify-end">
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button variant="link" className="text-sm text-primary p-0 h-auto">
+                      <Button variant="link" className="text-sm text-foreground p-0 h-auto">
                         Esqueci minha senha
                       </Button>
                     </DialogTrigger>
@@ -387,13 +390,16 @@ export default function Auth() {
                       className="pl-10 pr-10 h-12"
                       required
                     />
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 text-muted-foreground hover:text-foreground"
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
+                    </Button>
                   </div>
                   <p className="text-xs text-muted-foreground">
                     Mínimo de 6 caracteres
