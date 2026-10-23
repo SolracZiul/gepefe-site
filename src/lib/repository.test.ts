@@ -21,10 +21,10 @@ describe('Academic repository', () => {
 });
 import { researcherInitials, uniqueResearchers } from './repository';
 describe('researchers', () => {
-  it('shows one card per researcher despite accents, case, spacing and GEPEFE marker', () => {
+  test('shows one card per researcher despite accents, case, spacing and GEPEFE marker', () => {
     expect(uniqueResearchers(['João Silva (GEPEFE)', 'joao  silva', 'Maria Souza (GEPEFE)'])).toEqual(['João Silva', 'Maria Souza']);
   });
-  it('builds initials from first and last name, skipping titles', () => {
+  test('builds initials from first and last name, skipping titles', () => {
     expect(researcherInitials('Profa. Maria da Costa Souza')).toBe('MS');
   });
 });
