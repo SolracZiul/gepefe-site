@@ -10,4 +10,5 @@
 - [x] Unify repository lists and filters; redesign article metadata, citation, reader and related publications.
 - [x] Standardize About, researchers, news and account pages; verify public navigation and interactions.
 - [x] Hide missing news photos, simplify saved/history, researcher avatars + dedup, compact admin metrics and filters, standardize admin forms with shared dropzone.
+- [x] Mobile "Filtros Avançados" sheet now holds all five filters (área, categoria, ano, autor, ordenação) with Limpar/Ver resultados pinned to the bottom; verified applying and clearing.
 - [ ] Verify signed-in favorites/history end-to-end — unavailable for externally managed Supabase without a test session.
