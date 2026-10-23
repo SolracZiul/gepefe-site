@@ -11,4 +11,5 @@
 - [x] Standardize About, researchers, news and account pages; verify public navigation and interactions.
 - [x] Hide missing news photos, simplify saved/history, researcher avatars + dedup, compact admin metrics and filters, standardize admin forms with shared dropzone.
 - [x] Mobile "Filtros Avançados" sheet now holds all five filters (área, categoria, ano, autor, ordenação) with Limpar/Ver resultados pinned to the bottom; verified applying and clearing.
+- [x] Drop the "Mais Recentes" pill from the mobile quick-filter bar; sorting stays only in the advanced sheet and the desktop panel.
 - [ ] Verify signed-in favorites/history end-to-end — unavailable for externally managed Supabase without a test session.

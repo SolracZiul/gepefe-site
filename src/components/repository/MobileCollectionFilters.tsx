@@ -24,7 +24,6 @@ export function MobileCollectionFilters(props: Props) {
     ...(!props.category || props.category === 'Artigos Completos' ? [{ label: 'Artigos Completos', selected: props.type === 'Artigos Completos', action: () => props.onType(props.type === 'Artigos Completos' ? '' : 'Artigos Completos') }] : []),
     { label: 'Educação Física Escolar', selected: props.area === 'Educação Física Escolar', action: () => props.onArea(props.area === 'Educação Física Escolar' ? '' : 'Educação Física Escolar') },
     { label: 'Inclusão', selected: props.area === 'Inclusão', action: () => props.onArea(props.area === 'Inclusão' ? '' : 'Inclusão') },
-    { label: 'Mais Recentes', selected: props.sort === 'recent', action: () => props.onSort('recent') },
   ];
   const fields = [
     { label: 'Área de Estudo', value: props.area, options: props.areas, change: props.onArea },
