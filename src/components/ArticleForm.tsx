@@ -484,8 +484,6 @@ export const ArticleForm = ({ article, onSuccess, onCancel }: ArticleFormProps) 
                     Apenas se não fizer upload do arquivo acima
                   </p>
                 </div>
-              </div>
-
         </FormSection>
         <FormSection title="Conteúdo e Tags" description="Resumo acadêmico e palavras-chave.">
               <div className="space-y-2">
