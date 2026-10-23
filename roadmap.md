@@ -1,4 +1,5 @@
 # Institutional design across all pages
+- [ ] Limit quick filters to Tudo and four populated document categories; verify remaining categories in advanced filters and no horizontal scrolling.
 - [x] Generate contextual quick chips from real publication categories/tags and verify search/refinement/reset (Jogo: 21 results to 2, Tudo restores search).
 - [x] Reorder shared navigation and add compact mobile header and fixed bottom shortcuts.
 - [x] Add horizontal mobile filters and advanced year/author drawer; verify public mobile and desktop flows.

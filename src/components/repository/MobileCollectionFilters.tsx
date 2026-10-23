@@ -10,7 +10,7 @@ interface Props {
   area: string; type: string; sort: string; year: string; author: string;
   years: string[]; authors: string[]; category: string;
   areas: string[]; types: string[];
-  chips: PublicationChip[]; tag: string; onTag: (value: string) => void; onClearQuick: () => void;
+  chips: PublicationChip[]; onClearQuick: () => void;
   onArea: (value: string) => void; onType: (value: string) => void; onSort: (value: string) => void;
   onYear: (value: string) => void; onAuthor: (value: string) => void; onReset: () => void;
 }
@@ -21,15 +21,13 @@ const sortOptions = [
 ];
 export function MobileCollectionFilters(props: Props) {
   const [open, setOpen] = useState(false);
-  const advanced = Boolean(props.year || props.author || props.area || props.type || props.tag || props.sort !== 'recent');
+  const advanced = Boolean(props.year || props.author || props.area || props.type || props.sort !== 'recent');
   const chips = [
-    { key: 'all', label: 'Tudo', selected: !props.area && !props.type && !props.tag && !props.year && !props.author, action: props.onClearQuick },
+    { key: 'all', label: 'Tudo', selected: !props.area && !props.type && !props.year && !props.author, action: props.onClearQuick },
     ...props.chips.map(chip => ({
       key: `${chip.kind}:${chip.label}`, label: chip.label,
-      selected: chip.kind === 'category' ? props.type === chip.label : props.tag === chip.label,
-      action: () => chip.kind === 'category'
-        ? props.onType(props.type === chip.label ? '' : chip.label)
-        : props.onTag(props.tag === chip.label ? '' : chip.label),
+        selected: props.type === chip.label,
+        action: () => props.onType(props.type === chip.label ? '' : chip.label),
     })),
   ];
   const fields = [
@@ -40,7 +38,7 @@ export function MobileCollectionFilters(props: Props) {
   ];
   return <>
     <section aria-label="Filtros rápidos" className="mb-3 flex min-w-0 items-center gap-2 lg:hidden">
-      <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto py-1">{chips.map(chip => <Button key={chip.key} variant={chip.selected ? 'secondary' : 'outline'} size="sm" aria-pressed={chip.selected} onClick={chip.action} className={`h-9 shrink-0 rounded-full px-4 text-xs ${chip.selected ? 'bg-foreground text-background hover:bg-foreground/90 hover:text-background' : 'bg-card'}`}>{chip.label}</Button>)}</div>
+      <div className="flex min-w-0 flex-1 flex-wrap gap-2 py-1">{chips.map(chip => <Button key={chip.key} variant={chip.selected ? 'secondary' : 'outline'} size="sm" aria-pressed={chip.selected} onClick={chip.action} className={`h-9 max-w-full rounded-full px-3 text-xs ${chip.selected ? 'bg-foreground text-background hover:bg-foreground/90 hover:text-background' : 'bg-card'}`}>{chip.label}</Button>)}</div>
       <Button variant="ghost" size="icon" aria-label="Filtros Avançados" title="Filtros Avançados" aria-expanded={open} onClick={() => setOpen(true)} className={`relative shrink-0 ${advanced ? 'text-primary' : ''}`}><SlidersHorizontal />{advanced && <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-primary" />}</Button>
     </section>
     <Sheet open={open} onOpenChange={setOpen}><SheetContent side="bottom" className="repository max-h-[85dvh] overflow-y-auto rounded-t-lg pb-[calc(24px+env(safe-area-inset-bottom))]"><SheetHeader><SheetTitle className="mb-5 text-left">Filtros Avançados</SheetTitle></SheetHeader>

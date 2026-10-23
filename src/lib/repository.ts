@@ -23,7 +23,7 @@ export function filterPublications(articles: Article[], query: string, area: str
   }).sort((a, b) => sort === 'downloads' ? b.download_count - a.download_count : sort === 'title' ? a.title.localeCompare(b.title, 'pt-BR') : b.publish_date.localeCompare(a.publish_date));
 }
 
-export interface PublicationChip { kind: 'category' | 'tag'; label: string }
+export interface PublicationChip { kind: 'category'; label: string }
 
 /** Build quick facets from search matches, before the selected chip is applied. */
 export function publicationChips(articles: Article[], query: string, category = ''): PublicationChip[] {
@@ -38,8 +38,7 @@ export function publicationChips(articles: Article[], query: string, category = 
   };
   return [
     ...values(matching.map(article => article.category)).map(label => ({ kind: 'category' as const, label })),
-    ...values(matching.flatMap(article => article.tags)).map(label => ({ kind: 'tag' as const, label })),
-  ];
+  ].slice(0, 4);
 }
 
 export function formatAcademicAuthor(author: string) {
