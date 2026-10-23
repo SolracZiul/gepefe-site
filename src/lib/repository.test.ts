@@ -16,6 +16,6 @@ describe('Academic repository', () => {
   test('filters the selected year exactly', () => expect(filterPublications(articles, '', '', '', 'recent', { year: '2026' }).map(a => a.id)).toEqual(['2']));
   test('filters the selected author, not abstract mentions', () => expect(filterPublications([base, { ...base, id: 'other', authors: ['João Santos'] }], '', '', '', 'recent', { author: 'Vanessa Alves Silva' }).map(a => a.id)).toEqual(['1']));
   test('keeps category constraints alongside document type', () => expect(filterPublications(articles, '', '', 'Teses', 'recent', { category: 'Artigos Completos' })).toHaveLength(0));
-  test('builds a bibliographic citation from available metadata', () => expect(formatCitation(base, 'https://example.org/article/1')).toBe('SILVA, V. A.. Educação Física Escolar. Artigos Completos, 2025. Disponível em: https://example.org/article/1.'));
+  test('builds a bibliographic citation from available metadata', () => expect(formatCitation(base, 'https://example.org/article/1')).toBe('SILVA, V. A. Educação Física Escolar. Artigos Completos, 2025. Disponível em: https://example.org/article/1.'));
   test('formats academic surnames and initials', () => expect(formatAcademicAuthor('Vanessa Alves Silva (GEPEFE)')).toBe('SILVA, V. A.'));
 });

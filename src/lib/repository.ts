@@ -49,5 +49,5 @@ export function formatCitation(article: Article, url: string) {
   const authors = article.authors.length === 1 && article.authors[0] === collectiveAuthor
     ? 'GRUPO DE ESTUDOS E PESQUISAS EM EDUCAÇÃO FÍSICA E ESCOLA'
     : article.authors.map(formatAcademicAuthor).join('; ');
-  return `${authors}. ${article.title}. ${article.category}, ${article.publish_date.slice(0, 4)}. Disponível em: ${url}.`;
+  return `${authors.replace(/\.+$/, '')}. ${article.title.replace(/\.+$/, '')}. ${article.category}, ${article.publish_date.slice(0, 4)}. Disponível em: ${url}.`;
 }
