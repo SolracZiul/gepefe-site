@@ -51,3 +51,26 @@ export function formatCitation(article: Article, url: string) {
     : article.authors.map(formatAcademicAuthor).join('; ');
   return `${authors.replace(/\.+$/, '')}. ${article.title.replace(/\.+$/, '')}. ${article.category}, ${article.publish_date.slice(0, 4)}. Disponível em: ${url}.`;
 }
+
+/** Key that treats accent, case, spacing and the "(GEPEFE)" marker as the same researcher. */
+export function researcherKey(name: string) {
+  return name.replace(/\(GEPEFE\)/gi, '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+/** One display name per researcher, sorted in Portuguese order. */
+export function uniqueResearchers(names: string[]) {
+  const map = new Map<string, string>();
+  for (const raw of names) {
+    const name = raw.replace(/\(GEPEFE\)/gi, '').replace(/\s+/g, ' ').trim();
+    const key = researcherKey(name);
+    if (key && !map.has(key)) map.set(key, name);
+  }
+  return Array.from(map.values()).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+}
+
+/** Up to two initials: first and last name, skipping titles like "Dr." or "Profa.". */
+export function researcherInitials(name: string) {
+  const parts = name.split(' ').filter(part => part && !/\.$/.test(part) && !/^(d[aeo]s?|e)$/i.test(part));
+  if (parts.length === 0) return '?';
+  return ((parts[0][0] || '') + (parts.length > 1 ? parts[parts.length - 1][0] : '')).toUpperCase();
+}
