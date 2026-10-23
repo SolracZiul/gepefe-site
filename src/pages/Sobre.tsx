@@ -71,7 +71,7 @@ export default function Sobre() {
         </div>
 
         {/* Research Lines */}
-        <div className="bg-gradient-card rounded-lg p-8 mb-16">
+        <div id="linhas-de-pesquisa" className="bg-gradient-card rounded-lg p-8 mb-16 scroll-mt-24">
           <h2 className="text-3xl font-bold text-primary mb-8 text-center">
             Linhas de Pesquisa
           </h2>
