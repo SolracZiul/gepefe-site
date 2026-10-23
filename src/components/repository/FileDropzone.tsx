@@ -1,5 +1,6 @@
 import { useRef, useState, type ReactNode } from 'react';
-import { UploadCloud } from 'lucide-react';
+import { ArrowLeft, UploadCloud } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface FileDropzoneProps {
@@ -48,5 +49,11 @@ export function FormSection({ title, description, children }: { title: string; d
 }
 
 export function FormPageHeader({ title, subtitle, onBack }: { title: string; subtitle: string; onBack: () => void }) {
-  return null as unknown as ReactNode extends never ? never : JSX.Element ?? (onBack && title && subtitle);
+  return (
+    <header className="mb-6">
+      <Button type="button" variant="ghost" size="sm" className="-ml-3 mb-3" onClick={onBack}><ArrowLeft className="h-4 w-4" />Voltar</Button>
+      <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{title}</h1>
+      <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
+    </header>
+  );
 }

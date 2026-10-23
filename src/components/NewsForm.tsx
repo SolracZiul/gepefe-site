@@ -6,7 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Upload, Bold, Italic, Type } from "lucide-react";
+import { FileDropzone, FormPageHeader, FormSection } from "@/components/repository/FileDropzone";
+import { Upload, Bold, Italic, Type } from "lucide-react";
 
 interface News {
   id?: string;
@@ -273,23 +274,14 @@ export function NewsForm({ news, onSuccess, onCancel }: NewsFormProps) {
   };
 
   return (
-    <div className="w-full bg-background">
-      <div className="w-full">
-        <div className="w-full">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>
-                  {news ? "Editar Notícia" : "Nova Notícia"}
-                </CardTitle>
-                <Button onClick={onCancel} variant="ghost" size="sm">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Voltar
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="mx-auto w-full max-w-4xl pb-8">
+      <FormPageHeader
+        title={news ? "Editar Notícia" : "Nova Notícia"}
+        subtitle={news ? "Atualize as informações da notícia." : "Publique uma novidade do GEPEFE na seção de notícias."}
+        onBack={onCancel}
+      />
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <FormSection title="Informações Principais" description="Título, autoria e data da notícia.">
                 {/* Title */}
                 <div className="space-y-2">
                   <Label htmlFor="title">Título *</Label>
@@ -298,19 +290,6 @@ export function NewsForm({ news, onSuccess, onCancel }: NewsFormProps) {
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     placeholder="Digite o título da notícia"
-                    required
-                  />
-                </div>
-
-                {/* Summary */}
-                <div className="space-y-2">
-                  <Label htmlFor="summary">Resumo *</Label>
-                  <Textarea
-                    id="summary"
-                    value={formData.summary}
-                    onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
-                    placeholder="Digite um breve resumo da notícia"
-                    className="min-h-[80px]"
                     required
                   />
                 </div>
@@ -342,21 +321,9 @@ export function NewsForm({ news, onSuccess, onCancel }: NewsFormProps) {
                   />
                 </div>
 
-                {/* Multiple Images Upload */}
-                <div className="space-y-2">
-                  <Label htmlFor="images">Imagens da Notícia</Label>
-                  <div className="space-y-4">
-                    <Input
-                      id="images"
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={handleFileSelect}
-                    />
-                    <p className="text-sm text-muted-foreground">
-                      Formatos aceitos: PNG, JPG, JPEG. Tamanho máximo: 5MB por imagem. Você pode selecionar múltiplas imagens.
-                    </p>
-                    
+        </FormSection>
+        <FormSection title="Arquivos e Mídia" description="Imagens exibidas na capa e no carrossel da notícia.">
+          <FileDropzone id="images" accept="image/*" multiple label="Arraste as imagens aqui ou clique para escolher" hint="PNG, JPG ou JPEG (máx. 5MB por imagem)" onFiles={files => handleFileSelect({ target: { files } } as unknown as React.ChangeEvent<HTMLInputElement>)}>
                     {/* Preview of selected files */}
                     {selectedFiles.length > 0 && (
                       <div className="space-y-2">
@@ -432,7 +399,20 @@ export function NewsForm({ news, onSuccess, onCancel }: NewsFormProps) {
                         </Button>
                       </div>
                     </div>
-                  </div>
+          </FileDropzone>
+        </FormSection>
+        <FormSection title="Conteúdo e Tags" description="Resumo, texto completo e palavras-chave.">
+                {/* Summary */}
+                <div className="space-y-2">
+                  <Label htmlFor="summary">Resumo *</Label>
+                  <Textarea
+                    id="summary"
+                    value={formData.summary}
+                    onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
+                    placeholder="Digite um breve resumo da notícia"
+                    className="min-h-[80px]"
+                    required
+                  />
                 </div>
 
                 {/* Content */}
@@ -501,6 +481,7 @@ export function NewsForm({ news, onSuccess, onCancel }: NewsFormProps) {
                   </p>
                 </div>
 
+        </FormSection>
                 {/* Actions */}
                 <div className="flex gap-4 pt-4">
                   <Button
@@ -530,11 +511,7 @@ export function NewsForm({ news, onSuccess, onCancel }: NewsFormProps) {
                     Cancelar
                   </Button>
                 </div>
-              </form>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      </form>
     </div>
   );
 }

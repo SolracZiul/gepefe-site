@@ -214,49 +214,49 @@ export default function Admin() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+        <div className="mb-6 grid grid-cols-3 gap-2 sm:grid-cols-6">
           <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Total</CardDescription>
-              <CardTitle className="text-2xl">{articles.length}</CardTitle>
+            <CardHeader className="space-y-0.5 p-3">
+              <CardDescription className="text-xs">Total</CardDescription>
+              <CardTitle className="text-xl">{articles.length}</CardTitle>
             </CardHeader>
           </Card>
           <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Artigos</CardDescription>
-              <CardTitle className="text-2xl">
+            <CardHeader className="space-y-0.5 p-3">
+              <CardDescription className="text-xs">Artigos</CardDescription>
+              <CardTitle className="text-xl">
                 {articles.filter(a => a.content_type === "article" || !a.content_type).length}
               </CardTitle>
             </CardHeader>
           </Card>
           <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Notícias</CardDescription>
-              <CardTitle className="text-2xl">
+            <CardHeader className="space-y-0.5 p-3">
+              <CardDescription className="text-xs">Notícias</CardDescription>
+              <CardTitle className="text-xl">
                 {articles.filter(a => a.content_type === "news").length}
               </CardTitle>
             </CardHeader>
           </Card>
           <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Dissertações</CardDescription>
-              <CardTitle className="text-2xl">
+            <CardHeader className="space-y-0.5 p-3">
+              <CardDescription className="text-xs">Dissertações</CardDescription>
+              <CardTitle className="text-xl">
                 {articles.filter(a => a.category === "Dissertações").length}
               </CardTitle>
             </CardHeader>
           </Card>
           <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Teses</CardDescription>
-              <CardTitle className="text-2xl">
+            <CardHeader className="space-y-0.5 p-3">
+              <CardDescription className="text-xs">Teses</CardDescription>
+              <CardTitle className="text-xl">
                 {articles.filter(a => a.category === "Teses").length}
               </CardTitle>
             </CardHeader>
           </Card>
           <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Pesquisas</CardDescription>
-              <CardTitle className="text-2xl">
+            <CardHeader className="space-y-0.5 p-3">
+              <CardDescription className="text-xs">Pesquisas</CardDescription>
+              <CardTitle className="text-xl">
                 {articles.filter(a => a.category === "Pesquisas").length}
               </CardTitle>
             </CardHeader>
