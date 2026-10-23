@@ -1,4 +1,5 @@
 # Institutional design across all pages
+- [x] Remove the news block from the Home/Acervo Completo page on desktop and mobile so news lives only on /noticias; verified home shows filters, grid, pagination and footer only.
 - [x] Limit quick filters to Tudo and four populated document categories; verified advanced category selection and no horizontal scrolling at 834, 390 and 320px.
 - [x] Generate contextual quick chips from real publication categories/tags and verify search/refinement/reset (Jogo: 21 results to 2, Tudo restores search).
 - [x] Reorder shared navigation and add compact mobile header and fixed bottom shortcuts.
