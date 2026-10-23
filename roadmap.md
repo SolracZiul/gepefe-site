@@ -16,4 +16,5 @@
 - [x] Mobile "Filtros Avançados" sheet now holds all five filters (área, categoria, ano, autor, ordenação) with Limpar/Ver resultados pinned to the bottom; verified applying and clearing.
 - [x] Drop the "Mais Recentes" pill from the mobile quick-filter bar; sorting stays only in the advanced sheet and the desktop panel.
 - [x] Keep the chip bar on one continuous non-wrapping row with drag scrolling and a hidden scrollbar, advanced-filters icon pinned right; verified at 390 and 320px.
+- [x] Hide the chip bar's horizontal scrollbar in every engine (scrollbar-width, -ms-overflow-style, all webkit scrollbar parts) while keeping thumb swipe; verified a touch drag reaches the end with no visible track.
 - [ ] Verify signed-in favorites/history end-to-end — unavailable for externally managed Supabase without a test session.
