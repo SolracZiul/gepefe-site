@@ -1,6 +1,6 @@
 # Institutional design across all pages
-- [ ] Reorder shared navigation and add compact mobile header and fixed bottom shortcuts.
-- [ ] Add horizontal mobile filters and advanced year/author drawer; verify public mobile and desktop flows.
+- [x] Reorder shared navigation and add compact mobile header and fixed bottom shortcuts.
+- [x] Add horizontal mobile filters and advanced year/author drawer; verify public mobile and desktop flows.
 - [x] Apply edge-to-edge shell and remove redundant page introductions globally.
 - [x] Remove publication-card counters and verify layouts and public interactions.
 - [x] Share the Home header, sidebar and footer across every route.
