@@ -35,11 +35,11 @@ describe('contextual publication chips', () => {
     { ...base, id: 'outro', title: 'Dança', abstract: '', tags: ['Dança'], category: 'Teses' },
     { ...base, id: 'noticia', content_type: 'news', tags: ['Notícias exclusivas'], category: 'Notícia' },
   ];
-  test('uses only registered academic categories and nonempty tags', () => {
-    expect(publicationChips(data, '').map(chip => chip.label)).toEqual(['Artigos Completos', 'Teses', 'Dança', 'Inclusão', 'Jogo']);
+  test('uses only populated academic document categories, never tags', () => {
+    expect(publicationChips(data, '').map(chip => chip.label)).toEqual(['Artigos Completos', 'Teses']);
   });
   test('Jogo search exposes only metadata from matching publications', () => {
-    expect(publicationChips(data, 'Jogo').map(chip => chip.label)).toEqual(['Artigos Completos', 'Inclusão', 'Jogo']);
+    expect(publicationChips(data, 'Jogo').map(chip => chip.label)).toEqual(['Artigos Completos']);
   });
   test('no matches produce no invented chips', () => expect(publicationChips(data, 'inexistente')).toEqual([]));
   test('tag refinement matches exact metadata rather than title mentions', () => {
@@ -49,9 +49,20 @@ describe('contextual publication chips', () => {
     expect(filterPublications(data, 'Jogo', '', '', 'recent', { tag: '' }).map(article => article.id)).toEqual(['jogo']);
   });
   test('category routes restrict available chips', () => {
-    expect(publicationChips(data, '', 'Teses').map(chip => chip.label)).toEqual(['Teses', 'Dança']);
+    expect(publicationChips(data, '', 'Teses').map(chip => chip.label)).toEqual(['Teses']);
   });
-  test('normalizes repeated accented and spaced tags', () => {
-    expect(publicationChips([{ ...base, tags: [' Inclusão ', 'inclusao'] }], '').filter(chip => chip.kind === 'tag')).toEqual([{kind: 'tag', label: 'Inclusão'}]);
+  test('excludes year, date, author and generic tags', () => {
+    expect(publicationChips([{ ...base, tags: ['2020-', '23/10/2026', 'Vanessa Alves Silva', 'Outros', 'Teses'] }], '')).toEqual([{ kind: 'category', label: 'Artigos Completos' }]);
+  });
+  test('caps categories at four, leaving room for Tudo as the fifth chip', () => {
+    const categories = ['Artigos Completos', 'Dissertações', 'Pesquisas', 'Relatos de Experiência', 'Teses', 'Textos Acadêmicos'];
+    const all = categories.map((category, index) => ({ ...base, id: String(index), category }));
+    expect(publicationChips(all, '').map(chip => chip.label)).toEqual(categories.slice(0, 4));
+    expect(publicationChips(all, '').length + 1).toBe(5);
+  });
+  test('categories beyond the chip limit still filter publications', () => {
+    const categories = ['Artigos Completos', 'Dissertações', 'Pesquisas', 'Relatos de Experiência', 'Teses', 'Textos Acadêmicos'];
+    const all = categories.map((category, index) => ({ ...base, id: String(index), category }));
+    expect(filterPublications(all, '', '', 'Textos Acadêmicos', 'recent').map(article => article.id)).toEqual(['5']);
   });
 });
