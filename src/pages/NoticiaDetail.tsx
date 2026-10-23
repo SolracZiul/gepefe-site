@@ -129,8 +129,8 @@ export default function NoticiaDetail() {
     return (
       <div className="min-h-0 bg-background">
         
-        <main className="mx-auto py-0">
-          <div className="max-w-4xl mx-auto space-y-6">
+        <main className="w-full py-0">
+          <div className="w-full space-y-6">
             <Skeleton className="h-8 w-32" />
             <Skeleton className="h-12 w-full" />
             <Skeleton className="h-64 w-full" />
@@ -150,7 +150,7 @@ export default function NoticiaDetail() {
     return (
       <div className="min-h-0 bg-background">
         
-        <main className="mx-auto py-0">
+        <main className="w-full py-0">
           <div className="text-center py-16">
             <h1 className="text-2xl font-bold mb-4">Notícia não encontrada</h1>
             <Link to="/noticias">
@@ -173,16 +173,8 @@ export default function NoticiaDetail() {
     <div className="min-h-0 bg-background">
       
       
-      <main className="mx-auto py-0">
-        <div className="max-w-4xl mx-auto">
-          {/* Back button */}
-          <Link to="/noticias" className="inline-block mb-6">
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Voltar para Notícias
-            </Button>
-          </Link>
-
+      <main className="w-full py-0">
+        <div className="w-full">
           {/* Header */}
           <header className="mb-8">
             <h1 className="text-3xl sm:text-4xl font-semibold break-words text-foreground mb-4 leading-tight">

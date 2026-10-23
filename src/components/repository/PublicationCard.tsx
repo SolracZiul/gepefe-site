@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Bookmark, Download, ArrowUpRight, User, Users, FileText } from 'lucide-react';
+import { Bookmark, Download, ArrowUpRight, User, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArticleViewer } from '@/components/ArticleViewer';
@@ -55,14 +55,10 @@ export function PublicationCard({ article, saved, canSave, onSave, onRead }: Pro
     </div>
     <p className="mb-5 line-clamp-3 text-sm leading-6 text-muted-foreground">{article.abstract}</p>
     <div className="mt-auto">
-      <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] text-muted-foreground">
-        <span className="flex items-center gap-1.5"><Download className="h-3.5 w-3.5" />{article.download_count.toLocaleString('pt-BR')} downloads</span>
-        <span className="flex items-center gap-1.5"><FileText className="h-3.5 w-3.5" />{article.file_type?.includes('pdf') || article.pdf_url?.includes('.pdf') ? 'PDF' : 'Documento'}</span>
-        {canSave && <Button variant="ghost" size="icon" className="ml-auto h-7 w-7 hover:bg-muted hover:text-foreground" aria-label={saved ? 'Remover dos favoritos' : 'Salvar nos favoritos'} aria-pressed={saved} title={saved ? 'Remover dos favoritos' : 'Salvar nos favoritos'} onClick={onSave}><Bookmark className={saved ? 'fill-primary text-primary' : ''} /></Button>}
-      </div>
-      <div className="flex gap-2 border-t border-border pt-4">
-        <Button className="flex-1 px-3 text-xs" disabled={!hasFile} onClick={() => { onRead(); setPreview(true); }}><ArrowUpRight />Ler / Visualizar PDF</Button>
+      <div className="flex flex-wrap gap-2 border-t border-border pt-4">
+        <Button className="min-w-0 flex-1 px-3 text-xs" disabled={!hasFile} onClick={() => { onRead(); setPreview(true); }}><ArrowUpRight />Ler / Visualizar PDF</Button>
         <Button variant="outline" size="icon" disabled={!hasFile || downloading} aria-label="Download" title="Download" className="shrink-0 hover:bg-muted hover:text-foreground" onClick={download}><Download className={downloading ? 'animate-pulse' : ''} /></Button>
+        {canSave && <Button variant="ghost" size="icon" className="shrink-0 hover:bg-muted hover:text-foreground" aria-label={saved ? 'Remover dos favoritos' : 'Salvar nos favoritos'} aria-pressed={saved} title={saved ? 'Remover dos favoritos' : 'Salvar nos favoritos'} onClick={onSave}><Bookmark className={saved ? 'fill-primary text-primary' : ''} /></Button>}
       </div>
     </div>
     {preview && <ArticleViewer article={article} isOpen={preview} onClose={() => setPreview(false)} />}

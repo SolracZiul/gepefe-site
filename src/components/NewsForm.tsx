@@ -273,9 +273,9 @@ export function NewsForm({ news, onSuccess, onCancel }: NewsFormProps) {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-3xl mx-auto">
+    <div className="w-full bg-background">
+      <div className="w-full">
+        <div className="w-full">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">

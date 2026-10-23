@@ -86,13 +86,7 @@ export default function Noticias() {
     <div className="min-h-0 bg-background">
       
       
-      <main className="mx-auto py-0">
-        <div className="mb-8 border-b border-border pb-7">
-          <h1 className="text-3xl font-semibold text-foreground mb-4">Notícias GEPEFE</h1>
-          <p className="text-sm leading-6 text-muted-foreground max-w-2xl">
-            Acompanhe as últimas novidades, eventos e atualizações do Grupo de Estudos e Pesquisas em Educação Física Escolar
-          </p>
-        </div>
+      <main className="w-full py-0">
 
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">

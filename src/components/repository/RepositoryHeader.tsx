@@ -17,8 +17,8 @@ interface Props {
 export function RepositoryHeader({ query, onQueryChange, onToggleSidebar, onHistory, onSearch }: Props) {
   const { user, isAdmin, signOut } = useAuth();
   const name = user?.user_metadata?.display_name || user?.user_metadata?.full_name || 'Meu perfil';
-  return <header className="sticky top-0 z-40 border-b border-border bg-card">
-    <div className="mx-auto grid max-w-[1680px] grid-cols-[auto_minmax(0,1fr)] items-center gap-x-2 gap-y-3 px-4 py-4 sm:gap-x-5 lg:grid-cols-[240px_minmax(0,1fr)_auto] lg:px-8">
+  return <header className="w-full border-b border-border bg-card">
+    <div className="grid w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-x-2 gap-y-3 px-4 py-4 sm:gap-x-5 lg:grid-cols-[240px_minmax(0,1fr)_240px]">
       <div className="flex items-center gap-2 sm:gap-3">
         <Button variant="ghost" size="icon" aria-label="Alternar navegação" title="Alternar navegação" onClick={onToggleSidebar} className="shrink-0 hover:bg-muted hover:text-foreground"><PanelLeft /></Button>
         <Link to="/" aria-label="GEPEFE — início"><img src="/lovable-uploads/24fb75f9-0b2a-410a-8f90-d6d3efcf52e4.png" alt="GEPEFE" className="h-8 w-auto max-w-[100px] object-contain sm:h-10 sm:max-w-[135px]" /></Link>
