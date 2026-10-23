@@ -17,10 +17,10 @@ export function RepositoryHeader({ query, onQueryChange, onToggleSidebar, onHist
   const { user, isAdmin, signOut } = useAuth();
   const name = user?.user_metadata?.display_name || user?.user_metadata?.full_name || 'Meu perfil';
   return <header className="sticky top-0 z-40 border-b border-border bg-card">
-    <div className="mx-auto grid max-w-[1680px] grid-cols-[auto_1fr] items-center gap-x-5 gap-y-3 px-4 py-4 lg:grid-cols-[240px_minmax(0,1fr)_auto] lg:px-8">
-      <div className="flex items-center gap-3">
+    <div className="mx-auto grid max-w-[1680px] grid-cols-[auto_minmax(0,1fr)] items-center gap-x-2 gap-y-3 px-4 py-4 sm:gap-x-5 lg:grid-cols-[240px_minmax(0,1fr)_auto] lg:px-8">
+      <div className="flex items-center gap-2 sm:gap-3">
         <Button variant="ghost" size="icon" aria-label="Alternar navegação" title="Alternar navegação" onClick={onToggleSidebar} className="shrink-0 hover:bg-muted hover:text-foreground"><PanelLeft /></Button>
-        <Link to="/" aria-label="GEPEFE — início"><img src="/lovable-uploads/24fb75f9-0b2a-410a-8f90-d6d3efcf52e4.png" alt="GEPEFE" className="h-10 w-auto max-w-[135px] object-contain" /></Link>
+        <Link to="/" aria-label="GEPEFE — início"><img src="/lovable-uploads/24fb75f9-0b2a-410a-8f90-d6d3efcf52e4.png" alt="GEPEFE" className="h-8 w-auto max-w-[100px] object-contain sm:h-10 sm:max-w-[135px]" /></Link>
       </div>
       <form role="search" onSubmit={event => { event.preventDefault(); document.getElementById('publications')?.scrollIntoView({ block: 'start' }); }} className="relative col-span-2 row-start-2 lg:col-span-1 lg:row-start-1 lg:col-start-2 lg:mx-auto lg:w-full lg:max-w-2xl">
         <Search className="pointer-events-none absolute left-4 top-3.5 h-4 w-4 text-muted-foreground" />
@@ -35,7 +35,7 @@ export function RepositoryHeader({ query, onQueryChange, onToggleSidebar, onHist
           <DropdownMenuItem onClick={onHistory}><History className="mr-2 h-4 w-4" />Histórico de Leitura</DropdownMenuItem>
           {isAdmin && <DropdownMenuItem asChild><Link to="/admin"><Shield className="mr-2 h-4 w-4" />Painel Admin</Link></DropdownMenuItem>}
           <DropdownMenuSeparator /><DropdownMenuItem onClick={() => void signOut()}><LogOut className="mr-2 h-4 w-4" />Sair</DropdownMenuItem>
-        </DropdownMenuContent></DropdownMenu> : <Button variant="outline" asChild className="px-3 text-xs hover:bg-muted hover:text-foreground sm:text-sm"><Link to="/auth"><User />Login / Cadastro</Link></Button>}
+        </DropdownMenuContent></DropdownMenu> : <Button variant="outline" asChild className="px-3 text-xs hover:bg-muted hover:text-foreground sm:text-sm"><Link to="/auth"><User /><span className="sm:hidden">Entrar</span><span className="hidden sm:inline">Login / Cadastro</span></Link></Button>}
       </div>
     </div>
   </header>;
