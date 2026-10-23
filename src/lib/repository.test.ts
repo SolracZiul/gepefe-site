@@ -1,6 +1,6 @@
 /// <reference types="bun" />
 import { describe, expect, test } from 'bun:test';
-import { filterPublications, formatAcademicAuthor, formatCitation } from './repository';
+import { filterPublications, formatAcademicAuthor, formatCitation, publicationChips } from './repository';
 import type { Article } from '@/hooks/useArticles';
 
 const base: Article = { id: '1', title: 'Educação Física Escolar', authors: ['Vanessa Alves Silva'], abstract: 'Formação docente e inclusão', category: 'Artigos Completos', tags: ['Escola'], publish_date: '2025-01-01', download_count: 10, file_path: null, pdf_url: null, file_size: null, file_type: null, created_at: '', updated_at: '' };
@@ -26,5 +26,32 @@ describe('researchers', () => {
   });
   test('builds initials from first and last name, skipping titles', () => {
     expect(researcherInitials('Profa. Maria da Costa Souza')).toBe('MS');
+  });
+});
+
+describe('contextual publication chips', () => {
+  const data: Article[] = [
+    { ...base, id: 'jogo', title: 'Jogo na escola', abstract: '', tags: ['Jogo', 'Inclusão', ''], category: 'Artigos Completos' },
+    { ...base, id: 'outro', title: 'Dança', abstract: '', tags: ['Dança'], category: 'Teses' },
+    { ...base, id: 'noticia', content_type: 'news', tags: ['Notícias exclusivas'], category: 'Notícia' },
+  ];
+  test('uses only registered academic categories and nonempty tags', () => {
+    expect(publicationChips(data, '').map(chip => chip.label)).toEqual(['Artigos Completos', 'Teses', 'Dança', 'Inclusão', 'Jogo']);
+  });
+  test('Jogo search exposes only metadata from matching publications', () => {
+    expect(publicationChips(data, 'Jogo').map(chip => chip.label)).toEqual(['Artigos Completos', 'Inclusão', 'Jogo']);
+  });
+  test('no matches produce no invented chips', () => expect(publicationChips(data, 'inexistente')).toEqual([]));
+  test('tag refinement matches exact metadata rather than title mentions', () => {
+    expect(filterPublications(data, '', '', '', 'recent', { tag: 'inclusao' }).map(article => article.id)).toEqual(['jogo']);
+  });
+  test('clearing refinement preserves Jogo search results', () => {
+    expect(filterPublications(data, 'Jogo', '', '', 'recent', { tag: '' }).map(article => article.id)).toEqual(['jogo']);
+  });
+  test('category routes restrict available chips', () => {
+    expect(publicationChips(data, '', 'Teses').map(chip => chip.label)).toEqual(['Teses', 'Dança']);
+  });
+  test('normalizes repeated accented and spaced tags', () => {
+    expect(publicationChips([{ ...base, tags: [' Inclusão ', 'inclusao'] }], '').filter(chip => chip.kind === 'tag')).toEqual([{kind: 'tag', label: 'Inclusão'}]);
   });
 });

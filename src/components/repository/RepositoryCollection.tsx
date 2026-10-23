@@ -10,7 +10,7 @@ import { useArticlesContext } from '@/contexts/ArticlesContext';
 import { useSearch } from '@/contexts/SearchContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useFavorites } from '@/hooks/useFavorites';
-import { collectiveAuthor, filterPublications, readHistory, recordReading, studyAreas } from '@/lib/repository';
+import { collectiveAuthor, filterPublications, publicationChips, readHistory, recordReading, studyAreas } from '@/lib/repository';
 
 function Filter({ label, value, options, onChange }: { label: string; value: string; options: string[]; onChange: (value: string) => void }) {
   return <div className="min-w-0"><label className="mb-1 block text-[11px] font-medium text-muted-foreground">{label}</label><Select value={value || 'all'} onValueChange={value => onChange(value === 'all' ? '' : value)}><SelectTrigger aria-label={label} className="h-9 bg-background text-sm"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Todos</SelectItem>{options.map(option => <SelectItem key={option} value={option}>{option}</SelectItem>)}</SelectContent></Select></div>;
@@ -22,6 +22,7 @@ export function RepositoryCollection({ title = 'Todas as Publicações', categor
   const { isFavorited, toggleFavorite, loading: favoritesLoading } = useFavorites(user?.id || null);
   const [area, setArea] = useState('');
   const [type, setType] = useState('');
+  const [tag, setTag] = useState('');
   const [year, setYear] = useState('');
   const [author, setAuthor] = useState('');
   const [sort, setSort] = useState('recent');
@@ -30,21 +31,27 @@ export function RepositoryCollection({ title = 'Todas as Publicações', categor
   const [history, setHistory] = useState<string[]>([]);
   const [page, setPage] = useState(1);
   useEffect(() => { setHistory(user ? readHistory(user.id) : []); }, [user?.id]);
-  useEffect(() => { setPage(1); }, [searchQuery, area, type, year, author, sort, category, mode]);
+  useEffect(() => { setPage(1); }, [searchQuery, area, type, tag, year, author, sort, category, mode]);
   const academic = useMemo(() => articles.filter(item => item.content_type !== 'news'), [articles]);
+  const chips = useMemo(() => publicationChips(academic, searchQuery, category), [academic, searchQuery, category]);
+  useEffect(() => {
+    if (tag && !chips.some(chip => chip.kind === 'tag' && chip.label === tag)) setTag('');
+    if (type && !chips.some(chip => chip.kind === 'category' && chip.label === type)) setType('');
+  }, [chips, tag, type]);
   const types = Array.from(new Set(academic.map(item => item.category))).sort();
   const years = Array.from(new Set(academic.map(item => item.publish_date.slice(0, 4)))).sort().reverse();
   const authors = Array.from(new Set(academic.flatMap(item => item.authors).filter(name => name !== collectiveAuthor).map(name => name.replace(' (GEPEFE)', '')))).sort((a, b) => a.localeCompare(b, 'pt-BR'));
-  const filtered = personal ? filterPublications(articles, quick, '', '', 'recent', {}) : filterPublications(articles, searchQuery, area, type, sort, { year, author, category });
+  const filtered = personal ? filterPublications(articles, quick, '', '', 'recent', {}) : filterPublications(articles, searchQuery, area, type, sort, { year, author, category, tag });
   const visible = mode === 'favorites' ? filtered.filter(item => isFavorited(item.id)) : mode === 'history' ? history.flatMap(id => filtered.filter(item => item.id === id)) : filtered;
   const pages = Math.max(1, Math.ceil(visible.length / 9));
   const current = Math.min(page, pages);
-  const active = personal ? Boolean(quick) : Boolean(searchQuery || area || type || year || author);
-  const reset = () => { setQuick(''); setSearchQuery(''); setArea(''); setType(''); setYear(''); setAuthor(''); };
+  const active = personal ? Boolean(quick) : Boolean(searchQuery || area || type || tag || year || author);
+  const clearQuick = () => { setArea(''); setType(''); setTag(''); setYear(''); setAuthor(''); };
+  const reset = () => { setQuick(''); setSearchQuery(''); clearQuick(); setSort('recent'); };
   if (mode !== 'collection' && !authLoading && !user) return <section className="py-20 text-center"><BookOpen className="mx-auto mb-4 h-8 w-8 text-muted-foreground" /><h1 className="mb-3 text-2xl font-semibold">{title}</h1><p className="mb-5 text-sm text-muted-foreground">Entre na sua conta para acessar seus artigos.</p><Button asChild><Link to="/auth">Fazer Login</Link></Button></section>;
   return <>
     {personal ? <header className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><h1 className="text-xl font-semibold">{title}</h1><div className="relative w-full sm:max-w-xs"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input type="search" aria-label="Busca rápida" placeholder="Buscar por título, autor ou tag" value={quick} onChange={e => setQuick(e.target.value)} className="h-9 pl-9" /></div></header> : <>
-    <MobileCollectionFilters area={area} type={type} sort={sort} year={year} author={author} years={years} authors={authors} category={category} areas={studyAreas} types={category ? [category] : types} onArea={setArea} onType={setType} onSort={setSort} onYear={setYear} onAuthor={setAuthor} onReset={reset} />
+    <MobileCollectionFilters chips={chips} tag={tag} onTag={setTag} onClearQuick={clearQuick} area={area} type={type} sort={sort} year={year} author={author} years={years} authors={authors} category={category} areas={studyAreas} types={category ? [category] : types} onArea={setArea} onType={setType} onSort={setSort} onYear={setYear} onAuthor={setAuthor} onReset={reset} />
     <section aria-label="Filtros acadêmicos" className="mb-5 hidden gap-3 rounded-lg border border-border bg-card p-3 lg:grid lg:grid-cols-5">
       <Filter label="Área de Estudo" value={area} options={studyAreas} onChange={setArea} />
       <Filter label="Categoria / Tipo de Documento" value={type} options={category ? [category] : types} onChange={setType} />
