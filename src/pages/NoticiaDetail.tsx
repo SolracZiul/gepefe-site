@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Navigation } from "@/components/Navigation";
-import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -34,7 +32,7 @@ const renderMarkdown = (text: string) => {
       // Headers (## Title)
       if (line.startsWith('## ')) {
         return (
-          <h2 key={index} className="text-xl font-bold text-primary mt-6 mb-3 first:mt-0">
+          <h2 key={index} className="text-xl font-semibold text-foreground mt-6 mb-3 first:mt-0">
             {line.slice(3)}
           </h2>
         );
@@ -129,9 +127,9 @@ export default function NoticiaDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Navigation />
-        <main className="container mx-auto px-4 py-8">
+      <div className="min-h-0 bg-background">
+        
+        <main className="mx-auto py-0">
           <div className="max-w-4xl mx-auto space-y-6">
             <Skeleton className="h-8 w-32" />
             <Skeleton className="h-12 w-full" />
@@ -143,16 +141,16 @@ export default function NoticiaDetail() {
             </div>
           </div>
         </main>
-        <Footer />
+        
       </div>
     );
   }
 
   if (!news) {
     return (
-      <div className="min-h-screen bg-background">
-        <Navigation />
-        <main className="container mx-auto px-4 py-8">
+      <div className="min-h-0 bg-background">
+        
+        <main className="mx-auto py-0">
           <div className="text-center py-16">
             <h1 className="text-2xl font-bold mb-4">Notícia não encontrada</h1>
             <Link to="/noticias">
@@ -163,7 +161,7 @@ export default function NoticiaDetail() {
             </Link>
           </div>
         </main>
-        <Footer />
+        
       </div>
     );
   }
@@ -172,10 +170,10 @@ export default function NoticiaDetail() {
   const formattedDate = format(publishDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
+    <div className="min-h-0 bg-background">
       
-      <main className="container mx-auto px-4 py-8">
+      
+      <main className="mx-auto py-0">
         <div className="max-w-4xl mx-auto">
           {/* Back button */}
           <Link to="/noticias" className="inline-block mb-6">
@@ -187,12 +185,12 @@ export default function NoticiaDetail() {
 
           {/* Header */}
           <header className="mb-8">
-            <h1 className="text-4xl font-bold text-primary mb-4 leading-tight">
+            <h1 className="text-3xl sm:text-4xl font-semibold break-words text-foreground mb-4 leading-tight">
               {news.title}
             </h1>
             
             {news.summary && (
-              <p className="text-xl text-muted-foreground mb-6 leading-relaxed">
+              <p className="text-base text-muted-foreground mb-6 leading-relaxed">
                 {news.summary}
               </p>
             )}
@@ -231,7 +229,7 @@ export default function NoticiaDetail() {
                         <img
                           src={imageUrl}
                           alt={`${news.title} - Imagem ${index + 1}`}
-                          className="w-full h-80 md:h-[500px] object-cover"
+                          className="w-full h-80 md:h-[500px] object-contain bg-muted"
                         />
                       </div>
                     ))}
@@ -244,7 +242,7 @@ export default function NoticiaDetail() {
                     <Button
                       variant="outline"
                       size="icon"
-                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border-none shadow-lg"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-card/95 hover:bg-muted border-border shadow-card"
                       onClick={scrollPrev}
                       disabled={!prevBtnEnabled}
                     >
@@ -253,7 +251,7 @@ export default function NoticiaDetail() {
                     <Button
                       variant="outline"
                       size="icon"
-                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border-none shadow-lg"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-card/95 hover:bg-muted border-border shadow-card"
                       onClick={scrollNext}
                       disabled={!nextBtnEnabled}
                     >
@@ -266,9 +264,12 @@ export default function NoticiaDetail() {
                 {news.images.length > 1 && (
                   <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
                     {news.images.map((_, index) => (
-                      <button
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label={`Imagem ${index + 1}`}
                         key={index}
-                        className="w-2 h-2 rounded-full bg-white/60 hover:bg-white/80 transition-colors"
+                        className="h-3 w-3 rounded-full bg-card/70 hover:bg-card"
                         onClick={() => emblaApi && emblaApi.scrollTo(index)}
                       />
                     ))}
@@ -281,13 +282,13 @@ export default function NoticiaDetail() {
               <img
                 src={news.image_url}
                 alt={news.title}
-                className="w-full h-80 md:h-[500px] object-cover rounded-lg shadow-lg"
+                className="w-full h-80 md:h-[500px] object-contain bg-muted rounded-lg"
               />
             </div>
           )}
 
           {/* Content */}
-          <article className="prose prose-lg max-w-none mb-8">
+          <article className="prose prose-sm max-w-none mb-8">
             <div className="text-foreground leading-relaxed">
               {renderMarkdown(news.content)}
             </div>
@@ -309,7 +310,7 @@ export default function NoticiaDetail() {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }

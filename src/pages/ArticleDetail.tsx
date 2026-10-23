@@ -1,317 +1,65 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Download, ExternalLink, FileText, Calendar, User, Heart, Users } from "lucide-react";
-import { Navigation } from "@/components/Navigation";
-import { Footer } from "@/components/Footer";
-import { useAuth } from "@/hooks/useAuth";
-import { useFavorites } from "@/hooks/useFavorites";
-import { supabase } from "@/integrations/supabase/client";
-import { useArticlesContext } from "@/contexts/ArticlesContext";
-import type { Article } from "@/components/ArticleCard";
-import { recordReading } from '@/lib/repository';
-
+import { useParams, Link, Navigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { ArrowLeft, Bookmark, BookOpen, Calendar, Copy, Download, User, Users } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ArticleViewer } from '@/components/ArticleViewer';
+import { PublicationCard } from '@/components/repository/PublicationCard';
+import { useAuth } from '@/hooks/useAuth';
+import { useFavorites } from '@/hooks/useFavorites';
+import { useArticlesContext } from '@/contexts/ArticlesContext';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { collectiveAuthor, formatCitation, recordReading } from '@/lib/repository';
 export default function ArticleDetail() {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const { id } = useParams();
+  const { articles, loading, error, refetch } = useArticlesContext();
   const { user } = useAuth();
   const { toggleFavorite, isFavorited } = useFavorites(user?.id || null);
-  const { articles, loading } = useArticlesContext();
-  const [fileUrl, setFileUrl] = useState<string | null>(null);
-  const [loadingPreview, setLoadingPreview] = useState(false);
-
-  const article = articles.find((a: Article) => a.id === id);
-
-  useEffect(() => {
-    if (user && article && article.content_type !== 'news') recordReading(user.id, article.id);
-  }, [user?.id, article?.id]);
-
-  const getFileUrl = async () => {
-    if (!article) return null;
-    
-    if (article.file_path) {
-      const { data } = supabase.storage
-        .from('academic-articles')
-        .getPublicUrl(article.file_path);
-      return data.publicUrl;
-    }
-    return article.pdf_url;
-  };
-
-  const handleDownload = async () => {
+  const { toast } = useToast();
+  const [preview, setPreview] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const article = articles.find(item => item.id === id);
+  useEffect(() => { if (user && article && article.content_type !== 'news') recordReading(user.id, article.id); }, [user?.id, article?.id]);
+  if (loading) return <div role="status" className="py-20 text-center text-muted-foreground">Carregando artigo…</div>;
+  if (error) return <div className="py-20 text-center"><p className="mb-4 text-destructive">Não foi possível carregar o artigo.</p><Button onClick={() => void refetch()}>Tentar novamente</Button></div>;
+  if (!article) return <section className="py-20 text-center"><h1 className="mb-5 text-2xl font-semibold">Artigo não encontrado</h1><Button asChild variant="outline"><Link to="/todos"><ArrowLeft />Voltar ao acervo</Link></Button></section>;
+  if (article.content_type === 'news') return <Navigate to={`/noticia/${article.id}`} replace />;
+  const collective = article.authors.length === 1 && article.authors[0] === collectiveAuthor;
+  const member = article.authors.some(name => name.includes(' (GEPEFE)'));
+  const hasFile = Boolean(article.file_path || article.pdf_url);
+  const pdf = article.file_type?.includes('pdf') || article.pdf_url?.toLowerCase().includes('.pdf');
+  const citation = formatCitation(article, `${window.location.origin}/article/${article.id}`);
+  const related = articles.filter(item => item.content_type !== 'news' && item.id !== article.id && (item.category === article.category || item.tags.some(tag => article.tags.includes(tag)))).sort((a, b) => b.publish_date.localeCompare(a.publish_date)).slice(0, 3);
+  async function download() {
     if (!article) return;
-    
+    setDownloading(true);
     try {
       if (article.file_path) {
-        // Download from Supabase Storage
-        const { data, error } = await supabase.storage
-          .from('academic-articles')
-          .download(article.file_path);
-
+        const { data, error } = await supabase.storage.from('academic-articles').download(article.file_path);
         if (error) throw error;
-
-        // Create download link
         const url = URL.createObjectURL(data);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${article.title}.${article.file_type?.split('/')[1] || 'pdf'}`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-
-        // Update download count
-        await supabase
-          .from('articles')
-          .update({ download_count: article.download_count + 1 })
-          .eq('id', article.id);
-      } else if (article.pdf_url) {
-        // External URL - open in new tab
-        window.open(article.pdf_url, '_blank');
-      }
-    } catch (error) {
-      console.error('Error downloading file:', error);
-    }
-  };
-
-  const handleOpenExternal = async () => {
-    const url = await getFileUrl();
-    if (url) {
-      window.open(url, '_blank');
-    }
-  };
-
-  const loadPreview = async () => {
-    // Only load preview for uploaded files (file_path), not external URLs (pdf_url only)
-    if (!fileUrl && article && article.file_path) {
-      setLoadingPreview(true);
-      try {
-        const url = await getFileUrl();
-        setFileUrl(url);
-      } catch (error) {
-        console.error('Error loading preview:', error);
-      } finally {
-        setLoadingPreview(false);
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (article) {
-      loadPreview();
-    }
-  }, [article]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Navigation />
-        <div className="flex items-center justify-center h-[50vh]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Carregando artigo...</p>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
+        const anchor = document.createElement('a'); anchor.href = url; anchor.download = article.file_path.split('/').pop() || `${article.title}.pdf`; anchor.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      } else if (article.pdf_url) window.open(article.pdf_url, '_blank', 'noopener,noreferrer');
+    } catch { toast({ title: 'Não foi possível baixar o documento', variant: 'destructive' }); }
+    finally { setDownloading(false); }
   }
-
-  if (!article) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Navigation />
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold mb-4">Artigo não encontrado</h1>
-            <Button onClick={() => navigate(-1)}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Voltar
-            </Button>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
+  async function copyCitation() {
+    try { await navigator.clipboard.writeText(citation); toast({ title: 'Citação copiada' }); }
+    catch { toast({ title: 'Não foi possível copiar a citação', variant: 'destructive' }); }
   }
-
-  const isPDF = article.file_type?.includes('pdf') || article.pdf_url?.includes('.pdf');
-  const hasFile = article.file_path || article.pdf_url;
-
-  return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-      
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-6">
-          <Button variant="outline" onClick={() => navigate(-1)} className="mb-4">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Voltar
-          </Button>
-          
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
-            <div className="flex-1">
-              <div className="flex items-center gap-4 mb-4">
-                <Badge variant="secondary" className="bg-primary/10 text-primary">
-                  {article.category}
-                </Badge>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <Download className="w-4 h-4 mr-1" />
-                  {article.download_count} downloads
-                </div>
-              </div>
-              
-              <h1 className="text-2xl sm:text-3xl font-bold mb-4 leading-tight">
-                {article.title}
-              </h1>
-              
-              <div className="flex flex-col sm:flex-row sm:items-center gap-4 text-sm text-muted-foreground mb-6">
-                <div className="flex items-center">
-                  {article.authors.length === 1 && article.authors[0] === "Integrantes do Grupo de Estudos e Pesquisas em Educação Física e Escola" ? (
-                    // Criação coletiva do GEPEFE - ícone de grupo amarelo
-                    <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4 text-yellow-500" />
-                      <span className="font-medium text-primary">
-                        {article.authors[0]}
-                      </span>
-                    </div>
-                  ) : article.authors.some(author => author.includes(" (GEPEFE)")) ? (
-                    // Integrantes individuais do GEPEFE - apenas ícone amarelo, sem badge
-                    <>
-                      <User className="w-4 h-4 mr-1 text-yellow-500" />
-                      <span className="font-medium text-primary">
-                        {article.authors.map(author => author.replace(" (GEPEFE)", "")).join(", ")}
-                      </span>
-                    </>
-                  ) : (
-                    // Autores externos - ícone cinza normal
-                    <>
-                      <User className="w-4 h-4 mr-1" />
-                      {article.authors.join(", ")}
-                    </>
-                  )}
-                </div>
-                <div className="flex items-center">
-                  <Calendar className="w-4 h-4 mr-1" />
-                  {new Date(article.publish_date).toLocaleDateString('pt-BR')}
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-2">
-              {user && (
-                <Button
-                  variant={isFavorited(article.id) ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => toggleFavorite(article.id)}
-                  className="flex items-center gap-2"
-                >
-                  <Heart className={`h-4 w-4 ${isFavorited(article.id) ? 'fill-current' : ''}`} />
-                  {isFavorited(article.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
-                </Button>
-              )}
-              
-              {hasFile && (
-                <>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleOpenExternal}
-                  >
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    Abrir em nova aba
-                  </Button>
-                  <Button
-                    size="sm"
-                    onClick={handleDownload}
-                    className="bg-gradient-primary hover:shadow-glow"
-                  >
-                    <Download className="w-4 h-4 mr-2" />
-                    Download
-                  </Button>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Resumo */}
-        <div className="bg-card border rounded-lg p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">Resumo</h2>
-          <p className="text-muted-foreground leading-relaxed">
-            {article.abstract}
-          </p>
-        </div>
-
-        {/* Tags */}
-        {article.tags.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold mb-3">Tags</h2>
-            <div className="flex flex-wrap gap-2">
-              {article.tags.map((tag) => (
-                <Badge key={tag} variant="outline">
-                  {tag}
-                </Badge>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Visualização do Arquivo - só aparece se tiver arquivo carregado */}
-        {article.file_path && (
-          <div className="bg-card border rounded-lg p-6">
-            <h2 className="text-xl font-semibold mb-4">Visualização do Documento</h2>
-            
-            <div className="bg-muted/30 rounded-lg overflow-hidden" style={{ height: '70vh', minHeight: '500px' }}>
-              {loadingPreview ? (
-                <div className="flex items-center justify-center h-full">
-                  <div className="text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                    <p className="text-muted-foreground">Carregando visualização...</p>
-                  </div>
-                </div>
-              ) : fileUrl ? (
-                isPDF ? (
-                  <iframe
-                    src={`${fileUrl}#view=FitH`}
-                    className="w-full h-full border-0"
-                    title={`Preview: ${article.title}`}
-                  />
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-full p-8 text-center">
-                    <FileText className="w-16 h-16 text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">Visualização não disponível</h3>
-                    <p className="text-muted-foreground mb-4">
-                      Este tipo de arquivo não pode ser visualizado diretamente no navegador.
-                    </p>
-                    <div className="flex gap-2">
-                      <Button onClick={handleDownload}>
-                        <Download className="w-4 h-4 mr-2" />
-                        Baixar arquivo
-                      </Button>
-                      <Button variant="outline" onClick={handleOpenExternal}>
-                        <ExternalLink className="w-4 h-4 mr-2" />
-                        Abrir externamente
-                      </Button>
-                    </div>
-                  </div>
-                )
-              ) : (
-                <div className="flex flex-col items-center justify-center h-full p-8 text-center">
-                  <FileText className="w-16 h-16 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Arquivo não disponível</h3>
-                  <p className="text-muted-foreground">
-                    Nenhum arquivo foi encontrado para este artigo.
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-      
-      <Footer />
-    </div>
-  );
+  return <main>
+    <Button variant="ghost" size="sm" asChild className="mb-6"><Link to="/todos"><ArrowLeft />Voltar ao acervo</Link></Button>
+    <header className="border-b border-border pb-8"><div className="mb-4 flex flex-wrap items-center gap-3"><Badge variant="secondary" className="rounded-sm">{article.category}</Badge><span className="text-xs text-muted-foreground">{article.download_count} downloads</span></div><h1 className="max-w-5xl break-words text-3xl font-semibold leading-tight sm:text-4xl">{article.title}</h1>
+      <div className="mt-6 flex items-start gap-3 text-sm leading-6">{collective ? <Users className="mt-1 h-4 w-4 shrink-0 text-primary" /> : <User className={`mt-1 h-4 w-4 shrink-0 ${member ? 'text-primary' : 'text-muted-foreground'}`} />}<div><p>{collective ? 'Criação do GEPEFE' : article.authors.map(name => name.replace(' (GEPEFE)', '')).join('; ')}</p>{(collective || member) && <p className="text-xs text-muted-foreground">Grupo de Estudos e Pesquisas em Educação Física e Escola</p>}</div></div>
+      <div className="mt-4 flex flex-wrap items-center gap-5 text-xs text-muted-foreground"><span className="flex items-center gap-2"><Calendar className="h-4 w-4" />{new Date(`${article.publish_date.slice(0, 10)}T12:00:00`).toLocaleDateString('pt-BR')}</span><span>DOI: não informado</span></div>
+      <div className="mt-6 flex flex-wrap gap-3"><Button disabled={!hasFile || downloading} onClick={() => void download()}><Download />{downloading ? 'Baixando…' : pdf ? 'Baixar PDF' : 'Baixar documento'}</Button><Button variant="outline" disabled={!hasFile} onClick={() => setPreview(true)}><BookOpen />{pdf ? 'Ler PDF' : 'Ler documento'}</Button><Button variant="outline" size="icon" asChild={!user} onClick={user ? () => void toggleFavorite(article.id) : undefined} aria-label={isFavorited(article.id) ? 'Remover dos favoritos' : 'Salvar nos favoritos'} title="Salvar nos favoritos" aria-pressed={isFavorited(article.id)}>{user ? <Bookmark className={isFavorited(article.id) ? 'fill-primary text-primary' : ''} /> : <Link to="/auth"><Bookmark /></Link>}</Button></div>
+    </header>
+    <Tabs defaultValue="abstract" className="mt-8"><TabsList className="h-auto max-w-full flex-wrap justify-start"><TabsTrigger value="abstract">Resumo / Abstract</TabsTrigger><TabsTrigger value="keywords">Palavras-chave</TabsTrigger><TabsTrigger value="citation">Citação ABNT</TabsTrigger></TabsList><TabsContent value="abstract" className="py-6"><h2 className="mb-4 text-xl font-semibold">Resumo</h2><p className="max-w-4xl whitespace-pre-line text-sm leading-7 text-muted-foreground">{article.abstract || 'Resumo não informado.'}</p></TabsContent><TabsContent value="keywords" className="py-6"><h2 className="mb-4 text-xl font-semibold">Palavras-chave</h2><div className="flex flex-wrap gap-2">{article.tags.length ? article.tags.map(tag => <Badge key={tag} variant="outline">{tag}</Badge>) : <p className="text-sm text-muted-foreground">Palavras-chave não informadas.</p>}</div></TabsContent><TabsContent value="citation" className="py-6"><h2 className="mb-4 text-xl font-semibold">Referência bibliográfica</h2><p className="max-w-4xl break-words text-sm leading-7 text-muted-foreground">{citation}</p><Button variant="outline" className="mt-5" onClick={() => void copyCitation()}><Copy />Copiar citação</Button></TabsContent></Tabs>
+    <section className="mt-4 border-t border-border py-7"><div className="mb-4 flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-semibold">Citação pronta · ABNT</h2><Button variant="ghost" size="sm" onClick={() => void copyCitation()}><Copy />Copiar citação</Button></div><p className="max-w-4xl break-words text-sm leading-7 text-muted-foreground">{citation}</p></section>
+    {related.length > 0 && <section className="mt-8 border-t border-border pt-8"><h2 className="mb-5 text-xl font-semibold">Artigos Relacionados</h2><div className="grid gap-5 md:grid-cols-2 2xl:grid-cols-3">{related.map(item => <PublicationCard key={item.id} article={item} saved={isFavorited(item.id)} canSave={Boolean(user)} onSave={() => void toggleFavorite(item.id)} onRead={() => { if (user) recordReading(user.id, item.id); }} />)}</div></section>}
+    {preview && <ArticleViewer article={article} isOpen={preview} onClose={() => setPreview(false)} />}
+  </main>;
 }

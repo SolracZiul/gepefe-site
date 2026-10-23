@@ -1,128 +1,16 @@
-import { Navigation } from "@/components/Navigation";
-import { Footer } from "@/components/Footer";
-import { Button } from "@/components/ui/button";
-import { BookOpen, Users, Award, Globe } from "lucide-react";
+import { Link } from 'react-router-dom';
+import { ArrowRight, BookOpen, Users, Award, Globe, User } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useArticlesContext } from '@/contexts/ArticlesContext';
+import { useSearch } from '@/contexts/SearchContext';
 export default function Sobre() {
-  const handleSearch = (query: string) => {
-    console.log("Search:", query);
-  };
-  const handleCategoryFilter = (category: string) => {
-    console.log("Filter:", category);
-  };
-  return <div className="min-h-screen bg-background">
-      <Navigation />
-      
-      <main className="container mx-auto px-4 py-12">
-        {/* Hero Section */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-primary mb-6">
-            Sobre o GEPEFE
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Grupo de Estudos e Pesquisas em Educação Física e Escola - 
-            Promovendo a pesquisa acadêmica e o conhecimento científico na área de Educação Física.
-          </p>
-        </div>
-
-        {/* About Content */}
-        <div className="grid md:grid-cols-2 gap-12 mb-16">
-          <div>
-            <h2 className="text-3xl font-bold text-primary mb-6">Nossa Missão</h2>
-            <p className="text-lg text-muted-foreground mb-6">
-              O GEPEFE dedica-se à produção e disseminação de conhecimento científico na área de 
-              Educação Física Escolar, promovendo pesquisas que contribuam para o desenvolvimento 
-              da área e a formação de profissionais qualificados.
-            </p>
-            <p className="text-lg text-muted-foreground">
-              Nosso grupo reúne pesquisadores, professores e estudantes comprometidos com a 
-              excelência acadêmica e o avanço do conhecimento em Educação Física.
-            </p>
-          </div>
-          
-          <div>
-            <h2 className="text-3xl font-bold text-primary mb-6">Objetivos</h2>
-            <ul className="space-y-4">
-              <li className="flex items-start space-x-3">
-                <BookOpen className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
-                <span className="text-muted-foreground">
-                  Desenvolver pesquisas científicas de qualidade na área de Educação Física Escolar
-                </span>
-              </li>
-              <li className="flex items-start space-x-3">
-                <Users className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
-                <span className="text-muted-foreground">
-                  Formar pesquisadores e profissionais capacitados para atuar na área
-                </span>
-              </li>
-              <li className="flex items-start space-x-3">
-                <Globe className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
-                <span className="text-muted-foreground">
-                  Disseminar o conhecimento produzido para a comunidade acadêmica e sociedade
-                </span>
-              </li>
-              <li className="flex items-start space-x-3">
-                <Award className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
-                <span className="text-muted-foreground">
-                  Promover a excelência em pesquisa e extensão universitária
-                </span>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Research Lines */}
-        <div id="linhas-de-pesquisa" className="bg-gradient-card rounded-lg p-8 mb-16 scroll-mt-24">
-          <h2 className="text-3xl font-bold text-primary mb-8 text-center">
-            Linhas de Pesquisa
-          </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-background rounded-lg p-6 shadow-card">
-              <h3 className="text-xl font-semibold text-primary mb-3">
-                Pedagogia do Esporte
-              </h3>
-              <p className="text-muted-foreground">
-                Estudo dos processos de ensino-aprendizagem do esporte na escola e suas metodologias.
-              </p>
-            </div>
-            <div className="bg-background rounded-lg p-6 shadow-card">
-              <h3 className="text-xl font-semibold text-primary mb-3">
-                Currículo Escolar
-              </h3>
-              <p className="text-muted-foreground">
-                Análise e desenvolvimento de currículos de Educação Física na educação básica.
-              </p>
-            </div>
-            <div className="bg-background rounded-lg p-6 shadow-card">
-              <h3 className="text-xl font-semibold text-primary mb-3">
-                Formação Docente
-              </h3>
-              <p className="text-muted-foreground">
-                Pesquisas sobre a formação inicial e continuada de professores de Educação Física.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Statistics */}
-        
-
-        {/* CTA */}
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-primary mb-4">
-            Conheça Nossas Publicações
-          </h2>
-          <p className="text-muted-foreground mb-6">
-            Explore nosso repositório de artigos, pesquisas e materiais acadêmicos.
-          </p>
-          <Button size="lg" className="bg-primary hover:bg-primary/90" asChild>
-            <a href="/todos">
-              <BookOpen className="mr-2 h-5 w-5" />
-              Ver Publicações
-            </a>
-          </Button>
-        </div>
-      </main>
-
-      <Footer />
-    </div>;
+  const { articles } = useArticlesContext();
+  const { setSearchQuery } = useSearch();
+  const researchers = Array.from(new Set(articles.filter(item => item.content_type !== 'news').flatMap(item => item.authors.filter(name => name.includes(' (GEPEFE)'))))).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+  return <main><header className="mb-8 border-b border-border pb-7"><p className="mb-3 text-xs text-muted-foreground">GEPEFE / Institucional</p><h1 className="text-3xl font-semibold sm:text-4xl">Sobre o GEPEFE</h1><p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">Grupo de Estudos e Pesquisas em Educação Física e Escola</p></header>
+    <section className="grid gap-10 pb-10 lg:grid-cols-2"><div><h2 className="mb-4 text-xl font-semibold">Nossa Missão</h2><p className="text-sm leading-7 text-muted-foreground">O GEPEFE dedica-se à produção e disseminação de conhecimento científico na área de Educação Física Escolar, promovendo pesquisas que contribuam para o desenvolvimento da área e a formação de profissionais qualificados.</p><p className="mt-4 text-sm leading-7 text-muted-foreground">Nosso grupo reúne pesquisadores, professores e estudantes comprometidos com a excelência acadêmica e o avanço do conhecimento em Educação Física.</p></div><div><h2 className="mb-4 text-xl font-semibold">Objetivos</h2><ul className="space-y-4">{[{ icon: BookOpen, text: 'Desenvolver pesquisas científicas de qualidade na área de Educação Física Escolar' }, { icon: Users, text: 'Formar pesquisadores e profissionais capacitados para atuar na área' }, { icon: Globe, text: 'Disseminar o conhecimento produzido para a comunidade acadêmica e sociedade' }, { icon: Award, text: 'Promover a excelência em pesquisa e extensão universitária' }].map(item => <li key={item.text} className="flex items-start gap-3 text-sm leading-6 text-muted-foreground"><item.icon className="mt-1 h-4 w-4 shrink-0" />{item.text}</li>)}</ul></div></section>
+    <section id="linhas-de-pesquisa" className="scroll-mt-40 border-t border-border py-8"><h2 className="mb-5 text-xl font-semibold">Linhas de Pesquisa</h2><div className="grid gap-8 md:grid-cols-3">{[{ title: 'Pedagogia do Esporte', text: 'Estudo dos processos de ensino-aprendizagem do esporte na escola e suas metodologias.' }, { title: 'Currículo Escolar', text: 'Análise e desenvolvimento de currículos de Educação Física na educação básica.' }, { title: 'Formação Docente', text: 'Pesquisas sobre a formação inicial e continuada de professores de Educação Física.' }].map(item => <div key={item.title} className="border-l-2 border-primary pl-5"><h3 className="mb-3 text-base font-semibold">{item.title}</h3><p className="text-sm leading-6 text-muted-foreground">{item.text}</p></div>)}</div></section>
+    <section id="integrantes" className="scroll-mt-40 border-t border-border py-8"><h2 className="mb-2 text-xl font-semibold">Integrantes / Pesquisadores</h2><p className="mb-6 text-sm text-muted-foreground">Autores GEPEFE identificados nas publicações do acervo.</p><div className="grid gap-5 md:grid-cols-2 2xl:grid-cols-3">{researchers.map(author => <article key={author} className="rounded-lg border border-border bg-card p-5"><User className="mb-4 h-6 w-6 text-primary" /><h3 className="text-base font-semibold">{author.replace(' (GEPEFE)', '')}</h3><p className="mt-2 text-xs text-muted-foreground">Integrante do GEPEFE</p><Button variant="ghost" size="sm" className="mt-4" asChild><Link to="/busca" onClick={() => setSearchQuery(author.replace(' (GEPEFE)', ''))}>Publicações<ArrowRight /></Link></Button></article>)}</div>{researchers.length === 0 && <p className="py-8 text-sm text-muted-foreground">Nenhum integrante identificado no acervo disponível.</p>}</section>
+    <section className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-8"><h2 className="text-xl font-semibold">Produção acadêmica do GEPEFE</h2><Button asChild><Link to="/todos"><BookOpen />Ver Publicações</Link></Button></section>
+  </main>;
 }

@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import { Navigation } from "@/components/Navigation";
-import { Footer } from "@/components/Footer";
 import { NewsCard } from "@/components/NewsCard";
 import { useSearch } from "@/contexts/SearchContext";
 import { useAuth } from "@/hooks/useAuth";
@@ -85,19 +83,19 @@ export default function Noticias() {
   });
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
+    <div className="min-h-0 bg-background">
       
-      <main className="container mx-auto px-4 py-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-primary mb-4">Notícias GEPEFE</h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+      
+      <main className="mx-auto py-0">
+        <div className="mb-8 border-b border-border pb-7">
+          <h1 className="text-3xl font-semibold text-foreground mb-4">Notícias GEPEFE</h1>
+          <p className="text-sm leading-6 text-muted-foreground max-w-2xl">
             Acompanhe as últimas novidades, eventos e atualizações do Grupo de Estudos e Pesquisas em Educação Física Escolar
           </p>
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="space-y-4">
                 <Skeleton className="h-48 w-full rounded-lg" />
@@ -117,7 +115,7 @@ export default function Noticias() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
             {filteredNews.map((item) => (
               <NewsCard key={item.id} news={item} />
             ))}
@@ -125,7 +123,7 @@ export default function Noticias() {
         )}
       </main>
 
-      <Footer />
+      
     </div>
   );
 }
