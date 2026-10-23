@@ -4,6 +4,7 @@ import { BookOpen, ChevronLeft, ChevronRight, RotateCcw, X } from 'lucide-react'
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PublicationCard } from './PublicationCard';
+import { MobileCollectionFilters } from './MobileCollectionFilters';
 import { useArticlesContext } from '@/contexts/ArticlesContext';
 import { useSearch } from '@/contexts/SearchContext';
 import { useAuth } from '@/hooks/useAuth';
@@ -39,14 +40,15 @@ export function RepositoryCollection({ title = 'Todas as Publicações', categor
   const reset = () => { setSearchQuery(''); setArea(''); setType(''); setYear(''); setAuthor(''); };
   if (mode !== 'collection' && !authLoading && !user) return <section className="py-20 text-center"><BookOpen className="mx-auto mb-4 h-8 w-8 text-muted-foreground" /><h1 className="mb-3 text-2xl font-semibold">{title}</h1><p className="mb-5 text-sm text-muted-foreground">Entre na sua conta para acessar seus artigos.</p><Button asChild><Link to="/auth">Fazer Login</Link></Button></section>;
   return <>
-    <section aria-label="Filtros acadêmicos" className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+    <MobileCollectionFilters area={area} type={type} sort={sort} year={year} author={author} years={years} authors={authors} category={category} onArea={setArea} onType={setType} onSort={setSort} onYear={setYear} onAuthor={setAuthor} onReset={reset} />
+    <section aria-label="Filtros acadêmicos" className="mb-6 hidden gap-4 lg:grid lg:grid-cols-3 xl:grid-cols-5">
       <Filter label="Área de Estudo" value={area} options={studyAreas} onChange={setArea} />
       <Filter label="Categoria / Tipo de Documento" value={type} options={category ? [category] : types} onChange={setType} />
       <Filter label="Ano" value={year} options={years} onChange={setYear} />
       <Filter label="Autor" value={author} options={authors} onChange={setAuthor} />
       <div><label className="mb-2 block text-[11px] font-medium text-muted-foreground">Ordenação</label><Select value={sort} onValueChange={setSort}><SelectTrigger aria-label="Ordenação" className="h-11 bg-card"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="recent">Mais Recentes</SelectItem><SelectItem value="downloads">Mais Baixados</SelectItem><SelectItem value="title">A–Z</SelectItem></SelectContent></Select></div>
     </section>
-    <section id="publications" aria-label={title}>{active && <div className="mb-4 flex justify-end"><Button variant="ghost" size="sm" onClick={reset}><X />Limpar filtros</Button></div>}
+    <section id="publications" aria-label={title}>{active && <div className="mb-4 hidden justify-end lg:flex"><Button variant="ghost" size="sm" onClick={reset}><X />Limpar filtros</Button></div>}
       {loading || (mode !== 'collection' && (authLoading || favoritesLoading)) ? <div role="status" className="py-16 text-center text-muted-foreground">Carregando publicações…</div> : error ? <div className="py-16 text-center"><p className="mb-4 text-destructive">Não foi possível carregar o acervo.</p><Button variant="outline" onClick={() => void refetch()}><RotateCcw />Tentar novamente</Button></div> : visible.length === 0 ? <div className="py-16 text-center"><BookOpen className="mx-auto mb-4 h-8 w-8 text-muted-foreground" /><p className="text-sm text-muted-foreground">Nenhuma publicação encontrada.</p>{active && <Button variant="outline" className="mt-5" onClick={reset}>Limpar filtros</Button>}</div> : <div className="grid gap-5 md:grid-cols-2 2xl:grid-cols-3">{visible.slice((current - 1) * 9, current * 9).map(article => <PublicationCard key={article.id} article={article} canSave={Boolean(user)} saved={isFavorited(article.id)} onSave={() => void toggleFavorite(article.id)} onRead={() => { if (user) setHistory(recordReading(user.id, article.id)); }} />)}</div>}
       {!loading && visible.length > 0 && <div className="mt-6 flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground"><p>{(current - 1) * 9 + 1}–{Math.min(current * 9, visible.length)} de {visible.length} publicações</p>{pages > 1 && <div className="flex items-center gap-3"><Button variant="outline" size="icon" aria-label="Página anterior" disabled={current === 1} onClick={() => setPage(current - 1)}><ChevronLeft /></Button><span>{current} / {pages}</span><Button variant="outline" size="icon" aria-label="Próxima página" disabled={current === pages} onClick={() => setPage(current + 1)}><ChevronRight /></Button></div>}</div>}
     </section>

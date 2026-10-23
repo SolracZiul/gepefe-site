@@ -1,10 +1,12 @@
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import { Search, PanelLeft, User, Bookmark, History, LogOut, Shield, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/hooks/useAuth';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
 interface Props {
   query: string;
@@ -17,8 +19,14 @@ interface Props {
 export function RepositoryHeader({ query, onQueryChange, onToggleSidebar, onHistory, onSearch }: Props) {
   const { user, isAdmin, signOut } = useAuth();
   const name = user?.user_metadata?.display_name || user?.user_metadata?.full_name || 'Meu perfil';
+  const [searchOpen, setSearchOpen] = useState(false);
   return <header className="w-full border-b border-border bg-card">
-    <div className="grid w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-x-2 gap-y-3 px-4 py-4 sm:gap-x-5 lg:grid-cols-[240px_minmax(0,1fr)_240px]">
+    <div className="flex h-14 items-center justify-between px-3 lg:hidden">
+      <Link to="/" aria-label="GEPEFE — início"><img src="/lovable-uploads/24fb75f9-0b2a-410a-8f90-d6d3efcf52e4.png" alt="GEPEFE" className="h-8 w-auto" /></Link>
+      <div className="flex items-center gap-2"><Button variant="ghost" size="icon" aria-label="Abrir busca" title="Buscar" onClick={() => setSearchOpen(true)}><Search /></Button><ThemeToggle /></div>
+    </div>
+    <Sheet open={searchOpen} onOpenChange={setSearchOpen}><SheetContent side="top" className="repository"><SheetHeader><SheetTitle className="mb-4 text-left">Buscar no acervo</SheetTitle></SheetHeader><form role="search" onSubmit={event => { event.preventDefault(); setSearchOpen(false); onSearch(); }} className="flex gap-2"><Input autoFocus aria-label="Busca no acervo" placeholder="Título, autor, palavra-chave ou ano" value={query} onChange={event => onQueryChange(event.target.value)} className="min-w-0" /><Button type="submit" size="icon" aria-label="Pesquisar"><Search /></Button></form></SheetContent></Sheet>
+    <div className="hidden w-full grid-cols-[240px_minmax(0,1fr)_240px] items-center gap-x-5 px-4 py-4 lg:grid">
       <div className="flex items-center gap-2 sm:gap-3">
         <Button variant="ghost" size="icon" aria-label="Alternar navegação" title="Alternar navegação" onClick={onToggleSidebar} className="shrink-0 hover:bg-muted hover:text-foreground"><PanelLeft /></Button>
         <Link to="/" aria-label="GEPEFE — início"><img src="/lovable-uploads/24fb75f9-0b2a-410a-8f90-d6d3efcf52e4.png" alt="GEPEFE" className="h-8 w-auto max-w-[100px] object-contain sm:h-10 sm:max-w-[135px]" /></Link>
