@@ -9,10 +9,13 @@ const areaTerms: Record<string, string[]> = {
   'Esporte e Sociedade': ['esporte', 'sociedade', 'esportivo'],
 };
 
-export function filterPublications(articles: Article[], query: string, area: string, documentType: string, sort: string) {
+export function filterPublications(articles: Article[], query: string, area: string, documentType: string, sort: string, facets: { year?: string; author?: string; category?: string } = {}) {
   return articles.filter(article => {
     if (article.content_type === 'news') return false;
     if (documentType && article.category !== documentType) return false;
+    if (facets.category && article.category !== facets.category) return false;
+    if (facets.year && article.publish_date.slice(0, 4) !== facets.year) return false;
+    if (facets.author && !article.authors.some(author => normalize(author.replace(' (GEPEFE)', '')) === normalize(facets.author || ''))) return false;
     const searchable = normalize([article.title, ...article.authors, article.abstract, ...article.tags, article.publish_date.slice(0, 4)].join(' '));
     if (area && !(areaTerms[area] || [normalize(area)]).some(term => searchable.includes(term))) return false;
     return normalize(query.trim()).split(/\s+/).every(term => searchable.includes(term));
@@ -41,4 +44,10 @@ export function recordReading(userId: string, articleId: string) {
   const history = [articleId, ...readHistory(userId).filter(id => id !== articleId)];
   try { localStorage.setItem(`gepefe-reading:${userId}`, JSON.stringify(history)); } catch { /* Reading remains available without browser storage. */ }
   return history;
+}
+export function formatCitation(article: Article, url: string) {
+  const authors = article.authors.length === 1 && article.authors[0] === collectiveAuthor
+    ? 'GRUPO DE ESTUDOS E PESQUISAS EM EDUCAÇÃO FÍSICA E ESCOLA'
+    : article.authors.map(formatAcademicAuthor).join('; ');
+  return `${authors.replace(/\.+$/, '')}. ${article.title.replace(/\.+$/, '')}. ${article.category}, ${article.publish_date.slice(0, 4)}. Disponível em: ${url}.`;
 }

@@ -11,9 +11,10 @@ interface Props {
   onQueryChange: (query: string) => void;
   onToggleSidebar: () => void;
   onHistory: () => void;
+  onSearch: () => void;
 }
 
-export function RepositoryHeader({ query, onQueryChange, onToggleSidebar, onHistory }: Props) {
+export function RepositoryHeader({ query, onQueryChange, onToggleSidebar, onHistory, onSearch }: Props) {
   const { user, isAdmin, signOut } = useAuth();
   const name = user?.user_metadata?.display_name || user?.user_metadata?.full_name || 'Meu perfil';
   return <header className="sticky top-0 z-40 border-b border-border bg-card">
@@ -22,7 +23,7 @@ export function RepositoryHeader({ query, onQueryChange, onToggleSidebar, onHist
         <Button variant="ghost" size="icon" aria-label="Alternar navegação" title="Alternar navegação" onClick={onToggleSidebar} className="shrink-0 hover:bg-muted hover:text-foreground"><PanelLeft /></Button>
         <Link to="/" aria-label="GEPEFE — início"><img src="/lovable-uploads/24fb75f9-0b2a-410a-8f90-d6d3efcf52e4.png" alt="GEPEFE" className="h-8 w-auto max-w-[100px] object-contain sm:h-10 sm:max-w-[135px]" /></Link>
       </div>
-      <form role="search" onSubmit={event => { event.preventDefault(); document.getElementById('publications')?.scrollIntoView({ block: 'start' }); }} className="relative col-span-2 row-start-2 lg:col-span-1 lg:row-start-1 lg:col-start-2 lg:mx-auto lg:w-full lg:max-w-2xl">
+      <form role="search" onSubmit={event => { event.preventDefault(); onSearch(); }} className="relative col-span-2 row-start-2 lg:col-span-1 lg:row-start-1 lg:col-start-2 lg:mx-auto lg:w-full lg:max-w-2xl">
         <Search className="pointer-events-none absolute left-4 top-3.5 h-4 w-4 text-muted-foreground" />
         <Input aria-label="Buscar por título, autor, palavra-chave ou ano" placeholder="Título, Autor, Palavra-chave ou Ano" value={query} onChange={event => onQueryChange(event.target.value)} className="h-11 rounded-md border-border bg-background pl-11 pr-10 text-sm" />
         {query && <Button type="button" variant="ghost" size="icon" aria-label="Limpar busca" title="Limpar busca" onClick={() => onQueryChange('')} className="absolute right-1 top-1 h-9 w-9 hover:bg-muted hover:text-foreground"><X /></Button>}

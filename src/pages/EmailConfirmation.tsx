@@ -131,7 +131,7 @@ export default function EmailConfirmation() {
   }, [searchParams, navigate, toast]);
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-[65vh] flex items-center justify-center py-8">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Confirmação de Email</CardTitle>
@@ -147,9 +147,9 @@ export default function EmailConfirmation() {
             </div>
           ) : confirmed ? (
             <div className="flex flex-col items-center space-y-4">
-              <CheckCircle className="h-12 w-12 text-green-500" />
+              <CheckCircle className="h-12 w-12 text-foreground" />
               <div className="space-y-2">
-                <h3 className="text-lg font-semibold text-green-700">
+                <h3 className="text-lg font-semibold text-foreground">
                   Email confirmado com sucesso!
                 </h3>
                 <p className="text-muted-foreground">
@@ -159,9 +159,9 @@ export default function EmailConfirmation() {
             </div>
           ) : (
             <div className="flex flex-col items-center space-y-4">
-              <XCircle className="h-12 w-12 text-red-500" />
+              <XCircle className="h-12 w-12 text-destructive" />
               <div className="space-y-2">
-                <h3 className="text-lg font-semibold text-red-700">
+                <h3 className="text-lg font-semibold text-destructive">
                   Erro na confirmação
                 </h3>
                 <p className="text-muted-foreground text-sm">

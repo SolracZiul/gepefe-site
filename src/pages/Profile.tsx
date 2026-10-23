@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Navigation } from "@/components/Navigation";
-import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { User, Heart, Download } from "lucide-react";
@@ -40,7 +38,7 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-0 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
@@ -51,13 +49,13 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navigation />
+    <div className="min-h-0 flex flex-col">
       
-      <main className="flex-1 container mx-auto px-4 py-8">
+      
+      <main className="flex-1 mx-auto py-0">
         <div className="max-w-4xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-primary mb-2">Meu Perfil</h1>
+            <h1 className="text-3xl font-semibold text-foreground mb-2">Meu Perfil</h1>
             <p className="text-muted-foreground">
               Gerencie suas informações e acompanhe sua atividade no repositório
             </p>
@@ -151,7 +149,7 @@ export default function Profile() {
         </div>
       </main>
       
-      <Footer />
+      
     </div>
   );
 }

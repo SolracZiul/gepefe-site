@@ -158,7 +158,7 @@ export default function Admin() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-[65vh] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
           <p>Carregando...</p>
@@ -198,12 +198,12 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
+    <div className="bg-background">
+      <div className="mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-wrap justify-between items-center gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-primary">Painel Administrativo</h1>
+            <h1 className="text-3xl font-semibold text-foreground">Painel Administrativo</h1>
             <p className="text-muted-foreground">Gerencie as publicações do GEPEFE</p>
           </div>
           <div className="flex gap-2">
@@ -218,7 +218,7 @@ export default function Admin() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardHeader className="pb-2">
               <CardDescription>Total</CardDescription>
@@ -268,7 +268,7 @@ export default function Admin() {
         </div>
 
         {/* Actions */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
           <h2 className="text-xl font-semibold">Conteúdo</h2>
           <div className="flex gap-2">
             <Button onClick={() => handleCreateNew('article')}>

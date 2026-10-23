@@ -94,7 +94,7 @@ export default function ResetPassword() {
 
   if (!isValidSession) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 flex items-center justify-center p-4">
+      <div className="min-h-[65vh] flex items-center justify-center py-8">
         <Card className="w-full max-w-md">
           <CardContent className="pt-6 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
@@ -107,10 +107,10 @@ export default function ResetPassword() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 flex items-center justify-center p-4">
+      <div className="min-h-[65vh] flex items-center justify-center py-8">
         <Card className="w-full max-w-md">
           <CardContent className="pt-6 text-center">
-            <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+            <CheckCircle className="h-16 w-16 text-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Senha alterada com sucesso!</h3>
             <p className="text-muted-foreground mb-4">
               Redirecionando você para seu perfil...
@@ -123,8 +123,8 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-2xl border-0 bg-white/95 backdrop-blur-sm">
+    <div className="min-h-[65vh] flex items-center justify-center py-8">
+      <Card className="w-full max-w-md border-border bg-card shadow-card">
         <CardHeader className="text-center space-y-2">
           <CardTitle className="text-2xl font-bold">Nova Senha</CardTitle>
           <CardDescription>
@@ -146,13 +146,16 @@ export default function ResetPassword() {
                   className="pl-10 pr-10 h-12"
                   required
                 />
-                <button
+                <Button
+                      variant="ghost"
+                      size="icon"
+                      aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 text-muted-foreground hover:text-foreground"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -169,13 +172,16 @@ export default function ResetPassword() {
                   className="pl-10 pr-10 h-12"
                   required
                 />
-                <button
+                <Button
+                      variant="ghost"
+                      size="icon"
+                      aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 text-muted-foreground hover:text-foreground"
                 >
                   {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
+                </Button>
               </div>
             </div>
 

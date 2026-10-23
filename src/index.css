@@ -131,7 +131,13 @@
 }
 
 /* A neutral, restrained institutional workspace, scoped to the repository. */
-.repository {
+:root, .repository {
+  --news-overlay: linear-gradient(to top, hsl(222 13% 11% / 0.9), hsl(222 13% 11% / 0.15), transparent);
+  --media-foreground: 0 0% 100%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 215 15% 17%;
+  --accent: 210 10% 94%;
+  --accent-foreground: 215 15% 17%;
   --background: 210 14% 97%;
   --foreground: 215 15% 17%;
   --card: 0 0% 100%;
@@ -147,7 +153,11 @@
   font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   letter-spacing: 0;
 }
-.dark .repository {
+.dark, .dark .repository {
+  --popover: 222 13% 14%;
+  --popover-foreground: 210 12% 94%;
+  --accent: 222 10% 18%;
+  --accent-foreground: 210 12% 94%;
   --background: 222 13% 11%;
   --foreground: 210 12% 94%;
   --card: 222 13% 14%;

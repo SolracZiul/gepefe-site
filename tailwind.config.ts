@@ -19,6 +19,7 @@ export default {
 		},
 		extend: {
 			colors: {
+                'media-foreground': 'hsl(var(--media-foreground))',
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -65,6 +66,7 @@ export default {
 				}
 			},
 			backgroundImage: {
+                'news-overlay': 'var(--news-overlay)',
 				'gradient-primary': 'var(--gradient-primary)',
 				'gradient-hero': 'var(--gradient-hero)',
 				'gradient-card': 'var(--gradient-card)'

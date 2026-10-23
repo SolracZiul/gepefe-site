@@ -1,4 +1,6 @@
 import React from "react";
+import { RepositoryShell } from "./components/repository/RepositoryShell";
+import { RepositoryCollection } from "./components/repository/RepositoryCollection";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -48,8 +50,12 @@ const App = () => {
           <Sonner />
           <BrowserRouter>
             <div className="min-h-screen w-full">
-              <Routes>
+              <RepositoryShell><Routes>
                 <Route path="/" element={<Index />} />
+                <Route path="/repositorio" element={<Todos />} />
+                <Route path="/busca" element={<Todos />} />
+                <Route path="/historico" element={<RepositoryCollection title="Histórico de Leitura" mode="history" />} />
+                <Route path="/artigo/:id" element={<ArticleDetail />} />
                 <Route path="/todos" element={<Todos />} />
                 <Route path="/sobre" element={<Sobre />} />
                 <Route path="/artigos-completos" element={<ArtigosCompletos />} />
@@ -68,7 +74,7 @@ const App = () => {
                 <Route path="/noticia/:id" element={<NoticiaDetail />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
-              </Routes>
+              </Routes></RepositoryShell>
             </div>
           </BrowserRouter>
           </TooltipProvider>
