@@ -221,7 +221,7 @@ export default function NoticiaDetail() {
                         <img
                           src={imageUrl}
                           alt={`${news.title} - Imagem ${index + 1}`}
-                          className="block w-full h-auto max-h-[300px] md:max-h-[480px] object-cover"
+                          className="block w-full h-auto max-h-[300px] md:max-h-[480px] object-cover rounded-xl"
                         />
                       </div>
                     ))}
