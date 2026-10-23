@@ -9,17 +9,37 @@ const areaTerms: Record<string, string[]> = {
   'Esporte e Sociedade': ['esporte', 'sociedade', 'esportivo'],
 };
 
-export function filterPublications(articles: Article[], query: string, area: string, documentType: string, sort: string, facets: { year?: string; author?: string; category?: string } = {}) {
+export function filterPublications(articles: Article[], query: string, area: string, documentType: string, sort: string, facets: { year?: string; author?: string; category?: string; tag?: string } = {}) {
   return articles.filter(article => {
     if (article.content_type === 'news') return false;
     if (documentType && article.category !== documentType) return false;
     if (facets.category && article.category !== facets.category) return false;
+    if (facets.tag && !article.tags.some(tag => normalize(tag.trim()) === normalize(facets.tag || ''))) return false;
     if (facets.year && article.publish_date.slice(0, 4) !== facets.year) return false;
     if (facets.author && !article.authors.some(author => normalize(author.replace(' (GEPEFE)', '')) === normalize(facets.author || ''))) return false;
     const searchable = normalize([article.title, ...article.authors, article.abstract, ...article.tags, article.publish_date.slice(0, 4)].join(' '));
     if (area && !(areaTerms[area] || [normalize(area)]).some(term => searchable.includes(term))) return false;
     return normalize(query.trim()).split(/\s+/).every(term => searchable.includes(term));
   }).sort((a, b) => sort === 'downloads' ? b.download_count - a.download_count : sort === 'title' ? a.title.localeCompare(b.title, 'pt-BR') : b.publish_date.localeCompare(a.publish_date));
+}
+
+export interface PublicationChip { kind: 'category' | 'tag'; label: string }
+
+/** Build quick facets from search matches, before the selected chip is applied. */
+export function publicationChips(articles: Article[], query: string, category = ''): PublicationChip[] {
+  const matching = filterPublications(articles, query, '', '', 'recent', { category });
+  const values = (items: string[]) => {
+    const unique = new Map<string, string>();
+    for (const raw of items) {
+      const label = raw.trim();
+      if (label && !unique.has(normalize(label))) unique.set(normalize(label), label);
+    }
+    return Array.from(unique.values()).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+  };
+  return [
+    ...values(matching.map(article => article.category)).map(label => ({ kind: 'category' as const, label })),
+    ...values(matching.flatMap(article => article.tags)).map(label => ({ kind: 'tag' as const, label })),
+  ];
 }
 
 export function formatAcademicAuthor(author: string) {
