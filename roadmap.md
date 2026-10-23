@@ -6,6 +6,7 @@
 - [x] Keep one ABNT reference block on the article page and move "Sobre o GEPEFE" into the sidebar institutional block.
 - [x] Make the news cover image responsive, cropped and rounded with even spacing; verify desktop and mobile.
 - [x] Share the Home header, sidebar and footer across every route.
+- [x] Unify "Linhas de Pesquisa" and "Integrantes / Pesquisadores" on one page, drop the extra menu item and redirect the old addresses.
 - [x] Unify repository lists and filters; redesign article metadata, citation, reader and related publications.
 - [x] Standardize About, researchers, news and account pages; verify public navigation and interactions.
 - [ ] Verify signed-in favorites/history end-to-end — unavailable for externally managed Supabase without a test session.
