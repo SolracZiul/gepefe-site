@@ -3,18 +3,17 @@ import { Bookmark, FlaskConical, History, Info, Library, LockKeyholeOpen, Newspa
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useSearch } from '@/contexts/SearchContext';
+import { institutionalLinks, isCollectionRoute } from '@/lib/repository-navigation';
+
+const icons = { library: Library, news: Newspaper, research: FlaskConical, users: Users, info: Info };
 
 export function RepositorySidebar({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) {
   const { user } = useAuth();
   const location = useLocation();
   const { setSearchQuery, setSelectedCategory } = useSearch();
   const items = [
-    { label: 'Acervo Completo', icon: Library, href: '/todos', active: location.pathname === '/' || ['/todos', '/repositorio', '/busca', '/artigos-completos', '/textos-academicos', '/pesquisas', '/dissertacoes', '/teses'].includes(location.pathname) },
+    ...institutionalLinks.map(item => ({ ...item, icon: icons[item.icon], active: item.href === '/todos' ? isCollectionRoute(location.pathname) : item.href === '/noticias' ? location.pathname.startsWith('/noticia') : location.pathname + location.hash === item.href })),
     ...(user ? [{ label: 'Meus Favoritos', icon: Bookmark, href: '/favoritos' }, { label: 'Histórico de Leitura', icon: History, href: '/historico' }] : []),
-    { label: 'Sobre o GEPEFE', icon: Info, href: '/sobre' },
-    { label: 'Linhas de Pesquisa', icon: FlaskConical, href: '/sobre#linhas-de-pesquisa' },
-    { label: 'Integrantes / Pesquisadores', icon: Users, href: '/sobre#integrantes' },
-    { label: 'Notícias', icon: Newspaper, href: '/noticias' },
   ];
   return <>
     {!collapsed && <p className="mb-4 px-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Repositório</p>}
