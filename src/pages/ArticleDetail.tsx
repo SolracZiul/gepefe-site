@@ -10,6 +10,7 @@ import { useFavorites } from "@/hooks/useFavorites";
 import { supabase } from "@/integrations/supabase/client";
 import { useArticlesContext } from "@/contexts/ArticlesContext";
 import type { Article } from "@/components/ArticleCard";
+import { recordReading } from '@/lib/repository';
 
 export default function ArticleDetail() {
   const { id } = useParams<{ id: string }>();
@@ -21,6 +22,10 @@ export default function ArticleDetail() {
   const [loadingPreview, setLoadingPreview] = useState(false);
 
   const article = articles.find((a: Article) => a.id === id);
+
+  useEffect(() => {
+    if (user && article && article.content_type !== 'news') recordReading(user.id, article.id);
+  }, [user?.id, article?.id]);
 
   const getFileUrl = async () => {
     if (!article) return null;
