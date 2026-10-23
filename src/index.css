@@ -197,14 +197,24 @@ html body[data-scroll-locked] {
   flex-wrap: nowrap;
   align-items: center;
   overflow-x: auto;
+  overflow-y: hidden;
   overscroll-behavior-x: contain;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Edge / IE */
   -webkit-overflow-scrolling: touch;
 }
-.repository-chip-scroll::-webkit-scrollbar {
+/* Chrome / Safari / mobile browsers: the track, thumb and corner must all be invisible. */
+.repository-chip-scroll::-webkit-scrollbar,
+.repository-chip-scroll::-webkit-scrollbar-track,
+.repository-chip-scroll::-webkit-scrollbar-track-piece,
+.repository-chip-scroll::-webkit-scrollbar-thumb,
+.repository-chip-scroll::-webkit-scrollbar-button,
+.repository-chip-scroll::-webkit-scrollbar-corner {
   display: none;
   width: 0;
   height: 0;
+  min-width: 0;
+  min-height: 0;
+  background: transparent;
 }
 
