@@ -3,7 +3,7 @@ import { ArrowRight, BookOpen, Users, Award, Globe, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useArticlesContext } from '@/contexts/ArticlesContext';
 import { useSearch } from '@/contexts/SearchContext';
-export default function Sobre() {
+export default function LinhasDePesquisa() {
   const { articles } = useArticlesContext();
   const { setSearchQuery } = useSearch();
   const researchers = Array.from(new Set(articles.filter(item => item.content_type !== 'news').flatMap(item => item.authors.filter(name => name.includes(' (GEPEFE)'))))).sort((a, b) => a.localeCompare(b, 'pt-BR'));

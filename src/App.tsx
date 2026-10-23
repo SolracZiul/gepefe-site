@@ -5,11 +5,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import Sobre from "./pages/Sobre";
+import LinhasDePesquisa from "./pages/LinhasDePesquisa";
+import { institutionalRedirectTarget } from "./lib/repository-navigation";
 import ArtigosCompletos from "./pages/ArtigosCompletos";
 import TextosAcademicos from "./pages/TextosAcademicos";
 import Pesquisas from "./pages/Pesquisas";
@@ -29,9 +30,15 @@ import { ArticlesProvider } from "./contexts/ArticlesContext";
 import { SearchProvider } from "./contexts/SearchContext";
 
 console.log("App.tsx: All imports loaded successfully - Updated");
-console.log("Components check:", { Index, NotFound, Sobre, ArtigosCompletos, TextosAcademicos, Pesquisas, Dissertacoes, Todos, Auth, Admin, Noticias, NoticiaDetail });
+console.log("Components check:", { Index, NotFound, LinhasDePesquisa, ArtigosCompletos, TextosAcademicos, Pesquisas, Dissertacoes, Todos, Auth, Admin, Noticias, NoticiaDetail });
 
 const queryClient = new QueryClient();
+
+// Former institutional addresses must never dead-end: they land on the unified page.
+function LegacyInstitutionalRedirect() {
+  const { hash } = useLocation();
+  return <Navigate to={institutionalRedirectTarget(hash)} replace />;
+}
 
 const App = () => {
   console.log("App component rendering...");
@@ -57,7 +64,9 @@ const App = () => {
                 <Route path="/historico" element={<RepositoryCollection title="Histórico de Leitura" mode="history" />} />
                 <Route path="/artigo/:id" element={<ArticleDetail />} />
                 <Route path="/todos" element={<Todos />} />
-                <Route path="/sobre" element={<Sobre />} />
+                <Route path="/linhas-de-pesquisa" element={<LinhasDePesquisa />} />
+                <Route path="/sobre" element={<LegacyInstitutionalRedirect />} />
+                <Route path="/integrantes" element={<LegacyInstitutionalRedirect />} />
                 <Route path="/artigos-completos" element={<ArtigosCompletos />} />
                 <Route path="/textos-academicos" element={<TextosAcademicos />} />
                 <Route path="/pesquisas" element={<Pesquisas />} />

@@ -1,13 +1,20 @@
+// The institutional page is a single destination: mission, objectives, research lines and researchers.
+export const institutionalPath = '/linhas-de-pesquisa';
+
 export const institutionalLinks = [
   { label: 'Acervo Completo', href: '/todos', icon: 'library' },
   { label: 'Notícias', href: '/noticias', icon: 'news' },
-  { label: 'Linhas de Pesquisa', href: '/sobre#linhas-de-pesquisa', icon: 'research' },
-  { label: 'Integrantes / Pesquisadores', href: '/sobre#integrantes', icon: 'users' },
-  { label: 'Sobre o GEPEFE', href: '/sobre', icon: 'info' },
+  { label: 'Linhas de Pesquisa', href: institutionalPath, icon: 'research' },
 ] as const;
 
-// The sidebar menu omits "Sobre o GEPEFE": institutional identity lives in the sidebar's institutional block.
-export const sidebarLinks = institutionalLinks.filter(item => item.href !== '/sobre');
+export const sidebarLinks = institutionalLinks;
+
+const institutionalSections = ['#linhas-de-pesquisa', '#integrantes'];
+
+// Old institutional destinations (/sobre, /integrantes) land on the unified page, keeping a known section anchor.
+export function institutionalRedirectTarget(hash: string) {
+  return institutionalPath + (institutionalSections.includes(hash) ? hash : '');
+}
 
 export function mobileNavigation(signedIn: boolean) {
   return [
