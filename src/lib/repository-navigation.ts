@@ -6,6 +6,9 @@ export const institutionalLinks = [
   { label: 'Sobre o GEPEFE', href: '/sobre', icon: 'info' },
 ] as const;
 
+// The sidebar menu omits "Sobre o GEPEFE": institutional identity lives in the sidebar's institutional block.
+export const sidebarLinks = institutionalLinks.filter(item => item.href !== '/sobre');
+
 export function mobileNavigation(signedIn: boolean) {
   return [
     { label: 'Início', href: '/todos', icon: 'home' },
