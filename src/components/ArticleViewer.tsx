@@ -95,6 +95,9 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
   }, [isOpen, article.id]);
 
   const isPDF = article.file_type?.includes('pdf') || article.pdf_url?.includes('.pdf');
+  // External-hosted documents only offer the central "Acessar documento" action,
+  // so the header must not repeat it with "Abrir em nova aba".
+  const isExternalLink = !!article.pdf_url && !article.file_path;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
