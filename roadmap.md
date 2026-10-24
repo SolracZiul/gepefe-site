@@ -1,5 +1,5 @@
 # Institutional design across all pages
-- [ ] Confirm native Google OAuth suppresses automatic webview navigation and closes the integrated browser immediately on the exact app callback.
+- [x] Confirm native Google OAuth suppresses automatic webview navigation and closes the integrated browser immediately on the exact app callback; 36 focused tests pass, build OK; physical device check remains pending below.
 - [x] Correct native OAuth initialization, callback session handling and document/journal opening paths; 39 behavior tests pass and web login/reader UI checked.
 - [ ] Verify Google return and embedded documents on a physical native device — requires generated Android/iOS projects, OS scheme registration and Supabase callback allowlisting; instructions in NATIVE_SETUP.md.
 - [x] Remove the news block from the Home/Acervo Completo page on desktop and mobile so news lives only on /noticias; verified home shows filters, grid, pagination and footer only.
