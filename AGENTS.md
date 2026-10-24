@@ -16,3 +16,4 @@
 
 - Quick category chips derive from shared academic search matches before refinement; the full category selector remains independent of the quick-chip limit, and Tudo clears refinement without discarding search so advanced categories remain selectable.
 - The quick-filter chip bar renders one non-wrapping row through the shared `.repository-chip-scroll` class in `src/index.css` (nowrap, horizontal overflow, scrollbar hidden in every engine, vertical overflow hidden and touch-action left automatic) with each chip shrink-0, so pills never stack, no scroll indicator shows, thumb swipe and vertical page swiping from the row both still work, and the advanced-filters icon stays on the same line.
+- Admin content cards keep the text column min-w-0, the action buttons shrink-0 and the metadata row flex-wrap, so edit/delete never get pushed off-screen at phone widths; the page itself keeps bottom padding clear of the mobile bottom bar.
