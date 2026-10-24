@@ -1,4 +1,5 @@
 # Institutional design across all pages
+- [ ] Add automatic external-download preview fallback for blocked requests and invalid PDFs; preserve successful downloads.
 - [x] Separate download buttons from document previews; 5 focused download tests and 41 regression tests pass; real collection click downloaded a 163745-byte PDF without navigation. External hosts may block fetching or serve landing pages; those show an error rather than a preview. Native device transfer verification remains pending with the physical-device task below.
 - [x] Confirm native Google OAuth suppresses automatic webview navigation and closes the integrated browser immediately on the exact app callback; 36 focused tests pass, build OK; physical device check remains pending below.
 - [x] Correct native OAuth initialization, callback session handling and document/journal opening paths; 39 behavior tests pass and web login/reader UI checked.

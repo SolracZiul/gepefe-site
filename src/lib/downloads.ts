@@ -7,8 +7,22 @@ interface DownloadableDocument {
   pdf_url: string | null;
 }
 
-/** Download actions are separate from preview actions, including in the native app. */
+/** External hosts can refuse fetching; reserve the web tab before user activation expires. */
 export async function downloadDocument(article: DownloadableDocument) {
+  if (!article.file_path && article.pdf_url) {
+    const url = article.pdf_url;
+    const fallbackTab = !isNative() ? window.open('', '_blank') : null;
+    if (fallbackTab) fallbackTab.opener = null;
+    try {
+      await fetchAndDownload(url, `${article.title.replace(/[\\/:*?"<>|]/g, '_')}.pdf`, article.title, true);
+      fallbackTab?.close();
+    } catch (error) {
+      console.warn('Download direto bloqueado pelo servidor externo. Abrindo visualização.', error);
+      if (fallbackTab && !fallbackTab.closed) fallbackTab.location.href = url;
+      else await openExternalUrl(url);
+    }
+    return;
+  }
   const filename = article.file_path?.split('/').pop() || `${article.title.replace(/[\\/:*?"<>|]/g, '_')}.pdf`;
   let url: string;
   if (article.file_path) {
@@ -27,16 +41,22 @@ export async function downloadDocument(article: DownloadableDocument) {
     throw new Error('Ficheiro não disponível.');
   }
 
-  // Never fall back to opening a preview if a host refuses a download (e.g. CORS).
+  await fetchAndDownload(url, filename, article.title);
+}
+
+async function fetchAndDownload(url: string, filename: string, title: string, validatePdf = false) {
   const response = await fetch(url);
   if (!response.ok) throw new Error('Não foi possível descarregar o ficheiro.');
   const blob = await response.blob();
   if (!blob.size || blob.type.toLowerCase().includes('text/html')) {
     throw new Error('Este endereço não disponibiliza um ficheiro para download.');
   }
+  if (validatePdf && !((await blob.slice(0, 1024).text()).includes('%PDF-'))) {
+    throw new Error('O servidor não devolveu um PDF válido.');
+  }
   const file = new File([blob], filename, { type: blob.type });
   if (isNative() && navigator.canShare?.({ files: [file] })) {
-    try { await navigator.share({ files: [file], title: article.title }); }
+    try { await navigator.share({ files: [file], title }); }
     catch (error) { if ((error as DOMException).name !== 'AbortError') throw error; }
     return;
   }
