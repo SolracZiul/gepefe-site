@@ -106,16 +106,18 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
             <DialogTitle className="min-w-0 flex-1 text-sm leading-tight break-words sm:text-lg">{article.title}</DialogTitle>
             <div className="flex flex-nowrap items-center justify-end gap-2 sm:justify-start">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleOpenExternal}
-                className="shrink-0 whitespace-nowrap text-xs sm:text-sm"
-              >
-                <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Abrir em nova aba</span>
-                <span className="sm:hidden">Nova aba</span>
-              </Button>
+              {!isExternalLink && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleOpenExternal}
+                  className="shrink-0 whitespace-nowrap text-xs sm:text-sm"
+                >
+                  <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Abrir em nova aba</span>
+                  <span className="sm:hidden">Nova aba</span>
+                </Button>
+              )}
               <Button
                 size="sm"
                 onClick={handleDownload}
