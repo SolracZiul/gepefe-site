@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { openExternalUrl, openStoredFileNative, signInWithGoogle } from '@/lib/native';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Download, ExternalLink, FileText } from "lucide-react";
@@ -59,7 +60,7 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
           .eq('id', article.id);
       } else if (article.pdf_url) {
         // External URL - open in new tab
-        window.open(article.pdf_url, '_blank');
+        void openExternalUrl(article.pdf_url);
       }
     } catch (error) {
       console.error('Error downloading file:', error);
@@ -69,7 +70,7 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
   const handleOpenExternal = async () => {
     const url = await getFileUrl();
     if (url) {
-      window.open(url, '_blank');
+      void openExternalUrl(url);
     }
   };
 

@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { openExternalUrl, openStoredFileNative, signInWithGoogle } from '@/lib/native';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Download, Eye, Calendar, User, Heart, Users } from "lucide-react";
@@ -63,7 +64,7 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
           .eq('id', article.id);
       } else if (article.pdf_url) {
         // External URL - open in new tab
-        window.open(article.pdf_url, '_blank');
+        void openExternalUrl(article.pdf_url);
       }
     } catch (error) {
       console.error('Error downloading file:', error);

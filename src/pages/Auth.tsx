@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { openExternalUrl, openStoredFileNative, signInWithGoogle } from '@/lib/native';
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -96,15 +97,7 @@ export default function Auth() {
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/email-confirmation`,
-          queryParams: {
-            prompt: 'select_account'
-          }
-        }
-      });
+      const { error } = await signInWithGoogle(`${window.location.origin}/email-confirmation`);
 
       if (error) {
         toast({
