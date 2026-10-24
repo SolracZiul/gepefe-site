@@ -199,7 +199,7 @@ export default function Admin() {
 
   return (
     <div className="bg-background">
-      <div className="w-full">
+      <div className="w-full pb-24">
         {/* Header */}
         <div className="flex flex-wrap justify-between items-center gap-4 mb-8">
           <div className="flex gap-2">
@@ -214,7 +214,7 @@ export default function Admin() {
         </div>
 
         {/* Stats */}
-        <div className="mb-6 grid grid-cols-3 gap-2 sm:grid-cols-6">
+        <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           <Card>
             <CardHeader className="space-y-0.5 p-3">
               <CardDescription className="text-xs">Total</CardDescription>
@@ -266,7 +266,7 @@ export default function Admin() {
         {/* Actions */}
         <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
           <h2 className="text-xl font-semibold">Conteúdo</h2>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button onClick={() => handleCreateNew('article')}>
               <Plus className="h-4 w-4 mr-2" />
               Nova Publicação
