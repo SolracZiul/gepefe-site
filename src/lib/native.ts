@@ -34,11 +34,18 @@ export async function signInWithGoogle(webRedirect: string) {
   return result;
 }
 
+function parseNativeAuthCallback(url: string) {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'com.gepefe.app:' && parsed.hostname === 'login-callback' && ['', '/'].includes(parsed.pathname)
+      ? parsed : undefined;
+  } catch { return undefined; }
+}
+
 /** Only accepts the exact OAuth callback; never treats unrelated links as sessions. */
 export async function completeNativeAuth(url: string) {
-  let parsed: URL;
-  try { parsed = new URL(url); } catch { return false; }
-  if (parsed.protocol !== 'com.gepefe.app:' || parsed.hostname !== 'login-callback' || !['', '/'].includes(parsed.pathname)) return false;
+  const parsed = parseNativeAuthCallback(url);
+  if (!parsed) return false;
   const hash = new URLSearchParams(parsed.hash.replace(/^#/, ''));
   const parameter = (key: string) => hash.get(key) || parsed.searchParams.get(key);
   if (parameter('error')) throw new Error('Não foi possível concluir o login com Google. Tente novamente.');
@@ -61,15 +68,15 @@ export function registerNativeAuthListener(onSuccess: () => void, onError: () =>
   let disposed = false;
   let processing = false;
   const handleUrl = async ({ url }: { url: string }) => {
-    if (disposed || processing) return;
+    if (disposed || processing || !parseNativeAuthCallback(url)) return;
     processing = true;
     try {
+      // Dismiss OAuth as soon as the app receives its callback, before session I/O.
+      await Browser.close().catch(() => undefined);
       if (await completeNativeAuth(url) && !disposed) {
-        await Browser.close().catch(() => undefined);
         onSuccess();
       }
     } catch {
-      await Browser.close().catch(() => undefined);
       if (!disposed) onError();
     } finally { processing = false; }
   };

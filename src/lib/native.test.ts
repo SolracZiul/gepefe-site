@@ -94,3 +94,32 @@ test('cold-start callback also restores the session', async () => {
   expect(success).toHaveBeenCalledTimes(1);
   cleanup();
 });
+
+test('the app closes OAuth immediately before restoring the callback session', async () => {
+  const success = mock(() => undefined);
+  const cleanup = registerNativeAuthListener(success, mock(() => undefined));
+  await new Promise(resolve => setTimeout(resolve, 0));
+  let release: (() => void) | undefined;
+  setSession.mockImplementationOnce(async () => {
+    expect(browserClose).toHaveBeenCalledTimes(1);
+    await new Promise<void>(resolve => { release = resolve; });
+    return { data: { session: { user: { id: 'test-user' } } }, error: null };
+  });
+  const callback = onAppUrl({ url: 'com.gepefe.app://login-callback#access_token=test-access&refresh_token=test-refresh' });
+  await new Promise(resolve => setTimeout(resolve, 0));
+  expect(browserClose).toHaveBeenCalledTimes(1);
+  expect(success).not.toHaveBeenCalled();
+  release?.();
+  await callback;
+  expect(success).toHaveBeenCalledTimes(1);
+  cleanup();
+});
+
+test('unrelated app links do not close the integrated browser', async () => {
+  const cleanup = registerNativeAuthListener(mock(() => undefined), mock(() => undefined));
+  await new Promise(resolve => setTimeout(resolve, 0));
+  await onAppUrl({ url: 'com.gepefe.app://document' });
+  expect(browserClose).not.toHaveBeenCalled();
+  expect(setSession).not.toHaveBeenCalled();
+  cleanup();
+});
