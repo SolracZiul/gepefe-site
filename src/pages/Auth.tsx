@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { openExternalUrl, openStoredFileNative, signInWithGoogle } from '@/lib/native';
+import { signInWithGoogle } from '@/lib/native';
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

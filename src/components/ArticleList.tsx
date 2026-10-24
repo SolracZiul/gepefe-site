@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { openExternalUrl, openStoredFileNative, signInWithGoogle } from '@/lib/native';
+import { openExternalUrl } from '@/lib/native';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Edit, Trash2, Download, Calendar, User } from "lucide-react";
@@ -100,15 +100,13 @@ export const ArticleList = ({ articles, onEdit, onDelete }: ArticleListProps) =>
             </div>
             {article.pdf_url && (
               <div className="mt-3">
-                <a
-                  href={article.pdf_url}
-                  target="_blank"
-                  onClick={(e) => { e.preventDefault(); void openExternalUrl(article.pdf_url!); }}
-                  rel="noopener noreferrer"
-                  className="text-sm text-primary hover:underline"
+                <Button
+                  variant="link"
+                  onClick={() => { if (article.pdf_url) void openExternalUrl(article.pdf_url); }}
+                  className="h-auto p-0 text-sm"
                 >
                   Ver PDF →
-                </a>
+                </Button>
               </div>
             )}
           </CardContent>

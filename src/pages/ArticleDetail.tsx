@@ -1,5 +1,5 @@
 import { useParams, Link, Navigate } from 'react-router-dom';
-import { openExternalUrl, openStoredFileNative, signInWithGoogle } from '@/lib/native';
+import { openExternalUrl, openStoredFileNative } from '@/lib/native';
 import { useEffect, useState } from 'react';
 import { ArrowLeft, Bookmark, BookOpen, Calendar, Copy, Download, User, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';

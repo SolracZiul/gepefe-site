@@ -1,6 +1,6 @@
 import { Capacitor } from '@capacitor/core';
 import { Browser } from '@capacitor/browser';
-import { App } from '@capacitor/app';
+import { App as CapacitorApp } from '@capacitor/app';
 import { supabase } from '@/integrations/supabase/client';
 
 export const NATIVE_AUTH_CALLBACK = 'com.gepefe.app://login-callback';
@@ -9,7 +9,7 @@ export const isNative = () => Capacitor.isNativePlatform();
 
 /** Opens an external URL inside the app (in-app browser) on native, new tab on web. */
 export async function openExternalUrl(url: string) {
-  if (isNative()) await Browser.open({ url, presentationStyle: 'popover' });
+  if (isNative()) await Browser.open({ url });
   else window.open(url, '_blank', 'noopener,noreferrer');
 }
 
@@ -30,26 +30,75 @@ export async function signInWithGoogle(webRedirect: string) {
     provider: 'google',
     options: { redirectTo: NATIVE_AUTH_CALLBACK, skipBrowserRedirect: true, queryParams: { prompt: 'select_account' } },
   });
-  if (result.data?.url) await Browser.open({ url: result.data.url });
+  if (!result.error && result.data?.url) await Browser.open({ url: result.data.url });
   return result;
 }
 
-/** Listens for the deep link returning from OAuth and completes the session. */
-export function registerNativeAuthListener() {
-  if (!isNative()) return;
-  App.addListener('appUrlOpen', async ({ url }) => {
-    if (!url.startsWith(NATIVE_AUTH_CALLBACK)) return;
+/** Only accepts the exact OAuth callback; never treats unrelated links as sessions. */
+export async function completeNativeAuth(url: string) {
+  let parsed: URL;
+  try { parsed = new URL(url); } catch { return false; }
+  if (parsed.protocol !== 'com.gepefe.app:' || parsed.hostname !== 'login-callback' || !['', '/'].includes(parsed.pathname)) return false;
+  const hash = new URLSearchParams(parsed.hash.replace(/^#/, ''));
+  const parameter = (key: string) => hash.get(key) || parsed.searchParams.get(key);
+  if (parameter('error')) throw new Error('Não foi possível concluir o login com Google. Tente novamente.');
+  const code = parsed.searchParams.get('code');
+  const accessToken = parameter('access_token');
+  const refreshToken = parameter('refresh_token');
+  if (!code && (!accessToken || !refreshToken)) return false;
+  const result = code
+    ? await supabase.auth.exchangeCodeForSession(code)
+    : accessToken && refreshToken
+      ? await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
+      : undefined;
+  if (result?.error) throw result.error;
+  return Boolean(result?.data.session);
+}
+
+/** Mounted by App.tsx, including cold starts and cleanup on unmount. */
+export function registerNativeAuthListener(onSuccess: () => void, onError: () => void) {
+  if (!isNative()) return () => undefined;
+  let disposed = false;
+  let processing = false;
+  const handleUrl = async ({ url }: { url: string }) => {
+    if (disposed || processing) return;
+    processing = true;
     try {
-      const parsed = new URL(url);
-      const code = parsed.searchParams.get('code');
-      const hash = new URLSearchParams(parsed.hash.replace(/^#/, ''));
-      if (code) await supabase.auth.exchangeCodeForSession(code);
-      else if (hash.get('access_token') && hash.get('refresh_token')) {
-        await supabase.auth.setSession({ access_token: hash.get('access_token')!, refresh_token: hash.get('refresh_token')! });
+      if (await completeNativeAuth(url) && !disposed) {
+        await Browser.close().catch(() => undefined);
+        onSuccess();
       }
-    } finally {
+    } catch {
       await Browser.close().catch(() => undefined);
-      window.location.replace('/');
-    }
-  });
+      if (!disposed) onError();
+    } finally { processing = false; }
+  };
+  const listener = CapacitorApp.addListener('appUrlOpen', handleUrl);
+  void listener.then(async () => {
+    if (disposed) return;
+    const launch = await CapacitorApp.getLaunchUrl();
+    if (launch?.url) await handleUrl(launch);
+  }).catch(() => { if (!disposed) onError(); });
+  return () => {
+    disposed = true;
+    void listener.then(handle => handle.remove()).catch(() => undefined);
+  };
+}
+
+/** Also catches journal/PDF anchors embedded in sanitized news content. */
+export function registerNativeLinkListener(onError: () => void) {
+  if (!isNative()) return () => undefined;
+  const handleClick = (event: MouseEvent) => {
+    if (!(event.target instanceof Element)) return;
+    const anchor = event.target.closest('a[href]');
+    if (!(anchor instanceof HTMLAnchorElement)) return;
+    const url = new URL(anchor.href, window.location.href);
+    if (!['https:', 'http:'].includes(url.protocol)) return;
+    if (url.origin === window.location.origin && anchor.target !== '_blank' && !anchor.hasAttribute('download')) return;
+    event.preventDefault();
+    event.stopPropagation();
+    void openExternalUrl(url.href).catch(onError);
+  };
+  document.addEventListener('click', handleClick, true);
+  return () => document.removeEventListener('click', handleClick, true);
 }
