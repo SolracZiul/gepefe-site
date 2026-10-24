@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { isNative, openExternalUrl, openStoredFileNative } from '@/lib/native';
+import { downloadDocument } from '@/lib/downloads';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -37,36 +38,17 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
 
   const handleDownload = async () => {
     try {
-      if (article.file_path && await openStoredFileNative('academic-articles', article.file_path)) return;
+      await downloadDocument(article);
       if (article.file_path) {
-        // Download from Supabase Storage
-        const { data, error } = await supabase.storage
-          .from('academic-articles')
-          .download(article.file_path);
-
-        if (error) throw error;
-
-        // Create download link
-        const url = URL.createObjectURL(data);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${article.title}.${article.file_type?.split('/')[1] || 'pdf'}`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-
         // Update download count
         await supabase
           .from('articles')
           .update({ download_count: article.download_count + 1 })
           .eq('id', article.id);
-      } else if (article.pdf_url) {
-        // External URL - open in new tab
-        void openExternalUrl(article.pdf_url);
       }
     } catch (error) {
       console.error('Error downloading file:', error);
+      toast({ title: 'Não foi possível baixar o documento', variant: 'destructive' });
     }
   };
 
@@ -155,7 +137,7 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
                   Este documento está hospedado em um site externo.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                  <Button onClick={handleDownload} size="sm" className="text-xs sm:text-sm">
+                  <Button onClick={handleOpenExternal} size="sm" className="text-xs sm:text-sm">
                     <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                     Acessar documento
                   </Button>

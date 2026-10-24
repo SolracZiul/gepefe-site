@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { openExternalUrl, openStoredFileNative } from '@/lib/native';
+import { downloadDocument } from '@/lib/downloads';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Download, Eye, Calendar, User, Heart, Users } from "lucide-react";
@@ -39,33 +39,13 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
 
   const handleDownload = async () => {
     try {
-      if (article.file_path && await openStoredFileNative('academic-articles', article.file_path)) return;
+      await downloadDocument(article);
       if (article.file_path) {
-        // Download from Supabase Storage
-        const { data, error } = await supabase.storage
-          .from('academic-articles')
-          .download(article.file_path);
-
-        if (error) throw error;
-
-        // Create download link
-        const url = URL.createObjectURL(data);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${article.title}.${article.file_type?.split('/')[1] || 'pdf'}`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-
         // Update download count
         await supabase
           .from('articles')
           .update({ download_count: article.download_count + 1 })
           .eq('id', article.id);
-      } else if (article.pdf_url) {
-        // External URL - open in new tab
-        void openExternalUrl(article.pdf_url);
       }
     } catch (error) {
       console.error('Error downloading file:', error);
