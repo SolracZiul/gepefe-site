@@ -1,4 +1,5 @@
 import { useParams, Link, Navigate } from 'react-router-dom';
+import { openExternalUrl, openStoredFileNative, signInWithGoogle } from '@/lib/native';
 import { useEffect, useState } from 'react';
 import { ArrowLeft, Bookmark, BookOpen, Calendar, Copy, Download, User, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -36,13 +37,15 @@ export default function ArticleDetail() {
     if (!article) return;
     setDownloading(true);
     try {
-      if (article.file_path) {
+      if (article.file_path && await openStoredFileNative('academic-articles', article.file_path)) {
+        // opened in in-app browser
+      } else if (article.file_path) {
         const { data, error } = await supabase.storage.from('academic-articles').download(article.file_path);
         if (error) throw error;
         const url = URL.createObjectURL(data);
         const anchor = document.createElement('a'); anchor.href = url; anchor.download = article.file_path.split('/').pop() || `${article.title}.pdf`; anchor.click();
         setTimeout(() => URL.revokeObjectURL(url), 1000);
-      } else if (article.pdf_url) window.open(article.pdf_url, '_blank', 'noopener,noreferrer');
+      } else if (article.pdf_url) await openExternalUrl(article.pdf_url);
     } catch { toast({ title: 'Não foi possível baixar o documento', variant: 'destructive' }); }
     finally { setDownloading(false); }
   }
