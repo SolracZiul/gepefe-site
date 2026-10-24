@@ -99,15 +99,15 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="repository max-w-6xl max-h-[90vh] w-[95vw] h-[95vh] sm:max-w-[95vw] sm:w-[95vw] sm:h-[90vh] sm:max-h-[90vh] p-0 overflow-hidden flex flex-col">
-        <DialogHeader className="pb-2 sm:pb-4 px-2 sm:px-6 pt-2 sm:pt-6 pr-10 flex-shrink-0">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
-            <DialogTitle className="text-sm sm:text-lg leading-tight sm:pr-8 break-words">{article.title}</DialogTitle>
-            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+        <DialogHeader className="flex-shrink-0 pl-3 pr-12 pt-3 pb-2 sm:pl-6 sm:pr-14 sm:pt-5 sm:pb-3">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+            <DialogTitle className="min-w-0 flex-1 text-sm leading-tight break-words sm:text-lg">{article.title}</DialogTitle>
+            <div className="flex flex-nowrap items-center justify-end gap-2 sm:justify-start">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleOpenExternal}
-                className="text-xs sm:text-sm"
+                className="shrink-0 whitespace-nowrap text-xs sm:text-sm"
               >
                 <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                 <span className="hidden sm:inline">Abrir em nova aba</span>
@@ -116,7 +116,7 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
               <Button
                 size="sm"
                 onClick={handleDownload}
-                className="text-xs sm:text-sm"
+                className="shrink-0 whitespace-nowrap text-xs sm:text-sm"
               >
                 <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                 Download
