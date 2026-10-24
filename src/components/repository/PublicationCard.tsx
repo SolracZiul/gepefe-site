@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { openExternalUrl, openStoredFileNative } from '@/lib/native';
+import { downloadDocument } from '@/lib/downloads';
 import { Link } from 'react-router-dom';
 import { Bookmark, Download, ArrowUpRight, User, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,7 +7,6 @@ import { Badge } from '@/components/ui/badge';
 import { ArticleViewer } from '@/components/ArticleViewer';
 import type { Article } from '@/hooks/useArticles';
 import { collectiveAuthor, formatAcademicAuthor } from '@/lib/repository';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 interface Props {
@@ -29,20 +28,9 @@ export function PublicationCard({ article, saved, canSave, onSave, onRead }: Pro
   async function download() {
     setDownloading(true);
     try {
-      if (article.file_path && await openStoredFileNative('academic-articles', article.file_path)) {
-        // opened in in-app browser
-      } else if (article.file_path) {
-        const { data, error } = await supabase.storage.from('academic-articles').download(article.file_path);
-        if (error) throw error;
-        const url = URL.createObjectURL(data);
-        const anchor = document.createElement('a');
-        anchor.href = url;
-        anchor.download = article.file_path.split('/').pop() || `${article.title}.pdf`;
-        anchor.click();
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-      } else if (article.pdf_url) await openExternalUrl(article.pdf_url);
+      await downloadDocument(article);
     } catch {
-      toast({ title: 'Não foi possível baixar o documento', description: 'Tente novamente em instantes.', variant: 'destructive' });
+      toast({ title: 'Não foi possível baixar o documento', description: 'O servidor pode bloquear downloads ou o endereço pode não apontar diretamente para um ficheiro.', variant: 'destructive' });
     } finally { setDownloading(false); }
   }
 
