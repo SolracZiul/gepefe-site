@@ -1,4 +1,5 @@
 # Institutional design across all pages
+- [x] Separate the document modal's close button from "Download": header reserves right space (pr-12 / sm:pr-14) and the actions sit in one non-wrapping flex row; verified no overlap at 1280, 390 and 320px.
 - [x] Add automatic external-download preview fallback for blocked requests and invalid PDFs; 7 download tests and 13 native tests pass. Real collection click opened the external URL in a new tab, preserved the collection and showed no error toast. Native physical-device verification remains pending below.
 - [x] Separate successful download actions from previews; real collection click downloaded a 163745-byte PDF without navigation. External download failures now use automatic preview fallback. Native device transfer verification remains pending with the physical-device task below.
 - [x] Confirm native Google OAuth suppresses automatic webview navigation and closes the integrated browser immediately on the exact app callback; 36 focused tests pass, build OK; physical device check remains pending below.
