@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.gepefe.app',
+  appId: 'app.lovable.cd0ffe65d2284695aa755bda0b9594e2',
   appName: 'gepefe-knowledge-vault',
   webDir: 'dist',
   server: {
