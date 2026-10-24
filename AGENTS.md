@@ -1,4 +1,5 @@
 # Project conventions
+- Native OAuth and outbound HTTP links use shared helpers in `src/lib/native.ts`, mounted once by App.tsx with cleanup and cold-start handling; document previews/downloads and rich-content anchors must use Capacitor Browser so no native path falls back to external navigation.
 - Keep the institutional repository UI in `src/components/repository` and use shared article data and existing reader/favorites services; homepage presentation must not require schema changes.
 - Keep academic filtering, author formatting and browser-only reading history in `src/lib/repository.ts` with focused behavior tests; these rules must be reusable and independently verifiable.
 - Reading history stores only article IDs under a user-scoped browser key, not account permissions or article snapshots; it is device-local and does not imply synced analytics.

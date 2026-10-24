@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { RepositoryShell } from "./components/repository/RepositoryShell";
 import { RepositoryCollection } from "./components/repository/RepositoryCollection";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { registerNativeAuthListener, registerNativeLinkListener } from "./lib/native";
+import { useToast } from "./hooks/use-toast";
 import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -34,6 +36,20 @@ console.log("Components check:", { Index, NotFound, LinhasDePesquisa, ArtigosCom
 
 const queryClient = new QueryClient();
 
+function NativeEvents() {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  useEffect(() => {
+    const removeAuth = registerNativeAuthListener(
+      () => navigate('/', { replace: true }),
+      () => toast({ title: 'Não foi possível concluir o login com Google', description: 'Tente novamente.', variant: 'destructive' }),
+    );
+    const removeLinks = registerNativeLinkListener(() => toast({ title: 'Não foi possível abrir o documento', variant: 'destructive' }));
+    return () => { removeAuth(); removeLinks(); };
+  }, [navigate, toast]);
+  return null;
+}
+
 // Former institutional addresses must never dead-end: they land on the unified page.
 function LegacyInstitutionalRedirect() {
   const { hash } = useLocation();
@@ -56,6 +72,7 @@ const App = () => {
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <NativeEvents />
             <div className="min-h-screen w-full">
               <RepositoryShell><Routes>
                 <Route path="/" element={<Index />} />

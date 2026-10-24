@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { openExternalUrl, openStoredFileNative, signInWithGoogle } from '@/lib/native';
+import { isNative, openExternalUrl, openStoredFileNative } from '@/lib/native';
+import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Download, ExternalLink, FileText } from "lucide-react";
@@ -22,6 +23,7 @@ interface ArticleViewerProps {
 export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) => {
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
   const getFileUrl = async () => {
     if (article.file_path) {
@@ -35,6 +37,7 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
 
   const handleDownload = async () => {
     try {
+      if (article.file_path && await openStoredFileNative('academic-articles', article.file_path)) return;
       if (article.file_path) {
         // Download from Supabase Storage
         const { data, error } = await supabase.storage
@@ -91,10 +94,23 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
 
   // Load preview when dialog opens
   useEffect(() => {
-    if (isOpen) {
-      loadPreview();
-    }
-  }, [isOpen]);
+    if (!isOpen) return;
+    if (!isNative()) { void loadPreview(); return; }
+    let cancelled = false;
+    setLoading(true);
+    void (async () => {
+      try {
+        if (article.file_path) await openStoredFileNative('academic-articles', article.file_path);
+        else if (article.pdf_url) await openExternalUrl(article.pdf_url);
+        else throw new Error('No document');
+      } catch {
+        if (!cancelled) toast({ title: 'Não foi possível abrir o documento', variant: 'destructive' });
+      } finally {
+        if (!cancelled) { setLoading(false); onClose(); }
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [isOpen, article.id]);
 
   const isPDF = article.file_type?.includes('pdf') || article.pdf_url?.includes('.pdf');
 

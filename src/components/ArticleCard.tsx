@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { openExternalUrl, openStoredFileNative, signInWithGoogle } from '@/lib/native';
+import { openExternalUrl, openStoredFileNative } from '@/lib/native';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Download, Eye, Calendar, User, Heart, Users } from "lucide-react";
@@ -39,6 +39,7 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
 
   const handleDownload = async () => {
     try {
+      if (article.file_path && await openStoredFileNative('academic-articles', article.file_path)) return;
       if (article.file_path) {
         // Download from Supabase Storage
         const { data, error } = await supabase.storage
