@@ -28,6 +28,7 @@ import Favoritos from "./pages/Favoritos";
 import ArticleDetail from "./pages/ArticleDetail";
 import Noticias from "./pages/Noticias";
 import NoticiaDetail from "./pages/NoticiaDetail";
+import LayoutCheck from "./pages/__LayoutCheck";
 import { ArticlesProvider } from "./contexts/ArticlesContext";
 import { SearchProvider } from "./contexts/SearchContext";
 
@@ -98,6 +99,7 @@ const App = () => {
                 <Route path="/article/:id" element={<ArticleDetail />} />
                 <Route path="/noticias" element={<Noticias />} />
                 <Route path="/noticia/:id" element={<NoticiaDetail />} />
+                <Route path="/layout-check" element={<LayoutCheck />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes></RepositoryShell>
