@@ -1,4 +1,5 @@
 # Institutional design across all pages
+- [x] Show the viewer's "Abrir em nova aba" header button only for embedded documents; external-link screens open solely through the central "Acessar documento". Verified on real collection cards at 1280 and 390px: 8 external modals without the header button, 1 embedded PDF with it.
 - [x] Make the admin panel phone-safe: stats grid 2/3/6 columns, content cards w-full max-w-full overflow-hidden with shrink-0 actions and wrapping metadata, pb-24 above the bottom bar; verified no horizontal scrolling and both action buttons fully visible at 320 and 390px.
 - [x] Separate the document modal's close button from "Download": header reserves right space (pr-12 / sm:pr-14) and the actions sit in one non-wrapping flex row; verified no overlap at 1280, 390 and 320px.
 - [x] Add automatic external-download preview fallback for blocked requests and invalid PDFs; 7 download tests and 13 native tests pass. Real collection click opened the external URL in a new tab, preserved the collection and showed no error toast. Native physical-device verification remains pending below.
