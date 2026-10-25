@@ -1,13 +1,12 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { downloadDocument } from '@/lib/downloads';
+import { downloadDocument, getArticleFileUrl } from '@/lib/downloads';
+import { openExternalUrl } from '@/lib/native';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Download, Eye, Calendar, User, Heart, Users } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
 import { supabase } from "@/integrations/supabase/client";
-import { useState } from "react";
-import { ArticleViewer } from "./ArticleViewer";
 import { useNavigate } from "react-router-dom";
 
 // Component for displaying article information with favorites functionality
@@ -34,7 +33,6 @@ interface ArticleCardProps {
 export const ArticleCard = ({ article }: ArticleCardProps) => {
   const { user } = useAuth();
   const { toggleFavorite, isFavorited } = useFavorites(user?.id || null);
-  const [showPreview, setShowPreview] = useState(false);
   const navigate = useNavigate();
 
   const handleDownload = async () => {
@@ -52,8 +50,9 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
     }
   };
 
-  const handlePreview = () => {
-    setShowPreview(true);
+  const handlePreview = async () => {
+    const url = getArticleFileUrl(article);
+    if (url) await openExternalUrl(url);
   };
 
   const hasFile = article.file_path || article.pdf_url;
@@ -159,12 +158,6 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
           </Button>
         </div>
 
-        {/* Article Viewer */}
-        <ArticleViewer
-          article={article}
-          isOpen={showPreview}
-          onClose={() => setShowPreview(false)}
-        />
       </CardContent>
     </Card>
   );

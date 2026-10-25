@@ -38,11 +38,12 @@ test('Storage download requests download true and delivers a blob instead of ope
   expect(click).toHaveBeenCalledTimes(1);
   expect(open).not.toHaveBeenCalled();
 });
-test('native Storage downloads request a signed attachment instead of a preview URL', async () => {
+test('native Storage downloads open the absolute public URL in the integrated browser', async () => {
   native = true;
   await downloadDocument({ title: 'Artigo', file_path: 'folder/file.pdf', pdf_url: null });
-  expect(signedUrl.mock.calls[0]).toEqual(['folder/file.pdf', 60, { download: true }]);
-  expect(open.mock.calls[0]).toEqual(['https://storage.example/signed.pdf?download=']);
+  expect(publicUrl.mock.calls[0]).toEqual(['folder/file.pdf', undefined]);
+  expect(open.mock.calls[0]).toEqual(['https://storage.example/file.pdf?download=']);
+  expect(fetchFile).not.toHaveBeenCalled();
 });
 test('external PDF URLs are fetched and downloaded as blobs without opening a browser', async () => {
   await downloadDocument({ title: 'Artigo', file_path: null, pdf_url: 'https://journal.example/article.pdf' });

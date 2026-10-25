@@ -9,17 +9,29 @@ export const isNative = () => Capacitor.isNativePlatform();
 
 /** Opens an external URL inside the app (in-app browser) on native, new tab on web. */
 export async function openExternalUrl(url: string) {
-  if (isNative()) await Browser.open({ url });
-  else window.open(url, '_blank', 'noopener,noreferrer');
+  if (isNative()) {
+    try {
+      await Browser.open({ url });
+    } catch {
+      // Se o Browser falhar ou a janela já estiver aberta, tenta abrir na janela nativa sem crashar
+      window.open(url, '_system');
+    }
+  } else {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
 }
 
 /** Downloads a stored file: on native opens a signed URL in the in-app browser. Returns true if handled. */
 export async function openStoredFileNative(bucket: string, path: string) {
   if (!isNative()) return false;
-  const { data, error } = await supabase.storage.from(bucket).createSignedUrl(path, 600);
-  if (error || !data) throw error ?? new Error('Signed URL failed');
-  await Browser.open({ url: data.signedUrl });
-  return true;
+  try {
+    const { data, error } = await supabase.storage.from(bucket).createSignedUrl(path, 600);
+    if (error || !data) throw error ?? new Error('Signed URL failed');
+    await openExternalUrl(data.signedUrl);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export async function signInWithGoogle(webRedirect: string) {
@@ -30,7 +42,7 @@ export async function signInWithGoogle(webRedirect: string) {
     provider: 'google',
     options: { redirectTo: NATIVE_AUTH_CALLBACK, skipBrowserRedirect: true, queryParams: { prompt: 'select_account' } },
   });
-  if (!result.error && result.data?.url) await Browser.open({ url: result.data.url });
+  if (!result.error && result.data?.url) await openExternalUrl(result.data.url);
   return result;
 }
 
@@ -71,7 +83,6 @@ export function registerNativeAuthListener(onSuccess: () => void, onError: () =>
     if (disposed || processing || !parseNativeAuthCallback(url)) return;
     processing = true;
     try {
-      // Dismiss OAuth as soon as the app receives its callback, before session I/O.
       await Browser.close().catch(() => undefined);
       if (await completeNativeAuth(url) && !disposed) {
         onSuccess();
@@ -92,19 +103,27 @@ export function registerNativeAuthListener(onSuccess: () => void, onError: () =>
   };
 }
 
-/** Also catches journal/PDF anchors embedded in sanitized news content. */
+/** Also catches journal/PDF anchors embedded in sanitized news content safely. */
 export function registerNativeLinkListener(onError: () => void) {
   if (!isNative()) return () => undefined;
   const handleClick = (event: MouseEvent) => {
     if (!(event.target instanceof Element)) return;
     const anchor = event.target.closest('a[href]');
     if (!(anchor instanceof HTMLAnchorElement)) return;
-    const url = new URL(anchor.href, window.location.href);
-    if (!['https:', 'http:'].includes(url.protocol)) return;
-    if (url.origin === window.location.origin && anchor.target !== '_blank' && !anchor.hasAttribute('download')) return;
-    event.preventDefault();
-    event.stopPropagation();
-    void openExternalUrl(url.href).catch(onError);
+    try {
+      const url = new URL(anchor.href, window.location.href);
+      if (!['https:', 'http:'].includes(url.protocol)) return;
+      if (url.origin === window.location.origin && anchor.target !== '_blank' && !anchor.hasAttribute('download')) return;
+      
+      event.preventDefault();
+      event.stopPropagation();
+      void openExternalUrl(url.href).catch(() => {
+        // Fallback silencioso sem travar a app com o toast vermelho
+        window.open(url.href, '_blank');
+      });
+    } catch {
+      // Ignora falhas de sintaxe de URL para não exibir o toast de erro indesejado
+    }
   };
   document.addEventListener('click', handleClick, true);
   return () => document.removeEventListener('click', handleClick, true);

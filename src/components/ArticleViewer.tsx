@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { isNative, openExternalUrl, openStoredFileNative } from '@/lib/native';
+import { Browser } from '@capacitor/browser';
+import { Capacitor } from '@capacitor/core';
 import { downloadDocument } from '@/lib/downloads';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -16,6 +17,7 @@ interface ArticleViewerProps {
     file_type: string | null;
     pdf_url: string | null;
     download_count: number;
+    [key: string]: any;
   };
   isOpen: boolean;
   onClose: () => void;
@@ -26,24 +28,57 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  const getFileUrl = async () => {
+  const getFileUrl = (): string | null => {
     if (article.file_path) {
+      // Se já for uma URL completa
+      if (article.file_path.startsWith('http://') || article.file_path.startsWith('https://')) {
+        return article.file_path;
+      }
       const { data } = supabase.storage
         .from('academic-articles')
         .getPublicUrl(article.file_path);
-      return data.publicUrl;
+      
+      if (data?.publicUrl) {
+        return data.publicUrl;
+      }
     }
-    return article.pdf_url;
+    return article.pdf_url || null;
+  };
+
+  const handleOpenExternal = async () => {
+    const url = getFileUrl();
+    if (!url) {
+      toast({ title: 'Link do documento não encontrado', variant: 'destructive' });
+      return;
+    }
+
+    try {
+      if (Capacitor.isNativePlatform()) {
+        await Browser.open({ url });
+      } else {
+        window.open(url, '_blank', 'noopener,noreferrer');
+      }
+    } catch (error) {
+      console.error('Error opening external URL:', error);
+      toast({ title: 'Não foi possível abrir o documento', variant: 'destructive' });
+    }
   };
 
   const handleDownload = async () => {
     try {
-      await downloadDocument(article);
+      const url = getFileUrl();
+      if (!url) throw new Error('URL inválida');
+
+      if (Capacitor.isNativePlatform()) {
+        await Browser.open({ url });
+      } else {
+        await downloadDocument(article as any);
+      }
+
       if (article.file_path) {
-        // Update download count
         await supabase
           .from('articles')
-          .update({ download_count: article.download_count + 1 })
+          .update({ download_count: (article.download_count || 0) + 1 })
           .eq('id', article.id);
       }
     } catch (error) {
@@ -52,144 +87,40 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
     }
   };
 
-  const handleOpenExternal = async () => {
-    const url = await getFileUrl();
-    if (url) {
-      void openExternalUrl(url);
-    }
-  };
-
-  const loadPreview = async () => {
-    // Only load preview for uploaded files (file_path), not external URLs (pdf_url only)
-    if (!fileUrl && article.file_path) {
-      setLoading(true);
-      try {
-        const url = await getFileUrl();
-        setFileUrl(url);
-      } catch (error) {
-        console.error('Error loading preview:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
-
-  // Load preview when dialog opens
   useEffect(() => {
-    if (!isOpen) return;
-    if (!isNative()) { void loadPreview(); return; }
-    let cancelled = false;
-    setLoading(true);
-    void (async () => {
-      try {
-        if (article.file_path) await openStoredFileNative('academic-articles', article.file_path);
-        else if (article.pdf_url) await openExternalUrl(article.pdf_url);
-        else throw new Error('No document');
-      } catch {
-        if (!cancelled) toast({ title: 'Não foi possível abrir o documento', variant: 'destructive' });
-      } finally {
-        if (!cancelled) { setLoading(false); onClose(); }
-      }
-    })();
-    return () => { cancelled = true; };
+    if (isOpen) {
+      const url = getFileUrl();
+      setFileUrl(url);
+    }
   }, [isOpen, article.id]);
 
-  const isPDF = article.file_type?.includes('pdf') || article.pdf_url?.includes('.pdf');
-  // External-hosted documents only offer the central "Acessar documento" action,
-  // so the header must not repeat it with "Abrir em nova aba".
+  const isPDF = article.file_type?.includes('pdf') || article.pdf_url?.toLowerCase().includes('.pdf') || article.file_path?.toLowerCase().endsWith('.pdf');
   const isExternalLink = !!article.pdf_url && !article.file_path;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="repository max-w-6xl max-h-[90vh] w-[95vw] h-[95vh] sm:max-w-[95vw] sm:w-[95vw] sm:h-[90vh] sm:max-h-[90vh] p-0 overflow-hidden flex flex-col">
-        <DialogHeader className="flex-shrink-0 pl-3 pr-12 pt-3 pb-2 sm:pl-6 sm:pr-14 sm:pt-5 sm:pb-3">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-            <DialogTitle className="min-w-0 flex-1 text-sm leading-tight break-words sm:text-lg">{article.title}</DialogTitle>
-            <div className="flex flex-nowrap items-center justify-end gap-2 sm:justify-start">
-              {!isExternalLink && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleOpenExternal}
-                  className="shrink-0 whitespace-nowrap text-xs sm:text-sm"
-                >
-                  <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                  <span className="hidden sm:inline">Abrir em nova aba</span>
-                  <span className="sm:hidden">Nova aba</span>
-                </Button>
-              )}
-              <Button
-                size="sm"
-                onClick={handleDownload}
-                className="shrink-0 whitespace-nowrap text-xs sm:text-sm"
-              >
-                <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                Download
+        <DialogHeader className="flex-shrink-0 pl-3 pr-12 pt-3 pb-2 sm:pl-6 sm:pr-14 sm:pt-5 sm:pb-3 border-b">
+          <DialogTitle className="text-sm leading-tight break-words sm:text-lg font-bold">{article.title}</DialogTitle>
+        </DialogHeader>
+
+        <div className="flex-1 overflow-y-auto px-2 sm:px-6 pb-2 sm:pb-6 mt-4">
+          <div className="bg-muted/30 rounded-lg overflow-hidden h-full flex flex-col items-center justify-center p-6 text-center">
+            <FileText className="w-16 h-16 text-primary mb-4" />
+            <h3 className="text-lg font-semibold mb-2">{article.title}</h3>
+            <p className="text-sm text-muted-foreground mb-6 max-w-md">
+              {article.abstract || "Clique no botão abaixo para visualizar ou descarregar o documento completo no seu dispositivo."}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <Button onClick={handleOpenExternal} className="text-sm">
+                <ExternalLink className="w-4 h-4 mr-2" />
+                Visualizar Documento
+              </Button>
+              <Button variant="outline" onClick={handleDownload} className="text-sm">
+                <Download className="w-4 h-4 mr-2" />
+                Baixar Arquivo
               </Button>
             </div>
-          </div>
-        </DialogHeader>
-        
-        <div className="flex-1 overflow-y-auto px-2 sm:px-6 pb-2 sm:pb-6">
-
-          <div className="bg-muted/30 rounded-lg overflow-hidden h-full">
-            {article.pdf_url && !article.file_path ? (
-              // External URL - show link instead of preview
-              <div className="flex flex-col items-center justify-center h-full p-4 sm:p-8 text-center">
-                <ExternalLink className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground mb-4" />
-                <h3 className="text-base sm:text-lg font-semibold mb-2">Link Externo</h3>
-                <p className="text-sm sm:text-base text-muted-foreground mb-4">
-                  Este documento está hospedado em um site externo.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                  <Button onClick={handleOpenExternal} size="sm" className="text-xs sm:text-sm">
-                    <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                    Acessar documento
-                  </Button>
-                </div>
-              </div>
-            ) : loading ? (
-              <div className="flex items-center justify-center h-full">
-                <div className="text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                  <p className="text-muted-foreground">Carregando visualização...</p>
-                </div>
-              </div>
-            ) : fileUrl ? (
-              isPDF ? (
-                <iframe
-                  src={`${fileUrl}#view=FitH`}
-                  className="w-full h-full border-0"
-                  title={`Preview: ${article.title}`}
-                />
-              ) : (
-                <div className="flex flex-col items-center justify-center h-full p-4 sm:p-8 text-center">
-                  <FileText className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground mb-4" />
-                  <h3 className="text-base sm:text-lg font-semibold mb-2">Visualização não disponível</h3>
-                  <p className="text-sm sm:text-base text-muted-foreground mb-4">
-                    Este tipo de arquivo não pode ser visualizado diretamente no navegador.
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                    <Button onClick={handleDownload} size="sm" className="text-xs sm:text-sm">
-                      <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                      Baixar arquivo
-                    </Button>
-                    <Button variant="outline" onClick={handleOpenExternal} size="sm" className="text-xs sm:text-sm">
-                      <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                      Abrir externamente
-                    </Button>
-                  </div>
-                </div>
-              )
-            ) : (
-              <div className="flex flex-col items-center justify-center h-full p-4 sm:p-8 text-center">
-                <FileText className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground mb-4" />
-                <h3 className="text-base sm:text-lg font-semibold mb-2">Arquivo não disponível</h3>
-                <p className="text-sm sm:text-base text-muted-foreground">
-                  Nenhum arquivo foi encontrado para este artigo.
-                </p>
-              </div>
-            )}
           </div>
         </div>
       </DialogContent>

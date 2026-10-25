@@ -1,71 +1,42 @@
+import type { Article } from '@/hooks/useArticles';
 import { supabase } from '@/integrations/supabase/client';
 import { isNative, openExternalUrl } from '@/lib/native';
 
-interface DownloadableDocument {
-  title: string;
-  file_path: string | null;
-  pdf_url: string | null;
+/** Resolve Storage paths to absolute public URLs before they reach a browser. */
+export function getArticleFileUrl(article: Pick<Article, 'file_path' | 'pdf_url'>): string {
+  const path = article.file_path;
+  if (path) {
+    if (/^https?:\/\//i.test(path)) return path;
+    const { data } = supabase.storage.from('academic-articles').getPublicUrl(path);
+    if (data?.publicUrl) return data.publicUrl;
+  }
+  return article.pdf_url || '';
 }
 
-/** External hosts can refuse fetching; reserve the web tab before user activation expires. */
-export async function downloadDocument(article: DownloadableDocument) {
-  if (!article.file_path && article.pdf_url) {
-    const url = article.pdf_url;
-    const fallbackTab = !isNative() ? window.open('', '_blank') : null;
-    if (fallbackTab) fallbackTab.opener = null;
-    try {
-      await fetchAndDownload(url, `${article.title.replace(/[\\/:*?"<>|]/g, '_')}.pdf`, article.title, true);
-      fallbackTab?.close();
-    } catch (error) {
-      console.warn('Download direto bloqueado pelo servidor externo. Abrindo visualização.', error);
-      if (fallbackTab && !fallbackTab.closed) fallbackTab.location.href = url;
-      else await openExternalUrl(url);
-    }
+export async function downloadDocument(article: Article): Promise<void> {
+  const fileUrl = getArticleFileUrl(article);
+  if (!fileUrl) throw new Error('Nenhum arquivo disponível para este documento.');
+
+  // Capacitor's browser avoids navigating the WebView to a relative Storage path
+  // (which Android resolves against https://localhost/).
+  if (isNative()) {
+    await openExternalUrl(fileUrl);
     return;
   }
-  const filename = article.file_path?.split('/').pop() || `${article.title.replace(/[\\/:*?"<>|]/g, '_')}.pdf`;
-  let url: string;
-  if (article.file_path) {
-    if (isNative()) {
-      const { data, error } = await supabase.storage.from('academic-articles')
-        .createSignedUrl(article.file_path, 60, { download: true });
-      if (error || !data) throw error ?? new Error('Não foi possível obter o ficheiro.');
-      await openExternalUrl(data.signedUrl);
-      return;
-    }
-    url = supabase.storage.from('academic-articles')
-      .getPublicUrl(article.file_path, { download: true }).data.publicUrl;
-  } else if (article.pdf_url) {
-    url = article.pdf_url;
-  } else {
-    throw new Error('Ficheiro não disponível.');
-  }
 
-  await fetchAndDownload(url, filename, article.title);
-}
-
-async function fetchAndDownload(url: string, filename: string, title: string, validatePdf = false) {
+  // Keep the web download path and request Storage as an attachment when possible.
+  const url = article.file_path && !/^https?:\/\//i.test(article.file_path)
+    ? supabase.storage.from('academic-articles').getPublicUrl(article.file_path, { download: true }).data.publicUrl
+    : fileUrl;
   const response = await fetch(url);
-  if (!response.ok) throw new Error('Não foi possível descarregar o ficheiro.');
+  if (!response.ok) throw new Error('Não foi possível baixar o documento.');
   const blob = await response.blob();
-  if (!blob.size || blob.type.toLowerCase().includes('text/html')) {
-    throw new Error('Este endereço não disponibiliza um ficheiro para download.');
-  }
-  if (validatePdf && !((await blob.slice(0, 1024).text()).includes('%PDF-'))) {
-    throw new Error('O servidor não devolveu um PDF válido.');
-  }
-  const file = new File([blob], filename, { type: blob.type });
-  if (isNative() && navigator.canShare?.({ files: [file] })) {
-    try { await navigator.share({ files: [file], title }); }
-    catch (error) { if ((error as DOMException).name !== 'AbortError') throw error; }
-    return;
-  }
   const objectUrl = URL.createObjectURL(blob);
-  const anchor = document.createElement('a');
-  anchor.href = objectUrl;
-  anchor.download = filename;
-  document.body.appendChild(anchor);
-  anchor.click();
-  anchor.remove();
-  setTimeout(() => URL.revokeObjectURL(objectUrl), 30_000);
+  const link = document.createElement('a');
+  link.href = objectUrl;
+  link.download = article.file_path?.split('/').pop() || `${article.title}.pdf`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(objectUrl);
 }

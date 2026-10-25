@@ -9,6 +9,8 @@ import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from
 import { registerNativeAuthListener, registerNativeLinkListener } from "./lib/native";
 import { useToast } from "./hooks/use-toast";
 import { ThemeProvider } from "next-themes";
+import { SplashScreen } from '@capacitor/splash-screen';
+
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import LinhasDePesquisa from "./pages/LinhasDePesquisa";
@@ -31,10 +33,68 @@ import NoticiaDetail from "./pages/NoticiaDetail";
 import { ArticlesProvider } from "./contexts/ArticlesContext";
 import { SearchProvider } from "./contexts/SearchContext";
 
-console.log("App.tsx: All imports loaded successfully - Updated");
-console.log("Components check:", { Index, NotFound, LinhasDePesquisa, ArtigosCompletos, TextosAcademicos, Pesquisas, Dissertacoes, Todos, Auth, Admin, Noticias, NoticiaDetail });
-
 const queryClient = new QueryClient();
+
+const App = () => {
+  useEffect(() => {
+    // Esconde a ecrã de abertura suavemente quando o React estiver pronto
+    SplashScreen.hide();
+  }, []);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="light"
+        enableSystem={false}
+        disableTransitionOnChange={false}
+      >
+        <ArticlesProvider>
+          <SearchProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <NativeEvents />
+                <div className="min-h-screen w-full">
+                  <RepositoryShell>
+                    <Routes>
+                      <Route path="/" element={<Index />} />
+                      <Route path="/repositorio" element={<Todos />} />
+                      <Route path="/busca" element={<Todos />} />
+                      <Route path="/historico" element={<RepositoryCollection title="Histórico de Leitura" mode="history" />} />
+                      <Route path="/artigo/:id" element={<ArticleDetail />} />
+                      <Route path="/todos" element={<Todos />} />
+                      <Route path="/linhas-de-pesquisa" element={<LinhasDePesquisa />} />
+                      <Route path="/sobre" element={<LegacyInstitutionalRedirect />} />
+                      <Route path="/integrantes" element={<LegacyInstitutionalRedirect />} />
+                      <Route path="/artigos-completos" element={<ArtigosCompletos />} />
+                      <Route path="/textos-academicos" element={<TextosAcademicos />} />
+                      <Route path="/pesquisas" element={<Pesquisas />} />
+                      <Route path="/dissertacoes" element={<Dissertacoes />} />
+                      <Route path="/teses" element={<Teses />} />
+                      <Route path="/favoritos" element={<Favoritos />} />
+                      <Route path="/auth" element={<Auth />} />
+                      <Route path="/email-confirmation" element={<EmailConfirmation />} />
+                      <Route path="/reset-password" element={<ResetPassword />} />
+                      <Route path="/profile" element={<Profile />} />
+                      <Route path="/admin" element={<Admin />} />
+                      <Route path="/article/:id" element={<ArticleDetail />} />
+                      <Route path="/noticias" element={<Noticias />} />
+                      <Route path="/noticia/:id" element={<NoticiaDetail />} />
+                      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </RepositoryShell>
+                </div>
+              </BrowserRouter>
+            </TooltipProvider>
+          </SearchProvider>
+        </ArticlesProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
+};
 
 function NativeEvents() {
   const navigate = useNavigate();
@@ -55,60 +115,5 @@ function LegacyInstitutionalRedirect() {
   const { hash } = useLocation();
   return <Navigate to={institutionalRedirectTarget(hash)} replace />;
 }
-
-const App = () => {
-  console.log("App component rendering...");
-  return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="light"
-        enableSystem={false}
-        disableTransitionOnChange={false}
-      >
-        <ArticlesProvider>
-          <SearchProvider>
-            <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <NativeEvents />
-            <div className="min-h-screen w-full">
-              <RepositoryShell><Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/repositorio" element={<Todos />} />
-                <Route path="/busca" element={<Todos />} />
-                <Route path="/historico" element={<RepositoryCollection title="Histórico de Leitura" mode="history" />} />
-                <Route path="/artigo/:id" element={<ArticleDetail />} />
-                <Route path="/todos" element={<Todos />} />
-                <Route path="/linhas-de-pesquisa" element={<LinhasDePesquisa />} />
-                <Route path="/sobre" element={<LegacyInstitutionalRedirect />} />
-                <Route path="/integrantes" element={<LegacyInstitutionalRedirect />} />
-                <Route path="/artigos-completos" element={<ArtigosCompletos />} />
-                <Route path="/textos-academicos" element={<TextosAcademicos />} />
-                <Route path="/pesquisas" element={<Pesquisas />} />
-                <Route path="/dissertacoes" element={<Dissertacoes />} />
-                <Route path="/teses" element={<Teses />} />
-                <Route path="/favoritos" element={<Favoritos />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/email-confirmation" element={<EmailConfirmation />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="/article/:id" element={<ArticleDetail />} />
-                <Route path="/noticias" element={<Noticias />} />
-                <Route path="/noticia/:id" element={<NoticiaDetail />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes></RepositoryShell>
-            </div>
-          </BrowserRouter>
-          </TooltipProvider>
-        </SearchProvider>
-      </ArticlesProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
-  );
-};
 
 export default App;
