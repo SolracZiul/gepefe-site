@@ -4,8 +4,13 @@ import { afterEach, beforeEach, expect, mock, test } from 'bun:test';
 let native = false;
 const publicUrl = mock((_path: string, _options: unknown) => ({ data: { publicUrl: 'https://storage.example/file.pdf?download=' } }));
 const signedUrl = mock(async (_path: string, _expires: number, _options: unknown) => ({ data: { signedUrl: 'https://storage.example/signed.pdf?download=' }, error: null }));
-const open = mock(async (_url: string) => undefined);
-mock.module('@/lib/native', () => ({ isNative: () => native, openExternalUrl: open }));
+const open = mock(async (_options: { url: string }) => undefined);
+// Only the platform plugins are stubbed here, so the app's own native helper stays real
+// and this file's mocks cannot replace that module for the other test files.
+mock.module('@capacitor/core', () => ({ Capacitor: { isNativePlatform: () => native } }));
+mock.module('@capacitor/browser', () => ({ Browser: { open, close: async () => undefined } }));
+mock.module('@capacitor/app', () => ({ App: { addListener: async () => ({ remove: async () => undefined }), getLaunchUrl: async () => undefined } }));
+mock.module('@capacitor/share', () => ({ Share: { share: async () => undefined } }));
 mock.module('@/integrations/supabase/client', () => ({ supabase: { storage: { from: () => ({ getPublicUrl: publicUrl, createSignedUrl: signedUrl }) } } }));
 const { downloadDocument } = await import('./downloads');
 const originalFetch = globalThis.fetch;
@@ -42,7 +47,7 @@ test('native Storage downloads open the absolute public URL in the integrated br
   native = true;
   await downloadDocument({ title: 'Artigo', file_path: 'folder/file.pdf', pdf_url: null });
   expect(publicUrl.mock.calls[0]).toEqual(['folder/file.pdf', undefined]);
-  expect(open.mock.calls[0]).toEqual(['https://storage.example/file.pdf?download=']);
+  expect(open.mock.calls[0]).toEqual([{ url: 'https://storage.example/file.pdf?download=' }]);
   expect(fetchFile).not.toHaveBeenCalled();
 });
 test('external PDF URLs are fetched and downloaded as blobs without opening a browser', async () => {
@@ -70,7 +75,7 @@ test('native CORS failure opens the external document through the integrated bro
   native = true;
   fetchFile.mockImplementationOnce(async () => { throw new TypeError('Failed to fetch'); });
   await downloadDocument({ title: 'Artigo', file_path: null, pdf_url: 'https://journal.example/article.pdf' });
-  expect(open.mock.calls[0]).toEqual(['https://journal.example/article.pdf']);
+  expect(open.mock.calls[0]).toEqual([{ url: 'https://journal.example/article.pdf' }]);
   expect(click).not.toHaveBeenCalled();
 });
 test('non-PDF bytes with a PDF content type open preview instead of saving an invalid file', async () => {
