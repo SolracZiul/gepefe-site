@@ -131,3 +131,35 @@ test('unrelated app links do not close the integrated browser', async () => {
   expect(setSession).not.toHaveBeenCalled();
   cleanup();
 });
+test('shared article links always use the public website address', () => {
+  expect(getPublicShareUrl('/artigo/abc-123')).toBe('https://gepefe.netlify.app/artigo/abc-123');
+});
+
+test('native sharing opens the platform sheet with the item title and public link', async () => {
+  expect(await shareContent({ title: 'O jogo na escola', url: getPublicShareUrl('/artigo/abc-123') })).toBe('shared');
+  expect(shareSheet.mock.calls[0]).toEqual([{ title: 'O jogo na escola', url: 'https://gepefe.netlify.app/artigo/abc-123', dialogTitle: 'Compartilhar' }]);
+});
+
+test('web sharing uses the browser share sheet when it is available', async () => {
+  native = false;
+  const sheet = mock(async (_options: unknown) => undefined);
+  useNavigator({ share: sheet });
+  try {
+    expect(await shareContent({ title: 'O jogo na escola', url: 'https://gepefe.netlify.app/artigo/abc-123' })).toBe('shared');
+    expect(sheet.mock.calls[0]).toEqual([{ title: 'O jogo na escola', url: 'https://gepefe.netlify.app/artigo/abc-123' }]);
+  } finally {
+    useNavigator(originalNavigator);
+  }
+});
+
+test('web sharing copies the link when the browser share sheet is unavailable', async () => {
+  native = false;
+  const writeText = mock(async (_text: string) => undefined);
+  useNavigator({ clipboard: { writeText } });
+  try {
+    expect(await shareContent({ title: 'O jogo na escola', url: 'https://gepefe.netlify.app/artigo/abc-123' })).toBe('copied');
+    expect(writeText.mock.calls[0]).toEqual(['https://gepefe.netlify.app/artigo/abc-123']);
+  } finally {
+    useNavigator(originalNavigator);
+  }
+});
