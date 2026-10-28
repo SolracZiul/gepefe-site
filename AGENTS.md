@@ -3,6 +3,7 @@
 - Download buttons share `src/lib/downloads.ts`, requesting Storage attachment URLs and fetching external files as blobs; external fetch failures or invalid PDFs fall back to the shared integrated-browser helper on native and a synchronously reserved web tab to avoid popup blocking. Native stored downloads use short-lived signed attachment URLs inside Capacitor Browser to preserve private access and stay inside the app.
 - Keep the institutional repository UI in `src/components/repository` and use shared article data and existing reader/favorites services; homepage presentation must not require schema changes.
 - Keep academic filtering, author formatting and browser-only reading history in `src/lib/repository.ts` with focused behavior tests; these rules must be reusable and independently verifiable.
+- Test files stub platform plugins (Capacitor) rather than the app's own modules, because `mock.module` persists into later test files in one `bun test` run and would blank the real exports other suites import.
 - Reading history stores only article IDs under a user-scoped browser key, not account permissions or article snapshots; it is device-local and does not imply synced analytics.
 - All routes use RepositoryShell as the sole owner of institutional header/sidebar/footer, so navigation and theme remain identical without page-level chrome.
 - Institutional link ordering and mobile account shortcuts come from shared navigation definitions; the shell provides bottom navigation below the desktop breakpoint to prevent per-page drift.

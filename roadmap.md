@@ -28,3 +28,5 @@
 - [x] Keep the chip bar on one continuous non-wrapping row with drag scrolling and a hidden scrollbar, advanced-filters icon pinned right; verified at 390 and 320px.
 - [x] Hide the chip bar's horizontal scrollbar in every engine (scrollbar-width, -ms-overflow-style, all webkit scrollbar parts) while keeping thumb swipe; verified a touch drag reaches the end with no visible track.
 - [ ] Verify signed-in favorites/history end-to-end — unavailable for externally managed Supabase without a test session.
+- [x] Article/publication detail share button shows only its icon on phones (label returns from the small breakpoint up), matching the save button; verified at 393, 320 and 1280px.
+- [x] Download tests now stub the Capacitor plugins instead of the app's native helper, so the full suite runs together again; 53 tests pass.
