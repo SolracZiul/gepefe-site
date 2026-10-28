@@ -8,11 +8,13 @@ const setSession = mock(async (_tokens: unknown) => ({ data: { session: { user: 
 const exchangeCode = mock(async (_code: string) => ({ data: { session: { user: { id: 'test-user' } } }, error: null }));
 const oauth = mock(async (_options: unknown) => ({ data: { url: 'https://auth.example/authorize' }, error: null }));
 const signedUrl = mock(async (_path: string, _seconds: number) => ({ data: { signedUrl: 'https://files.example/document.pdf' }, error: null }));
+const shareSheet = mock(async (_options: unknown) => undefined);
 const removeListener = mock(async () => undefined);
 let onAppUrl: (event: { url: string }) => Promise<void> = async () => undefined;
 const launchUrl = mock(async (): Promise<{ url: string } | undefined> => undefined);
 mock.module('@capacitor/core', () => ({ Capacitor: { isNativePlatform: () => native } }));
 mock.module('@capacitor/browser', () => ({ Browser: { open: browserOpen, close: browserClose } }));
+mock.module('@capacitor/share', () => ({ Share: { share: shareSheet } }));
 mock.module('@capacitor/app', () => ({ App: {
   addListener: mock(async (_name: string, handler: typeof onAppUrl) => { onAppUrl = handler; return { remove: removeListener }; }),
   getLaunchUrl: launchUrl,
@@ -21,17 +23,23 @@ mock.module('@/integrations/supabase/client', () => ({ supabase: {
   auth: { setSession, exchangeCodeForSession: exchangeCode, signInWithOAuth: oauth },
   storage: { from: () => ({ createSignedUrl: signedUrl }) },
 } }));
-const { openExternalUrl, openStoredFileNative, signInWithGoogle, completeNativeAuth, registerNativeAuthListener } = await import('./native');
+const { openExternalUrl, openStoredFileNative, signInWithGoogle, completeNativeAuth, registerNativeAuthListener, getPublicShareUrl, shareContent } = await import('./native');
+
+const originalNavigator = globalThis.navigator;
+function useNavigator(value: unknown) {
+  Object.defineProperty(globalThis, 'navigator', { value, configurable: true, writable: true });
+}
 
 beforeEach(() => {
   native = true;
   browserOpen.mockClear(); browserClose.mockClear(); setSession.mockClear(); exchangeCode.mockClear(); oauth.mockClear(); signedUrl.mockClear(); removeListener.mockClear();
+  shareSheet.mockClear();
   launchUrl.mockResolvedValue(undefined);
 });
 
 test('native Google login uses the exact app callback without navigating the webview', async () => {
   await signInWithGoogle('https://web.example/email-confirmation');
-  expect(oauth.mock.calls[0]).toEqual([{ provider: 'google', options: { redirectTo: 'com.gepefe.app://login-callback', skipBrowserRedirect: true, queryParams: { prompt: 'select_account' } } }]);
+  expect(oauth.mock.calls[0]).toEqual([{ provider: 'google', options: { redirectTo: 'br.com.gepefe.app://login-callback', skipBrowserRedirect: true, queryParams: { prompt: 'select_account' } } }]);
   expect(browserOpen.mock.calls[0]).toEqual([{ url: 'https://auth.example/authorize' }]);
 });
 test('web Google login preserves its web callback and does not invoke a native plugin', async () => {
@@ -55,19 +63,19 @@ test('web stored downloads remain handled by the original browser download path'
   expect(signedUrl).not.toHaveBeenCalled();
 });
 test('OAuth hash callback restores both tokens through setSession', async () => {
-  expect(await completeNativeAuth('com.gepefe.app://login-callback#access_token=test-access&refresh_token=test-refresh')).toBe(true);
+  expect(await completeNativeAuth('br.com.gepefe.app://login-callback#access_token=test-access&refresh_token=test-refresh')).toBe(true);
   expect(setSession.mock.calls[0]).toEqual([{ access_token: 'test-access', refresh_token: 'test-refresh' }]);
 });
 test('OAuth query callback restores both tokens through setSession', async () => {
-  expect(await completeNativeAuth('com.gepefe.app://login-callback?access_token=test-access&refresh_token=test-refresh')).toBe(true);
+  expect(await completeNativeAuth('br.com.gepefe.app://login-callback?access_token=test-access&refresh_token=test-refresh')).toBe(true);
   expect(setSession).toHaveBeenCalledTimes(1);
 });
 test('PKCE callbacks exchange the code for a session', async () => {
-  expect(await completeNativeAuth('com.gepefe.app://login-callback?code=test-code')).toBe(true);
+  expect(await completeNativeAuth('br.com.gepefe.app://login-callback?code=test-code')).toBe(true);
   expect(exchangeCode.mock.calls[0]).toEqual(['test-code']);
 });
 test('unrelated callbacks and incomplete tokens cannot restore a session', async () => {
-  for (const url of ['https://login-callback#access_token=x&refresh_token=y', 'com.gepefe.app://login-callback.evil#access_token=x&refresh_token=y', 'com.gepefe.app://login-callback/other#access_token=x&refresh_token=y', 'com.gepefe.app://login-callback#access_token=x']) {
+  for (const url of ['https://login-callback#access_token=x&refresh_token=y', 'br.com.gepefe.app://login-callback.evil#access_token=x&refresh_token=y', 'br.com.gepefe.app://login-callback/other#access_token=x&refresh_token=y', 'br.com.gepefe.app://login-callback#access_token=x']) {
     expect(await completeNativeAuth(url)).toBe(false);
   }
   expect(setSession).not.toHaveBeenCalled();
@@ -77,7 +85,7 @@ test('appUrlOpen completes login, closes the browser and cleans up the listener'
   const error = mock(() => undefined);
   const cleanup = registerNativeAuthListener(success, error);
   await new Promise(resolve => setTimeout(resolve, 0));
-  await onAppUrl({ url: 'com.gepefe.app://login-callback#access_token=test-access&refresh_token=test-refresh' });
+  await onAppUrl({ url: 'br.com.gepefe.app://login-callback#access_token=test-access&refresh_token=test-refresh' });
   expect(success).toHaveBeenCalledTimes(1);
   expect(error).not.toHaveBeenCalled();
   expect(browserClose).toHaveBeenCalledTimes(1);
@@ -86,7 +94,7 @@ test('appUrlOpen completes login, closes the browser and cleans up the listener'
   expect(removeListener).toHaveBeenCalledTimes(1);
 });
 test('cold-start callback also restores the session', async () => {
-  launchUrl.mockResolvedValue({ url: 'com.gepefe.app://login-callback?code=cold-start-code' });
+  launchUrl.mockResolvedValue({ url: 'br.com.gepefe.app://login-callback?code=cold-start-code' });
   const success = mock(() => undefined);
   const cleanup = registerNativeAuthListener(success, mock(() => undefined));
   await new Promise(resolve => setTimeout(resolve, 0));
@@ -105,7 +113,7 @@ test('the app closes OAuth immediately before restoring the callback session', a
     await new Promise<void>(resolve => { release = resolve; });
     return { data: { session: { user: { id: 'test-user' } } }, error: null };
   });
-  const callback = onAppUrl({ url: 'com.gepefe.app://login-callback#access_token=test-access&refresh_token=test-refresh' });
+  const callback = onAppUrl({ url: 'br.com.gepefe.app://login-callback#access_token=test-access&refresh_token=test-refresh' });
   await new Promise(resolve => setTimeout(resolve, 0));
   expect(browserClose).toHaveBeenCalledTimes(1);
   expect(success).not.toHaveBeenCalled();
@@ -118,8 +126,40 @@ test('the app closes OAuth immediately before restoring the callback session', a
 test('unrelated app links do not close the integrated browser', async () => {
   const cleanup = registerNativeAuthListener(mock(() => undefined), mock(() => undefined));
   await new Promise(resolve => setTimeout(resolve, 0));
-  await onAppUrl({ url: 'com.gepefe.app://document' });
+  await onAppUrl({ url: 'br.com.gepefe.app://document' });
   expect(browserClose).not.toHaveBeenCalled();
   expect(setSession).not.toHaveBeenCalled();
   cleanup();
+});
+test('shared article links always use the public website address', () => {
+  expect(getPublicShareUrl('/artigo/abc-123')).toBe('https://gepefe.netlify.app/artigo/abc-123');
+});
+
+test('native sharing opens the platform sheet with the item title and public link', async () => {
+  expect(await shareContent({ title: 'O jogo na escola', url: getPublicShareUrl('/artigo/abc-123') })).toBe('shared');
+  expect(shareSheet.mock.calls[0]).toEqual([{ title: 'O jogo na escola', url: 'https://gepefe.netlify.app/artigo/abc-123', dialogTitle: 'Compartilhar' }]);
+});
+
+test('web sharing uses the browser share sheet when it is available', async () => {
+  native = false;
+  const sheet = mock(async (_options: unknown) => undefined);
+  useNavigator({ share: sheet });
+  try {
+    expect(await shareContent({ title: 'O jogo na escola', url: 'https://gepefe.netlify.app/artigo/abc-123' })).toBe('shared');
+    expect(sheet.mock.calls[0]).toEqual([{ title: 'O jogo na escola', url: 'https://gepefe.netlify.app/artigo/abc-123' }]);
+  } finally {
+    useNavigator(originalNavigator);
+  }
+});
+
+test('web sharing copies the link when the browser share sheet is unavailable', async () => {
+  native = false;
+  const writeText = mock(async (_text: string) => undefined);
+  useNavigator({ clipboard: { writeText } });
+  try {
+    expect(await shareContent({ title: 'O jogo na escola', url: 'https://gepefe.netlify.app/artigo/abc-123' })).toBe('copied');
+    expect(writeText.mock.calls[0]).toEqual(['https://gepefe.netlify.app/artigo/abc-123']);
+  } finally {
+    useNavigator(originalNavigator);
+  }
 });

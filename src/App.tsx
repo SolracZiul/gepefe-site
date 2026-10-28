@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
 import { registerNativeAppLinkListener, registerNativeAuthListener, registerNativeLinkListener } from "./lib/native";
 import { useToast } from "./hooks/use-toast";
 import { ThemeProvider } from "next-themes";
@@ -64,7 +64,7 @@ const App = () => {
                       <Route path="/repositorio" element={<Todos />} />
                       <Route path="/busca" element={<Todos />} />
                       <Route path="/historico" element={<RepositoryCollection title="Histórico de Leitura" mode="history" />} />
-                      <Route path="/artigo/:id" element={<ArticleDetail />} />
+                      <Route path="/artigo/:id" element={<LegacyArticleRedirect />} />
                       <Route path="/todos" element={<Todos />} />
                       <Route path="/linhas-de-pesquisa" element={<LinhasDePesquisa />} />
                       <Route path="/sobre" element={<LegacyInstitutionalRedirect />} />
@@ -80,7 +80,8 @@ const App = () => {
                       <Route path="/reset-password" element={<ResetPassword />} />
                       <Route path="/profile" element={<Profile />} />
                       <Route path="/admin" element={<Admin />} />
-                      <Route path="/article/:id" element={<ArticleDetail />} />
+                      <Route path="/publicacao/:id" element={<ArticleDetail />} />
+                      <Route path="/article/:id" element={<LegacyArticleRedirect />} />
                       <Route path="/noticias" element={<Noticias />} />
                       <Route path="/noticia/:id" element={<NoticiaDetail />} />
                       <Route path="/publicacao/:id" element={<ArticleDetail />} />
@@ -118,6 +119,12 @@ function NativeEvents() {
 function LegacyInstitutionalRedirect() {
   const { hash } = useLocation();
   return <Navigate to={institutionalRedirectTarget(hash)} replace />;
+}
+
+// Former document addresses must never dead-end: they land on the canonical publication page.
+function LegacyArticleRedirect() {
+  const { id } = useParams();
+  return <Navigate to={`/publicacao/${id}`} replace />;
 }
 
 export default App;

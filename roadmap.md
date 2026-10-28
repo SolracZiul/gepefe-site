@@ -1,4 +1,6 @@
 # Institutional design across all pages
+- [x] Add "Compartilhar" to article and publication detail pages: the platform sheet receives the title and the public link https://gepefe.netlify.app/artigo/{id}, and the link is copied with a confirmation when no sheet exists; verified a real click copies that exact address, a working sheet receives title + link with no copy toast, and the button stays readable at 1280 and 390px.
+- [x] Align the native OAuth tests with the app's registered br.com.gepefe.app callback scheme; 17 native tests, 23 repository, 6 navigation and 7 download tests pass.
 - [x] Publish the GEPEFE privacy policy on /privacidade with introduction, collection/use, sharing, security and contact sections plus the October 2026 effective date; linked from the site footer and verified at 1280, 390 and 320px with no horizontal overflow.
 - [x] Make the admin panel phone-safe: stats grid 2/3/6 columns, content cards w-full max-w-full overflow-hidden with shrink-0 actions and wrapping metadata, pb-24 above the bottom bar; verified no horizontal scrolling and both action buttons fully visible at 320 and 390px.
 - [x] Separate the document modal's close button from "Download": header reserves right space (pr-12 / sm:pr-14) and the actions sit in one non-wrapping flex row; verified no overlap at 1280, 390 and 320px.
@@ -26,3 +28,6 @@
 - [x] Keep the chip bar on one continuous non-wrapping row with drag scrolling and a hidden scrollbar, advanced-filters icon pinned right; verified at 390 and 320px.
 - [x] Hide the chip bar's horizontal scrollbar in every engine (scrollbar-width, -ms-overflow-style, all webkit scrollbar parts) while keeping thumb swipe; verified a touch drag reaches the end with no visible track.
 - [ ] Verify signed-in favorites/history end-to-end — unavailable for externally managed Supabase without a test session.
+- [x] Article/publication detail share button shows only its icon on phones (label returns from the small breakpoint up), matching the save button; verified at 393, 320 and 1280px.
+- [x] Download tests now stub the Capacitor plugins instead of the app's native helper, so the full suite runs together again; 53 tests pass.
+- [x] Every academic item now opens at /publicacao/{id} (cards, citation, sharing); older /artigo and /article links redirect there; news untouched; verified in the browser.

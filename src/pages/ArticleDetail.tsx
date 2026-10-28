@@ -1,7 +1,7 @@
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { downloadDocument, getArticleFileUrl } from '@/lib/downloads';
 import { useEffect, useState } from 'react';
-import { ArrowLeft, Bookmark, BookOpen, Calendar, Copy, Download, User, Users } from 'lucide-react';
+import { ArrowLeft, Bookmark, BookOpen, Calendar, Copy, Download, Share2, User, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -10,8 +10,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useArticlesContext } from '@/contexts/ArticlesContext';
 import { useToast } from '@/hooks/use-toast';
-import { collectiveAuthor, formatCitation, recordReading } from '@/lib/repository';
-import { openExternalUrl } from '@/lib/native';
+import { collectiveAuthor, formatCitation, publicationPath, recordReading } from '@/lib/repository';
+import { getPublicShareUrl, openExternalUrl, shareContent } from '@/lib/native';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
 
@@ -40,7 +40,7 @@ export default function ArticleDetail() {
   const member = article.authors.some(name => name.includes(' (GEPEFE)'));
   const hasFile = Boolean(article.file_path || article.pdf_url);
   const pdf = article.file_type?.includes('pdf') || article.pdf_url?.toLowerCase().includes('.pdf');
-  const citation = formatCitation(article, `${window.location.origin}/article/${article.id}`);
+  const citation = formatCitation(article, getPublicShareUrl(publicationPath(article)));
   const related = articles.filter(item => item.content_type !== 'news' && item.id !== article.id && (item.category === article.category || item.tags.some(tag => article.tags.includes(tag)))).sort((a, b) => b.publish_date.localeCompare(a.publish_date)).slice(0, 3);
 
   const fileUrl = getArticleFileUrl(article);
@@ -70,6 +70,21 @@ export default function ArticleDetail() {
       toast({ title: 'Citação copiada' }); 
     } catch { 
       toast({ title: 'Não foi possível copiar a citação', variant: 'destructive' }); 
+    }
+  }
+
+  // Shares the item's title and public link, falling back to copying the link when the platform sheet is unavailable.
+  async function share() {
+    if (!article) return;
+    try {
+      const delivered = await shareContent({
+        title: article.title,
+        url: getPublicShareUrl(publicationPath(article)),
+      });
+      if (delivered === 'copied') toast({ title: 'Link copiado para a área de transferência' });
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') return;
+      toast({ title: 'Não foi possível compartilhar', variant: 'destructive' });
     }
   }
 
@@ -108,6 +123,16 @@ export default function ArticleDetail() {
             aria-pressed={isFavorited(article.id)}
           >
             {user ? <Bookmark className={isFavorited(article.id) ? 'fill-primary text-primary' : ''} /> : <Link to="/auth"><Bookmark /></Link>}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => void share()}
+            aria-label="Compartilhar este documento"
+            title="Compartilhar"
+            className="w-10 gap-0 px-0 sm:w-auto sm:gap-2 sm:px-4"
+          >
+            <Share2 />
+            <span className="hidden sm:inline">Compartilhar</span>
           </Button>
         </div>
       </header>
