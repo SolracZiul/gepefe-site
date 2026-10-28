@@ -93,3 +93,8 @@ export function researcherInitials(name: string) {
   if (parts.length === 0) return '?';
   return ((parts[0][0] || '') + (parts.length > 1 ? parts[parts.length - 1][0] : '')).toUpperCase();
 }
+
+/** Every academic item has one canonical address, kept separate from news. */
+export function publicationPath(article: Pick<Article, 'id'>) {
+  return `/publicacao/${article.id}`;
+}

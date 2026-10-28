@@ -10,7 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useArticlesContext } from '@/contexts/ArticlesContext';
 import { useToast } from '@/hooks/use-toast';
-import { collectiveAuthor, formatCitation, recordReading } from '@/lib/repository';
+import { collectiveAuthor, formatCitation, publicationPath, recordReading } from '@/lib/repository';
 import { getPublicShareUrl, openExternalUrl, shareContent } from '@/lib/native';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
@@ -40,7 +40,7 @@ export default function ArticleDetail() {
   const member = article.authors.some(name => name.includes(' (GEPEFE)'));
   const hasFile = Boolean(article.file_path || article.pdf_url);
   const pdf = article.file_type?.includes('pdf') || article.pdf_url?.toLowerCase().includes('.pdf');
-  const citation = formatCitation(article, `${window.location.origin}/article/${article.id}`);
+  const citation = formatCitation(article, getPublicShareUrl(publicationPath(article)));
   const related = articles.filter(item => item.content_type !== 'news' && item.id !== article.id && (item.category === article.category || item.tags.some(tag => article.tags.includes(tag)))).sort((a, b) => b.publish_date.localeCompare(a.publish_date)).slice(0, 3);
 
   const fileUrl = getArticleFileUrl(article);
@@ -79,7 +79,7 @@ export default function ArticleDetail() {
     try {
       const delivered = await shareContent({
         title: article.title,
-        url: getPublicShareUrl(`/artigo/${article.id}`),
+        url: getPublicShareUrl(publicationPath(article)),
       });
       if (delivered === 'copied') toast({ title: 'Link copiado para a área de transferência' });
     } catch (error) {
