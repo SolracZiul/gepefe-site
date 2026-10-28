@@ -46,7 +46,7 @@ async function fetchAndDownload(url: string, filename: string, validatePdf: bool
   URL.revokeObjectURL(objectUrl);
 }
 
-export async function downloadDocument(article: Article): Promise<void> {
+export async function downloadDocument(article: Pick<Article, 'title' | 'file_path' | 'pdf_url'>): Promise<void> {
   const stored = Boolean(article.file_path) && !/^https?:\/\//i.test(article.file_path as string);
 
   // Stored files are resolved once, as an attachment on the web and as an absolute URL in the app.
