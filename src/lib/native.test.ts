@@ -21,11 +21,17 @@ mock.module('@/integrations/supabase/client', () => ({ supabase: {
   auth: { setSession, exchangeCodeForSession: exchangeCode, signInWithOAuth: oauth },
   storage: { from: () => ({ createSignedUrl: signedUrl }) },
 } }));
-const { openExternalUrl, openStoredFileNative, signInWithGoogle, completeNativeAuth, registerNativeAuthListener } = await import('./native');
+const { openExternalUrl, openStoredFileNative, signInWithGoogle, completeNativeAuth, registerNativeAuthListener, getPublicShareUrl, shareContent } = await import('./native');
+
+const originalNavigator = globalThis.navigator;
+function useNavigator(value: unknown) {
+  Object.defineProperty(globalThis, 'navigator', { value, configurable: true, writable: true });
+}
 
 beforeEach(() => {
   native = true;
   browserOpen.mockClear(); browserClose.mockClear(); setSession.mockClear(); exchangeCode.mockClear(); oauth.mockClear(); signedUrl.mockClear(); removeListener.mockClear();
+  shareSheet.mockClear();
   launchUrl.mockResolvedValue(undefined);
 });
 
