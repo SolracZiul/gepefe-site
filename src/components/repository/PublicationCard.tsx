@@ -1,14 +1,16 @@
 import { useState } from 'react';
-import { downloadDocument, getArticleFileUrl } from '@/lib/downloads';
-import { openExternalUrl } from '@/lib/native';
+import { downloadDocument } from '@/lib/downloads';
 import { Link } from 'react-router-dom';
 import { Bookmark, Download, ArrowUpRight, User, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { ArticleViewer } from '@/components/ArticleViewer';
 import type { Article } from '@/hooks/useArticles';
 import { collectiveAuthor, formatAcademicAuthor } from '@/lib/repository';
 import { useToast } from '@/hooks/use-toast';
+import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Props {
   article: Article;
@@ -19,35 +21,59 @@ interface Props {
 }
 
 export function PublicationCard({ article, saved, canSave, onSave, onRead }: Props) {
+  const [preview, setPreview] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const { toast } = useToast();
   const collective = article.authors.length === 1 && article.authors[0] === collectiveAuthor;
   const member = article.authors.some(author => author.includes(' (GEPEFE)'));
   const hasFile = Boolean(article.file_path || article.pdf_url);
 
-  // Obtém a URL do documento (preferindo pdf_url se existir, ou file_path)
-  const fileUrl = getArticleFileUrl(article);
+  function getAbsoluteFileUrl(): string {
+    const rawPath = article.file_path || article.pdf_url || '';
+    if (!rawPath) return '';
+
+    if (rawPath.startsWith('http://') || rawPath.startsWith('https://')) {
+      return rawPath;
+    }
+
+    const { data } = supabase.storage
+      .from('academic-articles')
+      .getPublicUrl(rawPath);
+
+    return data?.publicUrl || '';
+  }
 
   async function handleRead() {
     onRead();
-    if (fileUrl) await openExternalUrl(fileUrl);
+    setPreview(true);
   }
 
-  async function download() {
+  async function handleDownload(e: React.MouseEvent) {
+    e.stopPropagation();
+    e.preventDefault();
+
+    if (downloading) return;
     setDownloading(true);
+
     try {
-      await downloadDocument(article);
-    } catch {
-      // Se falhar a transferência direta no app nativo, abre no navegador do telemóvel
-      if (Capacitor.isNativePlatform() && fileUrl) {
-        await openExternalUrl(fileUrl);
-      } else {
-        toast({
-          title: 'Não foi possível baixar o documento',
-          description: 'O servidor pode bloquear downloads ou o endereço pode não apontar diretamente para um ficheiro.',
-          variant: 'destructive',
-        });
+      const url = getAbsoluteFileUrl();
+
+      if (!url) {
+        toast({ title: 'Ficheiro não disponível', variant: 'destructive' });
+        return;
       }
+
+      if (Capacitor.isNativePlatform()) {
+        await Browser.open({ url });
+      } else {
+        await downloadDocument(article as any);
+      }
+    } catch (error) {
+      console.error('Erro ao baixar documento:', error);
+      toast({
+        title: 'Não foi possível baixar o documento',
+        variant: 'destructive',
+      });
     } finally {
       setDownloading(false);
     }
@@ -90,18 +116,20 @@ export function PublicationCard({ article, saved, canSave, onSave, onRead }: Pro
             Ler / Visualizar PDF
           </Button>
           <Button
+            type="button"
             variant="outline"
             size="icon"
             disabled={!hasFile || downloading}
             aria-label="Download"
             title="Download"
             className="shrink-0 hover:bg-muted hover:text-foreground"
-            onClick={download}
+            onClick={handleDownload}
           >
             <Download className={downloading ? 'animate-pulse h-4 w-4' : 'h-4 w-4'} />
           </Button>
           {canSave && (
             <Button
+              type="button"
               variant="ghost"
               size="icon"
               className="shrink-0 hover:bg-muted hover:text-foreground"
@@ -115,6 +143,7 @@ export function PublicationCard({ article, saved, canSave, onSave, onRead }: Pro
           )}
         </div>
       </div>
+      {preview && <ArticleViewer article={article as any} isOpen={preview} onClose={() => setPreview(false)} />}
     </article>
   );
 }

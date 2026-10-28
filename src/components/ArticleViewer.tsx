@@ -30,7 +30,6 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
 
   const getFileUrl = (): string | null => {
     if (article.file_path) {
-      // Se já for uma URL completa
       if (article.file_path.startsWith('http://') || article.file_path.startsWith('https://')) {
         return article.file_path;
       }
@@ -45,6 +44,22 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
     return article.pdf_url || null;
   };
 
+  const getPreviewUrl = (url: string): string => {
+    // O Google Docs Viewer renderiza PDFs mesmo quando o navegador do sistema
+    // trataria a resposta do Storage como um download.
+    const parsedUrl = new URL(url, window.location.href);
+    const absoluteUrl = parsedUrl.toString();
+    const pathname = parsedUrl.pathname;
+    const isPdf = article.file_type?.toLowerCase().includes('pdf') || pathname.toLowerCase().endsWith('.pdf');
+    const isRemoteUrl = parsedUrl.origin !== window.location.origin;
+
+    if (Capacitor.isNativePlatform() && isPdf && isRemoteUrl) {
+      return `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(absoluteUrl)}`;
+    }
+
+    return absoluteUrl;
+  };
+
   const handleOpenExternal = async () => {
     const url = getFileUrl();
     if (!url) {
@@ -54,7 +69,7 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
 
     try {
       if (Capacitor.isNativePlatform()) {
-        await Browser.open({ url });
+        await Browser.open({ url: getPreviewUrl(url) });
       } else {
         window.open(url, '_blank', 'noopener,noreferrer');
       }
@@ -94,18 +109,37 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
     }
   }, [isOpen, article.id]);
 
-  const isPDF = article.file_type?.includes('pdf') || article.pdf_url?.toLowerCase().includes('.pdf') || article.file_path?.toLowerCase().endsWith('.pdf');
-  const isExternalLink = !!article.pdf_url && !article.file_path;
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="repository max-w-6xl max-h-[90vh] w-[95vw] h-[95vh] sm:max-w-[95vw] sm:w-[95vw] sm:h-[90vh] sm:max-h-[90vh] p-0 overflow-hidden flex flex-col">
+      <DialogContent className="repository flex h-[calc(100dvh-2rem)] max-h-[calc(100dvh-2rem)] w-[calc(100vw-1rem)] max-w-6xl flex-col overflow-hidden p-0 sm:w-[95vw]">
         <DialogHeader className="flex-shrink-0 pl-3 pr-12 pt-3 pb-2 sm:pl-6 sm:pr-14 sm:pt-5 sm:pb-3 border-b">
-          <DialogTitle className="text-sm leading-tight break-words sm:text-lg font-bold">{article.title}</DialogTitle>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+            <DialogTitle className="min-w-0 flex-1 text-sm leading-tight break-words sm:text-lg font-bold">{article.title}</DialogTitle>
+            <div className="flex flex-nowrap items-center justify-end gap-2 sm:justify-start">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleOpenExternal}
+                className="shrink-0 whitespace-nowrap text-xs sm:text-sm"
+              >
+                <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">Abrir no navegador</span>
+                <span className="sm:hidden">Abrir</span>
+              </Button>
+              <Button
+                size="sm"
+                onClick={handleDownload}
+                className="shrink-0 whitespace-nowrap text-xs sm:text-sm"
+              >
+                <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                Download
+              </Button>
+            </div>
+          </div>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto px-2 sm:px-6 pb-2 sm:pb-6 mt-4">
-          <div className="bg-muted/30 rounded-lg overflow-hidden h-full flex flex-col items-center justify-center p-6 text-center">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-2 pb-4 pt-4 sm:px-6 sm:pb-6">
+          <div className="bg-muted/30 flex flex-col items-center justify-center rounded-lg p-4 text-center sm:p-6">
             <FileText className="w-16 h-16 text-primary mb-4" />
             <h3 className="text-lg font-semibold mb-2">{article.title}</h3>
             <p className="text-sm text-muted-foreground mb-6 max-w-md">
@@ -127,3 +161,5 @@ export const ArticleViewer = ({ article, isOpen, onClose }: ArticleViewerProps) 
     </Dialog>
   );
 };
+
+export default ArticleViewer;

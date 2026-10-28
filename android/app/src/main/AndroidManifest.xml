@@ -23,7 +23,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="com.gepefe.app" android:host="login-callback" />
+                <data android:scheme="br.com.gepefe.app" android:host="login-callback" />
             </intent-filter>
 
             <intent-filter android:autoVerify="true">
@@ -31,6 +31,16 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="https" android:host="euwmjhuewnjymhzbedkh.supabase.co" />
+            </intent-filter>
+
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="https"
+                    android:host="gepefe.netlify.app"
+                    android:pathPrefix="/noticia/" />
             </intent-filter>
         </activity>
 

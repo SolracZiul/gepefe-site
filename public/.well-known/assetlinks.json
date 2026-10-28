@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "br.com.gepefe.app",
+      "sha256_cert_fingerprints": [
+        "85:E8:72:39:4B:43:84:2F:5A:EB:C6:38:E2:72:43:F5:25:20:C3:AD:CA:02:48:4A:51:0C:6B:11:CF:9B:4B:D9"
+      ]
+    }
+  }
+]

@@ -10,6 +10,7 @@ import { ptBR } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import useEmblaCarousel from 'embla-carousel-react';
 import DOMPurify from 'dompurify';
+import { getPublicShareUrl, isNative, shareContent } from '@/lib/native';
 
 interface News {
   id: string;
@@ -113,15 +114,18 @@ export default function NoticiaDetail() {
     emblaApi.on('select', onSelect);
   }, [emblaApi]);
 
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: news?.title,
-        text: news?.summary,
-        url: window.location.href,
+  const handleShare = async () => {
+    if (!news) return;
+    try {
+      await shareContent({
+        title: news.title,
+        text: news.summary,
+        url: isNative() ? getPublicShareUrl(`/noticia/${news.id}`) : window.location.href,
       });
-    } else {
-      navigator.clipboard.writeText(window.location.href);
+    } catch (error) {
+      // Fechar a folha de compartilhamento é uma ação normal do usuário.
+      if (error instanceof Error && error.name === 'AbortError') return;
+      console.error('Error sharing news:', error);
     }
   };
 

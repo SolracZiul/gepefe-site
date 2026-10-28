@@ -1,4 +1,4 @@
-package com.gepefe.app;
+package br.com.gepefe.app;
 
 import com.getcapacitor.BridgeActivity;
 

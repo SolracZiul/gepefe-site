@@ -1,11 +1,33 @@
 import { Capacitor } from '@capacitor/core';
 import { Browser } from '@capacitor/browser';
 import { App as CapacitorApp } from '@capacitor/app';
+import { Share } from '@capacitor/share';
 import { supabase } from '@/integrations/supabase/client';
 
-export const NATIVE_AUTH_CALLBACK = 'com.gepefe.app://login-callback';
+export const NATIVE_AUTH_CALLBACK = 'br.com.gepefe.app://login-callback';
+const PUBLIC_SITE_URL = 'https://gepefe.netlify.app';
 
 export const isNative = () => Capacitor.isNativePlatform();
+
+/** Resolves an app route to its public website URL for sharing outside the app. */
+export function getPublicShareUrl(path: string) {
+  return new URL(path, PUBLIC_SITE_URL).toString();
+}
+
+/** Opens the platform share sheet, using Capacitor on native WebViews. */
+export async function shareContent(options: { title: string; text?: string; url: string }) {
+  if (isNative()) {
+    await Share.share({ ...options, dialogTitle: 'Compartilhar' });
+    return;
+  }
+
+  if (navigator.share) {
+    await navigator.share(options);
+    return;
+  }
+
+  await navigator.clipboard.writeText(options.url);
+}
 
 /** Opens an external URL inside the app (in-app browser) on native, new tab on web. */
 export async function openExternalUrl(url: string) {
@@ -49,7 +71,7 @@ export async function signInWithGoogle(webRedirect: string) {
 function parseNativeAuthCallback(url: string) {
   try {
     const parsed = new URL(url);
-    return parsed.protocol === 'com.gepefe.app:' && parsed.hostname === 'login-callback' && ['', '/'].includes(parsed.pathname)
+    return parsed.protocol === 'br.com.gepefe.app:' && parsed.hostname === 'login-callback' && ['', '/'].includes(parsed.pathname)
       ? parsed : undefined;
   } catch { return undefined; }
 }
@@ -97,6 +119,37 @@ export function registerNativeAuthListener(onSuccess: () => void, onError: () =>
     const launch = await CapacitorApp.getLaunchUrl();
     if (launch?.url) await handleUrl(launch);
   }).catch(() => { if (!disposed) onError(); });
+  return () => {
+    disposed = true;
+    void listener.then(handle => handle.remove()).catch(() => undefined);
+  };
+}
+
+function parseNewsAppLink(url: string) {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'https:'
+      && parsed.hostname === 'gepefe.netlify.app'
+      && /^\/noticia\/[^/]+\/?$/.test(parsed.pathname)
+      ? `${parsed.pathname}${parsed.search}${parsed.hash}`
+      : undefined;
+  } catch { return undefined; }
+}
+
+/** Routes verified website news links into the matching screen in the app. */
+export function registerNativeAppLinkListener(onNavigate: (path: string) => void) {
+  if (!isNative()) return () => undefined;
+  let disposed = false;
+  const handleUrl = (url: string) => {
+    const path = parseNewsAppLink(url);
+    if (!disposed && path) onNavigate(path);
+  };
+  const listener = CapacitorApp.addListener('appUrlOpen', ({ url }) => handleUrl(url));
+  void listener.then(async () => {
+    if (disposed) return;
+    const launch = await CapacitorApp.getLaunchUrl();
+    if (launch?.url) handleUrl(launch.url);
+  }).catch(() => undefined);
   return () => {
     disposed = true;
     void listener.then(handle => handle.remove()).catch(() => undefined);

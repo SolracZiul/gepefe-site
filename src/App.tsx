@@ -6,7 +6,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import { registerNativeAuthListener, registerNativeLinkListener } from "./lib/native";
+import { registerNativeAppLinkListener, registerNativeAuthListener, registerNativeLinkListener } from "./lib/native";
 import { useToast } from "./hooks/use-toast";
 import { ThemeProvider } from "next-themes";
 import { SplashScreen } from '@capacitor/splash-screen';
@@ -106,8 +106,9 @@ function NativeEvents() {
       () => navigate('/', { replace: true }),
       () => toast({ title: 'Não foi possível concluir o login com Google', description: 'Tente novamente.', variant: 'destructive' }),
     );
+    const removeAppLinks = registerNativeAppLinkListener(path => navigate(path, { replace: true }));
     const removeLinks = registerNativeLinkListener(() => toast({ title: 'Não foi possível abrir o documento', variant: 'destructive' }));
-    return () => { removeAuth(); removeLinks(); };
+    return () => { removeAuth(); removeAppLinks(); removeLinks(); };
   }, [navigate, toast]);
   return null;
 }

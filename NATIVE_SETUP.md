@@ -1,8 +1,8 @@
 # Google login return on Android and iOS
 
-The app uses `com.gepefe.app://login-callback`. The JavaScript listener cannot register this scheme with the operating system. This checkout has no `android/` or `ios/` project, so complete the following in the native projects on your computer.
+The app uses `br.com.gepefe.app://login-callback`. The JavaScript listener cannot register this scheme with the operating system. The Android project is in `android/`; this checkout has no iOS project.
 
-1. In Supabase → Authentication → URL Configuration → Redirect URLs, allow exactly `com.gepefe.app://login-callback`. Leave the Google Cloud redirect pointed at Supabase's HTTPS auth callback, not the custom scheme.
+1. In Supabase → Authentication → URL Configuration → Redirect URLs, allow exactly `br.com.gepefe.app://login-callback`. Leave the Google Cloud redirect pointed at Supabase's HTTPS auth callback, not the custom scheme.
 2. Inside the main activity in `android/app/src/main/AndroidManifest.xml`, add:
 
 ```xml
@@ -10,7 +10,7 @@ The app uses `com.gepefe.app://login-callback`. The JavaScript listener cannot r
     <action android:name="android.intent.action.VIEW" />
     <category android:name="android.intent.category.DEFAULT" />
     <category android:name="android.intent.category.BROWSABLE" />
-    <data android:scheme="com.gepefe.app" android:host="login-callback" />
+    <data android:scheme="br.com.gepefe.app" android:host="login-callback" />
 </intent-filter>
 ```
 
@@ -21,7 +21,7 @@ The app uses `com.gepefe.app://login-callback`. The JavaScript listener cannot r
 <array>
     <dict>
         <key>CFBundleURLSchemes</key>
-        <array><string>com.gepefe.app</string></array>
+        <array><string>br.com.gepefe.app</string></array>
     </dict>
 </array>
 ```
