@@ -14,19 +14,20 @@ export function getPublicShareUrl(path: string) {
   return new URL(path, PUBLIC_SITE_URL).toString();
 }
 
-/** Opens the platform share sheet, using Capacitor on native WebViews. */
-export async function shareContent(options: { title: string; text?: string; url: string }) {
+/** Opens the platform share sheet, using Capacitor on native WebViews. Reports which channel delivered the item. */
+export async function shareContent(options: { title: string; text?: string; url: string }): Promise<'shared' | 'copied'> {
   if (isNative()) {
     await Share.share({ ...options, dialogTitle: 'Compartilhar' });
-    return;
+    return 'shared';
   }
 
   if (navigator.share) {
     await navigator.share(options);
-    return;
+    return 'shared';
   }
 
   await navigator.clipboard.writeText(options.url);
+  return 'copied';
 }
 
 /** Opens an external URL inside the app (in-app browser) on native, new tab on web. */
