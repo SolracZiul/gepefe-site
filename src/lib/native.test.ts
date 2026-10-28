@@ -8,11 +8,13 @@ const setSession = mock(async (_tokens: unknown) => ({ data: { session: { user: 
 const exchangeCode = mock(async (_code: string) => ({ data: { session: { user: { id: 'test-user' } } }, error: null }));
 const oauth = mock(async (_options: unknown) => ({ data: { url: 'https://auth.example/authorize' }, error: null }));
 const signedUrl = mock(async (_path: string, _seconds: number) => ({ data: { signedUrl: 'https://files.example/document.pdf' }, error: null }));
+const shareSheet = mock(async (_options: unknown) => undefined);
 const removeListener = mock(async () => undefined);
 let onAppUrl: (event: { url: string }) => Promise<void> = async () => undefined;
 const launchUrl = mock(async (): Promise<{ url: string } | undefined> => undefined);
 mock.module('@capacitor/core', () => ({ Capacitor: { isNativePlatform: () => native } }));
 mock.module('@capacitor/browser', () => ({ Browser: { open: browserOpen, close: browserClose } }));
+mock.module('@capacitor/share', () => ({ Share: { share: shareSheet } }));
 mock.module('@capacitor/app', () => ({ App: {
   addListener: mock(async (_name: string, handler: typeof onAppUrl) => { onAppUrl = handler; return { remove: removeListener }; }),
   getLaunchUrl: launchUrl,
