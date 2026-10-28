@@ -5,7 +5,8 @@
       "namespace": "android_app",
       "package_name": "br.com.gepefe.app",
       "sha256_cert_fingerprints": [
-        "85:E8:72:39:4B:43:84:2F:5A:EB:C6:38:E2:72:43:F5:25:20:C3:AD:CA:02:48:4A:51:0C:6B:11:CF:9B:4B:D9"
+        "85:E8:72:39:4B:43:84:2F:5A:EB:C6:38:E2:72:43:F5:25:20:C3:AD:CA:02:48:4A:51:0C:6B:11:CF:9B:4B:D9",
+        "8F:D5:D8:5C:F3:A1:8A:B0:E1:65:54:C1:CD:FE:17:51:3F:2D:85:14:CE:CF:32:B6:C4:03:5F:2F:36:EB:EC:44"
       ]
     }
   }
