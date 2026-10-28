@@ -1,7 +1,7 @@
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { downloadDocument, getArticleFileUrl } from '@/lib/downloads';
 import { useEffect, useState } from 'react';
-import { ArrowLeft, Bookmark, BookOpen, Calendar, Copy, Download, User, Users } from 'lucide-react';
+import { ArrowLeft, Bookmark, BookOpen, Calendar, Copy, Download, Share2, User, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -11,7 +11,7 @@ import { useFavorites } from '@/hooks/useFavorites';
 import { useArticlesContext } from '@/contexts/ArticlesContext';
 import { useToast } from '@/hooks/use-toast';
 import { collectiveAuthor, formatCitation, recordReading } from '@/lib/repository';
-import { openExternalUrl } from '@/lib/native';
+import { getPublicShareUrl, openExternalUrl, shareContent } from '@/lib/native';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
 
@@ -73,6 +73,21 @@ export default function ArticleDetail() {
     }
   }
 
+  // Shares the item's title and public link, falling back to copying the link when the platform sheet is unavailable.
+  async function share() {
+    if (!article) return;
+    try {
+      const delivered = await shareContent({
+        title: article.title,
+        url: getPublicShareUrl(`/artigo/${article.id}`),
+      });
+      if (delivered === 'copied') toast({ title: 'Link copiado para a área de transferência' });
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') return;
+      toast({ title: 'Não foi possível compartilhar', variant: 'destructive' });
+    }
+  }
+
   return (
     <main>
       <header className="border-b border-border pb-8">
@@ -108,6 +123,9 @@ export default function ArticleDetail() {
             aria-pressed={isFavorited(article.id)}
           >
             {user ? <Bookmark className={isFavorited(article.id) ? 'fill-primary text-primary' : ''} /> : <Link to="/auth"><Bookmark /></Link>}
+          </Button>
+          <Button variant="outline" onClick={() => void share()} aria-label="Compartilhar este documento">
+            <Share2 />Compartilhar
           </Button>
         </div>
       </header>
