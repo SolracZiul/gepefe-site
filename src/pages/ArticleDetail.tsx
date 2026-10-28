@@ -124,8 +124,15 @@ export default function ArticleDetail() {
           >
             {user ? <Bookmark className={isFavorited(article.id) ? 'fill-primary text-primary' : ''} /> : <Link to="/auth"><Bookmark /></Link>}
           </Button>
-          <Button variant="outline" onClick={() => void share()} aria-label="Compartilhar este documento">
-            <Share2 />Compartilhar
+          <Button
+            variant="outline"
+            onClick={() => void share()}
+            aria-label="Compartilhar este documento"
+            title="Compartilhar"
+            className="w-10 gap-0 px-0 sm:w-auto sm:gap-2 sm:px-4"
+          >
+            <Share2 />
+            <span className="hidden sm:inline">Compartilhar</span>
           </Button>
         </div>
       </header>
