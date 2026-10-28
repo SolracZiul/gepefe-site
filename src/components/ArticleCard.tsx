@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { downloadDocument, getArticleFileUrl } from '@/lib/downloads';
 import { openExternalUrl } from '@/lib/native';
+import { publicationPath } from '@/lib/repository';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Download, Eye, Calendar, User, Heart, Users } from "lucide-react";
@@ -85,7 +86,7 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
         
         <h3 
           className="text-lg font-semibold line-clamp-2 group-hover:text-primary transition-colors cursor-pointer"
-          onClick={() => navigate(`/article/${article.id}`)}
+          onClick={() => navigate(publicationPath(article))}
         >
           {article.title}
         </h3>

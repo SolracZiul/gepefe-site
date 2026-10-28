@@ -30,3 +30,4 @@
 - [ ] Verify signed-in favorites/history end-to-end — unavailable for externally managed Supabase without a test session.
 - [x] Article/publication detail share button shows only its icon on phones (label returns from the small breakpoint up), matching the save button; verified at 393, 320 and 1280px.
 - [x] Download tests now stub the Capacitor plugins instead of the app's native helper, so the full suite runs together again; 53 tests pass.
+- [x] Every academic item now opens at /publicacao/{id} (cards, citation, sharing); older /artigo and /article links redirect there; news untouched; verified in the browser.

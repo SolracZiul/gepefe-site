@@ -1,11 +1,12 @@
 /// <reference types="bun" />
 import { describe, expect, test } from 'bun:test';
-import { filterPublications, formatAcademicAuthor, formatCitation, publicationChips } from './repository';
+import { filterPublications, formatAcademicAuthor, formatCitation, publicationChips, publicationPath } from './repository';
 import type { Article } from '@/hooks/useArticles';
 
 const base: Article = { id: '1', title: 'Educação Física Escolar', authors: ['Vanessa Alves Silva'], abstract: 'Formação docente e inclusão', category: 'Artigos Completos', tags: ['Escola'], publish_date: '2025-01-01', download_count: 10, file_path: null, pdf_url: null, file_size: null, file_type: null, created_at: '', updated_at: '' };
 const articles = [base, { ...base, id: '2', title: 'A pesquisa', publish_date: '2026-01-01', download_count: 20 }, { ...base, id: 'news', content_type: 'news' }];
 describe('Academic repository', () => {
+  test('academic items open at one canonical publication address', () => expect(publicationPath(base)).toBe('/publicacao/1'));
   test('never includes news in the academic feed', () => expect(filterPublications(articles, '', '', '', 'recent').map(a => a.id)).toEqual(['2', '1']));
   test('searches publication year', () => expect(filterPublications(articles, '2025', '', '', 'recent').map(a => a.id)).toEqual(['1']));
   test('searches authors and accented keywords', () => expect(filterPublications(articles, 'silva inclusao', '', '', 'recent')).toHaveLength(2));
