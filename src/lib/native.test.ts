@@ -39,7 +39,7 @@ beforeEach(() => {
 
 test('native Google login uses the exact app callback without navigating the webview', async () => {
   await signInWithGoogle('https://web.example/email-confirmation');
-  expect(oauth.mock.calls[0]).toEqual([{ provider: 'google', options: { redirectTo: 'com.gepefe.app://login-callback', skipBrowserRedirect: true, queryParams: { prompt: 'select_account' } } }]);
+  expect(oauth.mock.calls[0]).toEqual([{ provider: 'google', options: { redirectTo: 'br.com.gepefe.app://login-callback', skipBrowserRedirect: true, queryParams: { prompt: 'select_account' } } }]);
   expect(browserOpen.mock.calls[0]).toEqual([{ url: 'https://auth.example/authorize' }]);
 });
 test('web Google login preserves its web callback and does not invoke a native plugin', async () => {
@@ -63,19 +63,19 @@ test('web stored downloads remain handled by the original browser download path'
   expect(signedUrl).not.toHaveBeenCalled();
 });
 test('OAuth hash callback restores both tokens through setSession', async () => {
-  expect(await completeNativeAuth('com.gepefe.app://login-callback#access_token=test-access&refresh_token=test-refresh')).toBe(true);
+  expect(await completeNativeAuth('br.com.gepefe.app://login-callback#access_token=test-access&refresh_token=test-refresh')).toBe(true);
   expect(setSession.mock.calls[0]).toEqual([{ access_token: 'test-access', refresh_token: 'test-refresh' }]);
 });
 test('OAuth query callback restores both tokens through setSession', async () => {
-  expect(await completeNativeAuth('com.gepefe.app://login-callback?access_token=test-access&refresh_token=test-refresh')).toBe(true);
+  expect(await completeNativeAuth('br.com.gepefe.app://login-callback?access_token=test-access&refresh_token=test-refresh')).toBe(true);
   expect(setSession).toHaveBeenCalledTimes(1);
 });
 test('PKCE callbacks exchange the code for a session', async () => {
-  expect(await completeNativeAuth('com.gepefe.app://login-callback?code=test-code')).toBe(true);
+  expect(await completeNativeAuth('br.com.gepefe.app://login-callback?code=test-code')).toBe(true);
   expect(exchangeCode.mock.calls[0]).toEqual(['test-code']);
 });
 test('unrelated callbacks and incomplete tokens cannot restore a session', async () => {
-  for (const url of ['https://login-callback#access_token=x&refresh_token=y', 'com.gepefe.app://login-callback.evil#access_token=x&refresh_token=y', 'com.gepefe.app://login-callback/other#access_token=x&refresh_token=y', 'com.gepefe.app://login-callback#access_token=x']) {
+  for (const url of ['https://login-callback#access_token=x&refresh_token=y', 'br.com.gepefe.app://login-callback.evil#access_token=x&refresh_token=y', 'br.com.gepefe.app://login-callback/other#access_token=x&refresh_token=y', 'br.com.gepefe.app://login-callback#access_token=x']) {
     expect(await completeNativeAuth(url)).toBe(false);
   }
   expect(setSession).not.toHaveBeenCalled();
@@ -85,7 +85,7 @@ test('appUrlOpen completes login, closes the browser and cleans up the listener'
   const error = mock(() => undefined);
   const cleanup = registerNativeAuthListener(success, error);
   await new Promise(resolve => setTimeout(resolve, 0));
-  await onAppUrl({ url: 'com.gepefe.app://login-callback#access_token=test-access&refresh_token=test-refresh' });
+  await onAppUrl({ url: 'br.com.gepefe.app://login-callback#access_token=test-access&refresh_token=test-refresh' });
   expect(success).toHaveBeenCalledTimes(1);
   expect(error).not.toHaveBeenCalled();
   expect(browserClose).toHaveBeenCalledTimes(1);
@@ -94,7 +94,7 @@ test('appUrlOpen completes login, closes the browser and cleans up the listener'
   expect(removeListener).toHaveBeenCalledTimes(1);
 });
 test('cold-start callback also restores the session', async () => {
-  launchUrl.mockResolvedValue({ url: 'com.gepefe.app://login-callback?code=cold-start-code' });
+  launchUrl.mockResolvedValue({ url: 'br.com.gepefe.app://login-callback?code=cold-start-code' });
   const success = mock(() => undefined);
   const cleanup = registerNativeAuthListener(success, mock(() => undefined));
   await new Promise(resolve => setTimeout(resolve, 0));
@@ -113,7 +113,7 @@ test('the app closes OAuth immediately before restoring the callback session', a
     await new Promise<void>(resolve => { release = resolve; });
     return { data: { session: { user: { id: 'test-user' } } }, error: null };
   });
-  const callback = onAppUrl({ url: 'com.gepefe.app://login-callback#access_token=test-access&refresh_token=test-refresh' });
+  const callback = onAppUrl({ url: 'br.com.gepefe.app://login-callback#access_token=test-access&refresh_token=test-refresh' });
   await new Promise(resolve => setTimeout(resolve, 0));
   expect(browserClose).toHaveBeenCalledTimes(1);
   expect(success).not.toHaveBeenCalled();
@@ -126,7 +126,7 @@ test('the app closes OAuth immediately before restoring the callback session', a
 test('unrelated app links do not close the integrated browser', async () => {
   const cleanup = registerNativeAuthListener(mock(() => undefined), mock(() => undefined));
   await new Promise(resolve => setTimeout(resolve, 0));
-  await onAppUrl({ url: 'com.gepefe.app://document' });
+  await onAppUrl({ url: 'br.com.gepefe.app://document' });
   expect(browserClose).not.toHaveBeenCalled();
   expect(setSession).not.toHaveBeenCalled();
   cleanup();
