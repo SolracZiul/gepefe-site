@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArticleViewer } from '@/components/ArticleViewer';
 import type { Article } from '@/hooks/useArticles';
-import { collectiveAuthor, formatAcademicAuthor } from '@/lib/repository';
+import { collectiveAuthor, formatAcademicAuthor, publicationPath } from '@/lib/repository';
 import { useToast } from '@/hooks/use-toast';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
@@ -90,7 +90,7 @@ export function PublicationCard({ article, saved, canSave, onSave, onRead }: Pro
         </span>
       </div>
       <h3 className="mb-3 text-lg font-semibold leading-snug">
-        <Link to={`/article/${article.id}`} onClick={onRead} className="line-clamp-3 hover:underline underline-offset-4">
+        <Link to={publicationPath(article)} onClick={onRead} className="line-clamp-3 hover:underline underline-offset-4">
           {article.title}
         </Link>
       </h3>
