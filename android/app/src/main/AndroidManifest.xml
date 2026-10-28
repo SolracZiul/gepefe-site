@@ -40,7 +40,11 @@
                 <data
                     android:scheme="https"
                     android:host="gepefe.netlify.app"
-                    android:pathPrefix="/noticia/" />
+                    android:pathPrefix="/noticia" />
+                <data
+                    android:scheme="https"
+                    android:host="gepefe.netlify.app"
+                    android:pathPrefix="/publicacao" />
             </intent-filter>
         </activity>
 

@@ -125,23 +125,23 @@ export function registerNativeAuthListener(onSuccess: () => void, onError: () =>
   };
 }
 
-function parseNewsAppLink(url: string) {
+function parseRepositoryAppLink(url: string) {
   try {
     const parsed = new URL(url);
     return parsed.protocol === 'https:'
       && parsed.hostname === 'gepefe.netlify.app'
-      && /^\/noticia\/[^/]+\/?$/.test(parsed.pathname)
+      && /^\/(?:noticia|publicacao)\/[^/]+\/?$/.test(parsed.pathname)
       ? `${parsed.pathname}${parsed.search}${parsed.hash}`
       : undefined;
   } catch { return undefined; }
 }
 
-/** Routes verified website news links into the matching screen in the app. */
+/** Routes verified news and publication links into the matching app screens. */
 export function registerNativeAppLinkListener(onNavigate: (path: string) => void) {
   if (!isNative()) return () => undefined;
   let disposed = false;
   const handleUrl = (url: string) => {
-    const path = parseNewsAppLink(url);
+    const path = parseRepositoryAppLink(url);
     if (!disposed && path) onNavigate(path);
   };
   const listener = CapacitorApp.addListener('appUrlOpen', ({ url }) => handleUrl(url));
