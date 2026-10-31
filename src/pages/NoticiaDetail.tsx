@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, Calendar, User, Share2, ChevronLeft, ChevronRight } from "lucide-react";
@@ -205,10 +206,14 @@ export default function NoticiaDetail() {
                 </div>
               )}
               
-              <Button onClick={handleShare} variant="outline" size="sm">
-                <Share2 className="h-4 w-4 mr-2" />
-                Compartilhar
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button onClick={handleShare} variant="outline" size="icon" className="shrink-0" aria-label="Compartilhar">
+                    <Share2 className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Compartilhar</TooltipContent>
+              </Tooltip>
             </div>
 
             <Separator />
