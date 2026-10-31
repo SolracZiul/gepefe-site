@@ -79,7 +79,7 @@ const App = () => {
                       <Route path="/email-confirmation" element={<EmailConfirmation />} />
                       <Route path="/reset-password" element={<ResetPassword />} />
                       <Route path="/profile" element={<Profile />} />
-                      <Route path="/admin" element={<Admin />} />
+                    <Route path="/admin" element={<Admin />} />
                       <Route path="/publicacao/:id" element={<ArticleDetail />} />
                       <Route path="/article/:id" element={<LegacyArticleRedirect />} />
                       <Route path="/noticias" element={<Noticias />} />
