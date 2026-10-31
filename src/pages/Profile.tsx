@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { User, Heart, Download } from "lucide-react";
+import { User, Heart, Download, History } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -99,6 +99,15 @@ export default function Profile() {
                 >
                   <Heart className="h-4 w-4 mr-2" />
                   Meus Favoritos
+                </Button>
+
+                <Button
+                  variant="outline"
+                  className="w-full justify-start lg:hidden"
+                  onClick={() => navigate("/historico")}
+                >
+                  <History className="h-4 w-4 mr-2" />
+                  Histórico de Leitura
                 </Button>
                 
                 <Button 
