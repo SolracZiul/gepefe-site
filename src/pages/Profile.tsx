@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { User, Heart, Download, History } from "lucide-react";
+import { User, Heart, Download, History, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -35,6 +35,10 @@ export default function Profile() {
       fetchDisplayName();
     }
   }, [user, loading, navigate]);
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate("/auth");
+  };
 
   if (loading) {
     return (
@@ -129,6 +133,15 @@ export default function Profile() {
                     Painel Administrativo
                   </Button>
                 )}
+
+                <Button
+                  variant="outline"
+                  className="w-full justify-start text-destructive hover:bg-destructive/10 hover:text-destructive"
+                  onClick={handleSignOut}
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sair
+                </Button>
               </CardContent>
             </Card>
           </div>

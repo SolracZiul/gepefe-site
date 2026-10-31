@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, LogOut, Edit, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import { ArticleForm } from "@/components/ArticleForm";
 import { ArticleList } from "@/components/ArticleList";
 import { NewsForm } from "@/components/NewsForm";
@@ -98,9 +98,6 @@ export default function Admin() {
     }
   };
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-  };
 
   const handleEdit = (article: Article) => {
     setEditingArticle(article);
@@ -200,18 +197,6 @@ export default function Admin() {
   return (
     <div className="bg-background">
       <div className="w-full pb-24">
-        {/* Header */}
-        <div className="flex flex-wrap justify-between items-center gap-4 mb-8">
-          <div className="flex gap-2">
-            <Button onClick={() => navigate("/")}>
-              Ver Site
-            </Button>
-            <Button onClick={handleSignOut} variant="outline">
-              <LogOut className="h-4 w-4 mr-2" />
-              Sair
-            </Button>
-          </div>
-        </div>
 
         {/* Stats */}
         <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
@@ -264,19 +249,27 @@ export default function Admin() {
         </div>
 
         {/* Actions */}
-        <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
-          <h2 className="text-xl font-semibold">Conteúdo</h2>
-          <div className="flex flex-wrap gap-2">
-            <Button onClick={() => handleCreateNew('article')}>
-              <Plus className="h-4 w-4 mr-2" />
-              Nova Publicação
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 sm:mb-6">
+          <h2 className="text-lg font-semibold sm:text-xl">Conteúdo</h2>
+          <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap">
+            <Button
+              onClick={() => handleCreateNew('article')}
+              className="w-full justify-center gap-1.5 px-2 text-xs sm:w-auto sm:px-4 sm:text-sm"
+            >
+              <Plus className="h-4 w-4 shrink-0" />
+              <span className="truncate">Nova Publicação</span>
             </Button>
-            <Button onClick={() => handleCreateNew('news')} variant="outline">
-              <Plus className="h-4 w-4 mr-2" />
-              Nova Notícia
+            <Button
+              onClick={() => handleCreateNew('news')}
+              variant="outline"
+              className="w-full justify-center gap-1.5 px-2 text-xs sm:w-auto sm:px-4 sm:text-sm"
+            >
+              <Plus className="h-4 w-4 shrink-0" />
+              <span className="truncate">Nova Notícia</span>
             </Button>
           </div>
         </div>
+
 
         {/* Articles List */}
         <ArticleList
