@@ -28,7 +28,7 @@ const collected = [
 
 export default function Privacidade() {
   return (
-    <main className="pb-6">
+    <main className="mx-auto w-full max-w-7xl px-4 pb-6">
       <header className="border-b border-border pb-8">
         <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
           Documentos institucionais
@@ -44,8 +44,8 @@ export default function Privacidade() {
         </p>
       </header>
 
-      <div className="grid gap-x-12 gap-y-10 pt-8 lg:grid-cols-[minmax(0,72ch)_minmax(0,1fr)]">
-        <div className="min-w-0">
+      <div className="grid gap-x-8 gap-y-10 pt-8 lg:grid-cols-12 xl:gap-x-12">
+        <div className="min-w-0 lg:col-span-8 xl:col-span-9">
           <section id="introducao" className="scroll-mt-40">
             <h2 className="mb-4 text-xl font-semibold">Introdução</h2>
             <p className="text-sm leading-7 text-muted-foreground">
@@ -178,7 +178,7 @@ export default function Privacidade() {
           </footer>
         </div>
 
-        <nav aria-label="Secções desta página" className="hidden lg:block">
+        <nav aria-label="Secções desta página" className="hidden min-w-0 lg:col-span-4 lg:block xl:col-span-3">
           <div className="sticky top-[calc(var(--repository-header-height)+24px)] space-y-3">
             <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
               Nesta página

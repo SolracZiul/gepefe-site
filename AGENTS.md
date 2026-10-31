@@ -7,7 +7,7 @@
 - Reading history stores only article IDs under a user-scoped browser key, not account permissions or article snapshots; it is device-local and does not imply synced analytics.
 - All routes use RepositoryShell as the sole owner of institutional header/sidebar/footer, so navigation and theme remain identical without page-level chrome.
 - Institutional link ordering and mobile account shortcuts come from shared navigation definitions; the shell provides bottom navigation below the desktop breakpoint to prevent per-page drift.
-- RepositoryShell measures the fixed header height for content and full-height sidebar offsets; page wrappers stay fluid without centered max-width constraints to keep all routes edge-to-edge.
+- RepositoryShell measures the fixed header height for content and full-height sidebar offsets; page wrappers stay fluid to keep routes edge-to-edge, except the privacy page's centered inner desktop grid.
 - Collection routes and Home use RepositoryCollection with PublicationCard and repository utilities, so filters and bibliographic actions cannot drift between pages.
 - Mobile filter chips and the year/author bottom sheet share RepositoryCollection filter state with desktop controls, so changing presentation never changes academic filtering rules.
 - The sidebar menu lists only collection and section destinations while institutional identity lives in the sidebar's institutional block, and each article page renders its citation once, so no destination or bibliographic string is offered twice.
@@ -22,3 +22,5 @@
 - Owner-authored policy pages live on clearly app-owned routes (`/privacidade`) linked from the shared footer, and state only facts the group provided; the contact shown is the group's published address, so no invented channel or compliance claim ever appears.
 - Detail pages share one item through `shareContent` in `src/lib/native.ts`, which passes the item title and its canonical public link to the platform sheet (Capacitor on native, `navigator.share` on web) and copies the link when no sheet exists; the helper reports which channel delivered it so the page can confirm a copy, and a sheet the user closed is never treated as a failure.
 - Academic items have one canonical address, `/publicacao/{id}` through `publicationPath` in `src/lib/repository.ts`, so cards, citation, sharing and routing never disagree; older `/artigo` and `/article` links redirect there and news keeps its own `/noticia/{id}`.
+- Collection read actions link to the canonical detail page, never a modal; DocumentPreview uses the shared file URL helper and PDF.js beneath the abstract for cross-device rendering, while blocked/non-PDF destinations use the integrated-browser helper.
+- Publication detail tabs and tooltip-equipped icon actions share one desktop toolbar; mobile tabs scroll independently so action controls never squeeze or wrap the tabs.
