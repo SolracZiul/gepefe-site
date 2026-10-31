@@ -36,4 +36,5 @@
 - [x] Every academic item now opens at /publicacao/{id} (cards, citation, sharing); older /artigo and /article links redirect there; news untouched; verified in the browser.
 - [x] Admin phones: "+ Nova Publicação" and "+ Nova Notícia" side by side in a two-column grid, card header keeps category + date left with 40x40 edit/delete actions right, titles text-base leading-snug, secondary metadata text-xs, tags flex-wrap gap-1.5, page and cards px-4 py-3; verified no horizontal overflow and full button text at 393, 320 and 1280px.
 - [x] Drop the redundant "Ver Site" and "Sair" buttons from the admin header and add a red "Sair" (LogOut) action to the profile quick actions that signs out of Supabase and returns to /auth; checked the button renders with icon and destructive color at 393, 320 and 1280px.
+- [x] Signup now signs the user in straight away (email confirmation is off): the session from signUp sends them to home or the admin panel and the toast reads "Conta criada com sucesso!"; verified with a real signup that landed on / with a live session, then removed the throwaway account.
 
