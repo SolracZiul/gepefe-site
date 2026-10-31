@@ -31,6 +31,7 @@ import ArticleDetail from "./pages/ArticleDetail";
 import Noticias from "./pages/Noticias";
 import NoticiaDetail from "./pages/NoticiaDetail";
 import Privacidade from "./pages/Privacidade";
+import LayoutCheck from "./pages/LayoutCheck";
 import { ArticlesProvider } from "./contexts/ArticlesContext";
 import { SearchProvider } from "./contexts/SearchContext";
 
@@ -79,7 +80,8 @@ const App = () => {
                       <Route path="/email-confirmation" element={<EmailConfirmation />} />
                       <Route path="/reset-password" element={<ResetPassword />} />
                       <Route path="/profile" element={<Profile />} />
-                      <Route path="/admin" element={<Admin />} />
+                    <Route path="/admin" element={<Admin />} />
+                    <Route path="/layout-check" element={<LayoutCheck />} />
                       <Route path="/publicacao/:id" element={<ArticleDetail />} />
                       <Route path="/article/:id" element={<LegacyArticleRedirect />} />
                       <Route path="/noticias" element={<Noticias />} />
