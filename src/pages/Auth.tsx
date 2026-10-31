@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { signInWithGoogle } from '@/lib/native';
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
+import { resolveSignUpResult } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Mail, Lock, User, Eye, EyeOff } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -24,14 +25,15 @@ export default function Auth() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const redirectByRole = useCallback(async (userId: string) => {
+    const { data: isAdmin } = await supabase.rpc('has_role', {
+      _user_id: userId,
+      _role: 'admin',
+    });
+    navigate(isAdmin ? '/admin' : '/');
+  }, [navigate]);
+
   useEffect(() => {
-    const redirectByRole = async (userId: string) => {
-      const { data: isAdmin } = await supabase.rpc('has_role', {
-        _user_id: userId,
-        _role: 'admin',
-      });
-      navigate(isAdmin ? '/admin' : '/');
-    };
 
     const checkUserAndRedirect = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -50,7 +52,7 @@ export default function Auth() {
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, redirectByRole]);
 
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -59,8 +61,8 @@ export default function Auth() {
 
     try {
       const redirectUrl = `${window.location.origin}/email-confirmation`;
-      
-      const { error } = await supabase.auth.signUp({
+
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -71,18 +73,29 @@ export default function Auth() {
         }
       });
 
-      if (error) {
+      const outcome = resolveSignUpResult({ data, error });
+
+      if (outcome.status === "failed") {
         toast({
           variant: "destructive",
           title: "Erro no cadastro",
-          description: error.message,
+          description: outcome.message,
         });
-      } else {
-        toast({
-          title: "Cadastro realizado!",
-          description: "Verifique seu email para confirmar a conta.",
-        });
+        return;
       }
+
+      if (outcome.status === "signed-in") {
+        // Email confirmation is disabled: the signup response already carries
+        // a live session, so the account is logged in and goes straight in.
+        toast({ title: "Conta criada com sucesso!" });
+        await redirectByRole(outcome.userId);
+        return;
+      }
+
+      toast({
+        title: "Cadastro realizado!",
+        description: "Verifique seu email para confirmar a conta.",
+      });
     } catch (error) {
       toast({
         variant: "destructive",
