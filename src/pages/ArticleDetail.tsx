@@ -159,7 +159,6 @@ export default function ArticleDetail() {
         <TabsContent value="abstract" className="py-6">
           <h2 className="mb-4 text-xl font-semibold">Resumo</h2>
           <p className="whitespace-pre-line text-sm leading-7 text-muted-foreground">{article.abstract || 'Resumo não informado.'}</p>
-          <DocumentPreview article={article} />
         </TabsContent>
         <TabsContent value="keywords" className="py-6">
           <h2 className="mb-4 text-xl font-semibold">Palavras-chave</h2>
@@ -173,6 +172,8 @@ export default function ArticleDetail() {
           <Button variant="outline" className="mt-5" onClick={() => void copyCitation()}><Copy />Copiar Citação</Button>
         </TabsContent>
       </Tabs>
+
+      <DocumentPreview article={article} />
 
       {related.length > 0 && (
         <section className="mt-8 border-t border-border pt-8">
