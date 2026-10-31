@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PublicationCard } from '@/components/repository/PublicationCard';
+import { DocumentPreview } from '@/components/repository/DocumentPreview';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAuth } from '@/hooks/useAuth';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useArticlesContext } from '@/contexts/ArticlesContext';
@@ -94,7 +96,7 @@ export default function ArticleDetail() {
         <div className="mb-4 flex flex-wrap items-center gap-3">
           <Badge variant="secondary" className="rounded-sm">{article.category}</Badge>
         </div>
-        <h1 className="break-words text-3xl font-semibold leading-tight sm:text-4xl">{article.title}</h1>
+        <h1 className="break-words text-lg font-semibold leading-tight sm:text-3xl lg:text-4xl">{article.title}</h1>
         <div className="mt-6 flex items-start gap-3 text-sm leading-6">
           {collective ? <Users className="mt-1 h-4 w-4 shrink-0 text-primary" /> : <User className={`mt-1 h-4 w-4 shrink-0 ${member ? 'text-primary' : 'text-muted-foreground'}`} />}
           <div>
@@ -106,46 +108,58 @@ export default function ArticleDetail() {
           <span className="flex items-center gap-2"><Calendar className="h-4 w-4" />{new Date(`${article.publish_date.slice(0, 10)}T12:00:00`).toLocaleDateString('pt-BR')}</span>
           <span>DOI: não informado</span>
         </div>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Button disabled={!hasFile || downloading} onClick={() => void download()}>
-            <Download />{downloading ? 'Baixando…' : pdf ? 'Baixar PDF' : 'Baixar documento'}
-          </Button>
-          <Button variant="outline" disabled={!hasFile} onClick={() => void handleOpenOrRead()}>
-            <BookOpen />{pdf ? 'Ler PDF' : 'Ler documento'}
-          </Button>
+      </header>
+
+      <Tabs defaultValue="abstract" className="mt-6 min-w-0">
+        <div className="flex min-w-0 flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="min-w-0 overflow-x-auto">
+            <TabsList className="h-10 w-max flex-nowrap justify-start whitespace-nowrap">
+              <TabsTrigger value="abstract" className="shrink-0 px-2 text-xs sm:px-3 sm:text-sm">Resumo / Abstract</TabsTrigger>
+              <TabsTrigger value="keywords" className="shrink-0 px-2 text-xs sm:px-3 sm:text-sm">Palavras-chave</TabsTrigger>
+              <TabsTrigger value="citation" className="shrink-0 px-2 text-xs sm:px-3 sm:text-sm">Citação ABNT</TabsTrigger>
+            </TabsList>
+          </div>
+          <div role="group" aria-label="Ações da publicação" className="flex shrink-0 items-center gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild><span className="inline-flex"><Button size="icon" disabled={!hasFile || downloading} aria-label={pdf ? 'Baixar PDF' : 'Baixar documento'} onClick={() => void download()}>
+              <Download className={downloading ? 'animate-pulse' : ''} />
+            </Button></span></TooltipTrigger>
+            <TooltipContent>{downloading ? 'Baixando…' : pdf ? 'Baixar PDF' : 'Baixar documento'}</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild><span className="inline-flex"><Button size="icon" variant="outline" disabled={!hasFile} aria-label={pdf ? 'Ler PDF' : 'Ler documento'} onClick={() => void handleOpenOrRead()}>
+              <BookOpen />
+            </Button></span></TooltipTrigger>
+            <TooltipContent>{pdf ? 'Ler PDF' : 'Ler documento'}</TooltipContent>
+          </Tooltip>
+          <Tooltip><TooltipTrigger asChild>
           <Button 
             variant="outline" 
             size="icon" 
             asChild={!user} 
             onClick={user ? () => void toggleFavorite(article.id) : undefined} 
             aria-label={isFavorited(article.id) ? 'Remover dos favoritos' : 'Salvar nos favoritos'} 
-            title="Salvar nos favoritos" 
             aria-pressed={isFavorited(article.id)}
           >
             {user ? <Bookmark className={isFavorited(article.id) ? 'fill-primary text-primary' : ''} /> : <Link to="/auth"><Bookmark /></Link>}
           </Button>
+          </TooltipTrigger><TooltipContent>{isFavorited(article.id) ? 'Remover dos favoritos' : 'Salvar nos favoritos'}</TooltipContent></Tooltip>
+          <Tooltip><TooltipTrigger asChild>
           <Button
             variant="outline"
+            size="icon"
             onClick={() => void share()}
             aria-label="Compartilhar este documento"
-            title="Compartilhar"
-            className="w-10 gap-0 px-0 sm:w-auto sm:gap-2 sm:px-4"
           >
             <Share2 />
-            <span className="hidden sm:inline">Compartilhar</span>
           </Button>
+          </TooltipTrigger><TooltipContent>Compartilhar</TooltipContent></Tooltip>
+          </div>
         </div>
-      </header>
-
-      <Tabs defaultValue="abstract" className="mt-8">
-        <TabsList className="h-auto max-w-full flex-wrap justify-start">
-          <TabsTrigger value="abstract">Resumo / Abstract</TabsTrigger>
-          <TabsTrigger value="keywords">Palavras-chave</TabsTrigger>
-          <TabsTrigger value="citation">Citação ABNT</TabsTrigger>
-        </TabsList>
         <TabsContent value="abstract" className="py-6">
           <h2 className="mb-4 text-xl font-semibold">Resumo</h2>
           <p className="whitespace-pre-line text-sm leading-7 text-muted-foreground">{article.abstract || 'Resumo não informado.'}</p>
+          <DocumentPreview article={article} />
         </TabsContent>
         <TabsContent value="keywords" className="py-6">
           <h2 className="mb-4 text-xl font-semibold">Palavras-chave</h2>

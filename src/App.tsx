@@ -84,8 +84,8 @@ const App = () => {
                       <Route path="/article/:id" element={<LegacyArticleRedirect />} />
                       <Route path="/noticias" element={<Noticias />} />
                       <Route path="/noticia/:id" element={<NoticiaDetail />} />
-                      <Route path="/publicacao/:id" element={<ArticleDetail />} />
                       <Route path="/privacidade" element={<Privacidade />} />
+                      <Route path="/politica-de-privacidade" element={<Navigate to="/privacidade" replace />} />
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                       <Route path="*" element={<NotFound />} />
                     </Routes>

@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { Bookmark, Download, ArrowUpRight, User, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArticleViewer } from '@/components/ArticleViewer';
 import type { Article } from '@/hooks/useArticles';
 import { collectiveAuthor, formatAcademicAuthor, publicationPath } from '@/lib/repository';
 import { useToast } from '@/hooks/use-toast';
@@ -21,7 +20,6 @@ interface Props {
 }
 
 export function PublicationCard({ article, saved, canSave, onSave, onRead }: Props) {
-  const [preview, setPreview] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const { toast } = useToast();
   const collective = article.authors.length === 1 && article.authors[0] === collectiveAuthor;
@@ -41,11 +39,6 @@ export function PublicationCard({ article, saved, canSave, onSave, onRead }: Pro
       .getPublicUrl(rawPath);
 
     return data?.publicUrl || '';
-  }
-
-  async function handleRead() {
-    onRead();
-    setPreview(true);
   }
 
   async function handleDownload(e: React.MouseEvent) {
@@ -89,8 +82,8 @@ export function PublicationCard({ article, saved, canSave, onSave, onRead }: Pro
           {article.publish_date.slice(0, 4)}
         </span>
       </div>
-      <h3 className="mb-3 text-lg font-semibold leading-snug">
-        <Link to={publicationPath(article)} onClick={onRead} className="line-clamp-3 hover:underline underline-offset-4">
+      <h3 className="mb-3 text-lg font-semibold leading-tight sm:text-xl">
+        <Link to={publicationPath(article)} onClick={onRead} className="line-clamp-3 break-words hover:underline underline-offset-4">
           {article.title}
         </Link>
       </h3>
@@ -109,11 +102,12 @@ export function PublicationCard({ article, saved, canSave, onSave, onRead }: Pro
         <div className="flex flex-wrap gap-2 border-t border-border pt-4">
           <Button
             className="min-w-0 flex-1 px-3 text-xs"
-            disabled={!hasFile}
-            onClick={handleRead}
+            asChild
           >
-            <ArrowUpRight className="mr-1 h-3.5 w-3.5" />
-            Ler / Visualizar PDF
+            <Link to={publicationPath(article)} onClick={onRead}>
+              <ArrowUpRight className="mr-1 h-3.5 w-3.5" />
+              Ler / Visualizar PDF
+            </Link>
           </Button>
           <Button
             type="button"
@@ -143,7 +137,6 @@ export function PublicationCard({ article, saved, canSave, onSave, onRead }: Pro
           )}
         </div>
       </div>
-      {preview && <ArticleViewer article={article as any} isOpen={preview} onClose={() => setPreview(false)} />}
     </article>
   );
 }
