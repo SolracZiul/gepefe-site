@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import { Search, PanelLeft, User, Bookmark, History, LogOut, Shield, X } from 'lucide-react';
+import { Search, PanelLeft, User, LogOut, Shield, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -16,7 +16,7 @@ interface Props {
   onSearch: () => void;
 }
 
-export function RepositoryHeader({ query, onQueryChange, onToggleSidebar, onHistory, onSearch }: Props) {
+export function RepositoryHeader({ query, onQueryChange, onToggleSidebar, onSearch }: Props) {
   const { user, isAdmin, signOut } = useAuth();
   const name = user?.user_metadata?.display_name || user?.user_metadata?.full_name || 'Meu perfil';
   const [searchOpen, setSearchOpen] = useState(false);
@@ -40,8 +40,6 @@ export function RepositoryHeader({ query, onQueryChange, onToggleSidebar, onHist
         <ThemeToggle />
         {user ? <DropdownMenu><DropdownMenuTrigger asChild><Button variant="outline" className="max-w-44 hover:bg-muted hover:text-foreground"><User /><span className="hidden truncate sm:inline">{name.split(' ')[0]}</span></Button></DropdownMenuTrigger><DropdownMenuContent align="end">
           <DropdownMenuItem asChild><Link to="/profile"><User className="mr-2 h-4 w-4" />Meu Perfil</Link></DropdownMenuItem>
-          <DropdownMenuItem asChild><Link to="/favoritos"><Bookmark className="mr-2 h-4 w-4" />Meus Artigos Salvos</Link></DropdownMenuItem>
-          <DropdownMenuItem onClick={onHistory}><History className="mr-2 h-4 w-4" />Histórico de Leitura</DropdownMenuItem>
           {isAdmin && <DropdownMenuItem asChild><Link to="/admin"><Shield className="mr-2 h-4 w-4" />Painel Admin</Link></DropdownMenuItem>}
           <DropdownMenuSeparator /><DropdownMenuItem onClick={() => void signOut()}><LogOut className="mr-2 h-4 w-4" />Sair</DropdownMenuItem>
         </DropdownMenuContent></DropdownMenu> : <Button variant="outline" asChild className="px-3 text-xs hover:bg-muted hover:text-foreground sm:text-sm"><Link to="/auth"><User /><span className="sm:hidden">Entrar</span><span className="hidden sm:inline">Login / Cadastro</span></Link></Button>}
