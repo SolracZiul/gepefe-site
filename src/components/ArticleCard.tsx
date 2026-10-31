@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { downloadDocument, getArticleFileUrl } from '@/lib/downloads';
-import { openExternalUrl } from '@/lib/native';
+import { downloadDocument } from '@/lib/downloads';
 import { publicationPath } from '@/lib/repository';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -52,8 +51,7 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
   };
 
   const handlePreview = async () => {
-    const url = getArticleFileUrl(article);
-    if (url) await openExternalUrl(url);
+    navigate(publicationPath(article));
   };
 
   const hasFile = article.file_path || article.pdf_url;
