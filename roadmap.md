@@ -1,7 +1,7 @@
 # Institutional design across all pages
-- [ ] Navigate list read actions directly to publication details; embed document preview below the abstract.
-- [ ] Make publication actions icon-only with tooltips; keep mobile tabs on one line and align desktop tabs/actions.
-- [ ] Refine mobile publication titles and privacy desktop 12-column layout; support /politica-de-privacidade.
+- [x] Navigate list read actions directly to publication details; render PDF.js preview below the abstract; verified a real 17-page PDF and page turn without a modal.
+- [x] Make publication actions icon-only with tooltips; verified single-line mobile tabs at 320/393px and aligned desktop tabs/actions.
+- [x] Refine mobile publication titles and privacy desktop 12-column layout; /politica-de-privacidade redirects to /privacidade; 54 tests pass.
 - [x] Add "Compartilhar" to article and publication detail pages: the platform sheet receives the title and the public link https://gepefe.netlify.app/artigo/{id}, and the link is copied with a confirmation when no sheet exists; verified a real click copies that exact address, a working sheet receives title + link with no copy toast, and the button stays readable at 1280 and 390px.
 - [x] Align the native OAuth tests with the app's registered br.com.gepefe.app callback scheme; 17 native tests, 23 repository, 6 navigation and 7 download tests pass.
 - [x] Publish the GEPEFE privacy policy on /privacidade with introduction, collection/use, sharing, security and contact sections plus the October 2026 effective date; linked from the site footer and verified at 1280, 390 and 320px with no horizontal overflow.
