@@ -1,5 +1,6 @@
 # Institutional design across all pages
 - [x] Implement native-only Baixados, persistent PDF saving/removal and automatic offline navigation; 66 tests pass, web exclusion verified at 384/1280px, simulated native save/read/remove flow verified.
+- [x] Baixados cards react one at a time: action feedback and the disabled state now follow the clicked card's id only (activeItemId), both buttons stop event propagation, list keys stay item.id, and the hover styles live on the buttons; 69 tests pass and build is OK — visual check needs a phone build.
 - [x] Offline native bottom navigation: tapping Início, Notícias, Salvos or Perfil/Entrar while offline keeps the user on /baixados with the toast "Modo offline ativo. Conecte-se à internet para acessar esta seção." and the Baixados icon active; reconnecting releases navigation and toasts "Conexão reestabelecida."; 69 tests pass and web tabs still navigate normally with no message.
 - [ ] Verify offline PDFs on a physical native device after local update, build, Capacitor sync and reinstall — requires an installed device build; test airplane-mode cold launch and persistent reading/removal.
 - [x] Navigate list read actions directly to publication details; render PDF.js preview below the abstract; verified a real 17-page PDF and page turn without a modal.
