@@ -1,4 +1,5 @@
 # Institutional design across all pages
+- [ ] Implement native-only Baixados, persistent PDF saving/removal and automatic offline navigation; verify web exclusion and native behavior tests.
 - [x] Navigate list read actions directly to publication details; render PDF.js preview below the abstract; verified a real 17-page PDF and page turn without a modal.
 - [x] Make publication actions icon-only with tooltips; verified single-line mobile tabs at 320/393px and aligned desktop tabs/actions.
 - [x] Refine mobile publication titles and privacy desktop 12-column layout; /politica-de-privacidade redirects to /privacidade; 54 tests pass.
