@@ -27,11 +27,12 @@ export function institutionalRedirectTarget(hash: string) {
   return institutionalPath + (institutionalSections.includes(hash) ? hash : '');
 }
 
-export function mobileNavigation(signedIn: boolean) {
+export function mobileNavigation(signedIn: boolean, isNative = false, isMobile = false) {
   return [
     { label: 'Início', href: '/todos', icon: 'home' },
     { label: 'Notícias', href: '/noticias', icon: 'news' },
     ...(signedIn ? [{ label: 'Salvos', href: '/favoritos', icon: 'saved' }] : []),
+    ...(isNative && isMobile ? [{ label: 'Baixados', href: '/baixados', icon: 'downloads' }] : []),
     { label: signedIn ? 'Perfil' : 'Entrar', href: signedIn ? '/profile' : '/auth', icon: 'user' },
   ];
 }

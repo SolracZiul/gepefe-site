@@ -10,6 +10,8 @@ import { registerNativeAppLinkListener, registerNativeAuthListener, registerNati
 import { useToast } from "./hooks/use-toast";
 import { ThemeProvider } from "next-themes";
 import { SplashScreen } from '@capacitor/splash-screen';
+import { watchNativeConnection } from './lib/native-offline';
+import Baixados from './pages/Baixados';
 
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -75,6 +77,7 @@ const App = () => {
                       <Route path="/dissertacoes" element={<Dissertacoes />} />
                       <Route path="/teses" element={<Teses />} />
                       <Route path="/favoritos" element={<Favoritos />} />
+                      <Route path="/baixados" element={<Baixados />} />
                       <Route path="/auth" element={<Auth />} />
                       <Route path="/email-confirmation" element={<EmailConfirmation />} />
                       <Route path="/reset-password" element={<ResetPassword />} />
@@ -110,7 +113,8 @@ function NativeEvents() {
     );
     const removeAppLinks = registerNativeAppLinkListener(path => navigate(path, { replace: true }));
     const removeLinks = registerNativeLinkListener(() => toast({ title: 'Não foi possível abrir o documento', variant: 'destructive' }));
-    return () => { removeAuth(); removeAppLinks(); removeLinks(); };
+    const removeNetwork = watchNativeConnection(() => navigate('/baixados', { replace: true }));
+    return () => { removeAuth(); removeAppLinks(); removeLinks(); removeNetwork(); };
   }, [navigate, toast]);
   return null;
 }

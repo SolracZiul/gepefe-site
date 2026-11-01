@@ -9,7 +9,7 @@ import type { Article } from '@/hooks/useArticles';
 
 GlobalWorkerOptions.workerSrc = workerUrl;
 
-function PdfReader({ url, title }: { url: string; title: string }) {
+export function PdfReader({ url, title, local = false }: { url: string; title: string; local?: boolean }) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const container = useRef<HTMLDivElement>(null);
   const [document, setDocument] = useState<PDFDocumentProxy | null>(null);
@@ -66,7 +66,7 @@ function PdfReader({ url, title }: { url: string; title: string }) {
       </div>
       <div ref={container} className="relative mx-auto min-h-[360px] w-full max-w-4xl">
         {loading && <div role="status" className="flex h-24 items-center justify-center gap-2 text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" />Carregando PDF…</div>}
-        {failed ? <div className="flex min-h-[360px] flex-col items-center justify-center gap-4 px-4 text-center"><p className="text-sm text-muted-foreground">A visualização deste documento não está disponível.</p><Button variant="outline" onClick={() => void openExternalUrl(url)}><ExternalLink />Acessar documento</Button></div> : <canvas ref={canvas} role="img" aria-label={`${title}, página ${page}`} className="block h-auto w-full" />}
+        {failed ? <div className="flex min-h-[360px] flex-col items-center justify-center gap-4 px-4 text-center"><p className="text-sm text-muted-foreground">A visualização deste documento não está disponível.</p>{!local && <Button variant="outline" onClick={() => void openExternalUrl(url)}><ExternalLink />Acessar documento</Button>}</div> : <canvas ref={canvas} role="img" aria-label={`${title}, página ${page}`} className="block h-auto w-full" />}
       </div>
     </div>
   );
