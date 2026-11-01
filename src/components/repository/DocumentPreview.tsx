@@ -5,11 +5,23 @@ import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 import { Button } from '@/components/ui/button';
 import { getArticleFileUrl } from '@/lib/downloads';
 import { openExternalUrl } from '@/lib/native';
+import { Capacitor } from '@capacitor/core';
+import { findDownload, openPdfFile, readDownload, type OfflinePublication } from '@/lib/native-offline';
 import type { Article } from '@/hooks/useArticles';
 
-GlobalWorkerOptions.workerSrc = workerUrl;
+GlobalWorkerOptions.workerSrc = new URL(workerUrl, window.location.href).toString();
 
-export function PdfReader({ url, title, local = false }: { url: string; title: string; local?: boolean }) {
+async function loadPdf(url: string) {
+  try { return await getDocument(url).promise; }
+  catch {
+    // Some hosts reject range requests; retry with the whole file in memory.
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('PDF indisponível');
+    return getDocument({ data: new Uint8Array(await response.arrayBuffer()) }).promise;
+  }
+}
+
+export function PdfReader({ url, title, local = false, onAccess }: { url: string; title: string; local?: boolean; onAccess?: () => void }) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const container = useRef<HTMLDivElement>(null);
   const [document, setDocument] = useState<PDFDocumentProxy | null>(null);
@@ -28,11 +40,12 @@ export function PdfReader({ url, title, local = false }: { url: string; title: s
 
   useEffect(() => {
     let active = true;
-    const task = getDocument(url);
-    task.promise.then(pdf => { if (active) setDocument(pdf); }).catch(() => {
+    let loaded: PDFDocumentProxy | undefined;
+    setFailed(false); setLoading(true);
+    loadPdf(url).then(pdf => { loaded = pdf; if (active) setDocument(pdf); else void pdf.destroy(); }).catch(() => {
       if (active) { setFailed(true); setLoading(false); }
     });
-    return () => { active = false; void task.destroy(); };
+    return () => { active = false; void loaded?.destroy(); };
   }, [url]);
 
   useEffect(() => {
@@ -66,7 +79,7 @@ export function PdfReader({ url, title, local = false }: { url: string; title: s
       </div>
       <div ref={container} className="relative mx-auto min-h-[360px] w-full max-w-4xl">
         {loading && <div role="status" className="flex h-24 items-center justify-center gap-2 text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" />Carregando PDF…</div>}
-        {failed ? <div className="flex min-h-[360px] flex-col items-center justify-center gap-4 px-4 text-center"><p className="text-sm text-muted-foreground">A visualização deste documento não está disponível.</p>{!local && <Button variant="outline" onClick={() => void openExternalUrl(url)}><ExternalLink />Acessar documento</Button>}</div> : <canvas ref={canvas} role="img" aria-label={`${title}, página ${page}`} className="block h-auto w-full" />}
+        {failed ? <div className="flex min-h-[360px] flex-col items-center justify-center gap-4 px-4 text-center"><p className="text-sm text-muted-foreground">A visualização deste documento não está disponível.</p>{(!local || onAccess) && <Button variant="outline" onClick={() => onAccess ? onAccess() : void openExternalUrl(url)}><ExternalLink />Acessar documento</Button>}</div> : <canvas ref={canvas} role="img" aria-label={`${title}, página ${page}`} className="block h-auto w-full" />}
       </div>
     </div>
   );
@@ -74,18 +87,33 @@ export function PdfReader({ url, title, local = false }: { url: string; title: s
 
 export function DocumentPreview({ article }: { article: Article }) {
   const url = getArticleFileUrl(article);
-  if (!url) return null;
-  const pdf = article.file_type?.toLowerCase().includes('pdf') || /\.pdf(?:$|[?#])/i.test(url);
+  const [saved, setSaved] = useState<OfflinePublication | null>(null);
+  const [localUrl, setLocalUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+    let active = true; let created: string | null = null;
+    void findDownload(article.id).then(async item => {
+      if (!active || !item) return;
+      setSaved(item);
+      created = await readDownload(item).catch(() => null);
+      if (active) setLocalUrl(created); else if (created) URL.revokeObjectURL(created);
+    });
+    return () => { active = false; if (created) URL.revokeObjectURL(created); };
+  }, [article.id]);
+  const access = () => { if (Capacitor.isNativePlatform() && saved) void openPdfFile(saved, url); else void openExternalUrl(url ?? ''); };
+  if (!url && !localUrl) return null;
+  const pdf = !!localUrl || article.file_type?.toLowerCase().includes('pdf') || /\.pdf(?:$|[?#])/i.test(url ?? '');
+  const source = localUrl ?? url!;
 
   return (
     <section id="documento" aria-label="Visualização do documento" className="mt-8 min-w-0 scroll-mt-40 border-t border-border pt-6">
       <h2 className="mb-4 text-xl font-semibold">Documento</h2>
       {pdf ? (
-        <PdfReader key={url} url={url} title={article.title} />
+        <PdfReader key={source} url={source} title={article.title} local={!!localUrl} onAccess={access} />
       ) : (
         <div className="flex flex-col items-center gap-4 border-y border-border bg-muted/30 px-4 py-10">
           <FileText className="h-10 w-10 text-muted-foreground" />
-          <Button variant="outline" onClick={() => void openExternalUrl(url)}>
+          <Button variant="outline" onClick={access}>
             <ExternalLink />Acessar documento
           </Button>
         </div>
