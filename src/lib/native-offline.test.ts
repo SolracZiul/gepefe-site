@@ -11,6 +11,9 @@ const getStatus = mock(async () => ({ connected: true }));
 const downloadFile = mock(async ({ path }: { path: string }) => { files.set(path, btoa(downloadBytes)); });
 const readFile = mock(async ({ path }: { path: string }) => { const data = files.get(path); if (!data) throw new Error('missing'); return { data }; });
 mock.module('@capacitor/core', () => ({ Capacitor: { isNativePlatform: () => native } }));
+mock.module('@capacitor/browser', () => ({ Browser: { open: async () => undefined, close: async () => undefined } }));
+mock.module('@capacitor/app', () => ({ App: { addListener: async () => ({ remove: async () => undefined }), getLaunchUrl: async () => undefined } }));
+mock.module('@capacitor/share', () => ({ Share: { share: async () => undefined } }));
 mock.module('@capacitor/filesystem', () => ({ Directory: { Data: 'DATA' }, Filesystem: {
   readFile, downloadFile,
   mkdir: async () => undefined,
