@@ -35,8 +35,8 @@ function NativeDownloads() {
         <h2 className="break-words text-base font-semibold leading-snug">{item.title}</h2>
         <p className="mt-2 text-xs text-muted-foreground">{item.authors.join('; ')}</p>
         <div className="mt-4 flex items-center gap-2">
-          <Button variant="outline" disabled={busy !== null} onClick={() => void act(item, false)}><BookOpen className="h-4 w-4" />Ler PDF</Button>
           <Button size="icon" variant="ghost" title="Remover download" aria-label={`Remover download: ${item.title}`} disabled={busy !== null} onClick={() => void act(item, true)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+          <Button variant="outline" disabled={busy !== null} onClick={() => void act(item, false)}><BookOpen className="h-4 w-4" />Ler PDF</Button>
         </div>
       </article>)}
     </div>
