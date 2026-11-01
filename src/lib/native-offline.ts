@@ -101,3 +101,21 @@ export function watchNativeConnection(onOffline: () => void): () => void {
   void Network.getStatus().then(status => { if (statusVersion === initialVersion) apply(status.connected); }).catch(() => undefined);
   return () => { disposed = true; void remove?.(); };
 }
+export async function findDownload(id: string): Promise<OfflinePublication | null> {
+  if (!Capacitor.isNativePlatform()) return null;
+  return (await listDownloads().catch(() => [])).find(item => item.id === id) ?? null;
+}
+
+/** Opens a saved PDF in the phone's reader; falls back to a new tab with the given URL. */
+export async function openPdfFile(item: OfflinePublication | null, fallbackUrl?: string | null): Promise<void> {
+  if (Capacitor.isNativePlatform() && item) {
+    try {
+      const { FileOpener } = await import('@capacitor-community/file-opener');
+      const { uri } = await Filesystem.getUri({ path: item.path, directory: Directory.Data });
+      await FileOpener.open({ filePath: uri, contentType: 'application/pdf' });
+      return;
+    } catch { /* fall through to the browser */ }
+  }
+  if (fallbackUrl) window.open(fallbackUrl, '_blank', 'noopener');
+  else throw new Error('PDF indisponível.');
+}

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { PdfReader } from '@/components/repository/DocumentPreview';
 import { useNativeDownloads } from '@/hooks/useNativeDownloads';
 import { useToast } from '@/hooks/use-toast';
-import { readDownload, removeDownload, type OfflinePublication } from '@/lib/native-offline';
+import { openPdfFile, readDownload, removeDownload, type OfflinePublication } from '@/lib/native-offline';
 
 export default function Baixados() {
   return Capacitor.isNativePlatform() ? <NativeDownloads /> : <Navigate to="/" replace />;
@@ -22,7 +22,7 @@ function NativeDownloads() {
     setBusy(item.id);
     try {
       if (remove) { await removeDownload(item.id); if (reader?.id === item.id) setReader(null); }
-      else { const url = await readDownload(item); setReader({ id: item.id, title: item.title, url }); }
+      else { try { await openPdfFile(item); } catch { const url = await readDownload(item); window.open(url, '_blank'); setReader({ id: item.id, title: item.title, url }); } }
     } catch { toast({ title: 'Não foi possível acessar o download', variant: 'destructive' }); }
     finally { setBusy(null); }
   }
