@@ -10,7 +10,7 @@ import { registerNativeAppLinkListener, registerNativeAuthListener, registerNati
 import { useToast } from "./hooks/use-toast";
 import { ThemeProvider } from "next-themes";
 import { SplashScreen } from '@capacitor/splash-screen';
-import { watchNativeConnection } from './lib/native-offline';
+import { connectionRestoredMessage, watchNativeConnection } from './lib/native-offline';
 import Baixados from './pages/Baixados';
 
 import Index from "./pages/Index";
@@ -113,7 +113,7 @@ function NativeEvents() {
     );
     const removeAppLinks = registerNativeAppLinkListener(path => navigate(path, { replace: true }));
     const removeLinks = registerNativeLinkListener(() => toast({ title: 'Não foi possível abrir o documento', variant: 'destructive' }));
-    const removeNetwork = watchNativeConnection(() => navigate('/baixados', { replace: true }));
+    const removeNetwork = watchNativeConnection(() => navigate('/baixados', { replace: true }), () => toast({ title: connectionRestoredMessage }));
     return () => { removeAuth(); removeAppLinks(); removeLinks(); removeNetwork(); };
   }, [navigate, toast]);
   return null;

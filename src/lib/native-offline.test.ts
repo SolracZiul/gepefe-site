@@ -26,9 +26,9 @@ mock.module('@capacitor/network', () => ({ Network: {
   addListener: async (_event: string, listener: typeof statusListener) => { statusListener = listener; return { remove: stop }; },
 } }));
 mock.module('@/integrations/supabase/client', () => ({ supabase: { storage: { from: () => ({ getPublicUrl: () => ({ data: { publicUrl: 'https://storage.example/test.pdf' } }) }) } } }));
-const { listDownloads, saveDownload, readDownload, removeDownload, offlineDestination, watchNativeConnection } = await import('./native-offline');
+const { isOfflineMode, listDownloads, offlineDestination, offlineNavigationTarget, readDownload, removeDownload, saveDownload, watchNativeConnection } = await import('./native-offline');
 const article: Article = { id: 'pdf-1', title: 'Educação física', authors: ['Autor'], category: 'Artigos Completos', publish_date: '2026-11-01', abstract: 'Resumo', tags: ['Escola'], file_path: 'test.pdf', pdf_url: null, file_type: 'application/pdf', file_size: 40, download_count: 0, created_at: '', updated_at: '' };
-beforeEach(() => { native = false; files = new Map(); downloadBytes = '%PDF-1.4 native test'; statusListener = undefined; downloadFile.mockClear(); readFile.mockClear(); getStatus.mockClear(); stop.mockClear(); });
+beforeEach(async () => { native = false; files = new Map(); downloadBytes = '%PDF-1.4 native test'; statusListener = undefined; downloadFile.mockClear(); readFile.mockClear(); native = true; const reset = watchNativeConnection(() => undefined, () => undefined); await Promise.resolve(); reset(); native = false; statusListener = undefined; getStatus.mockClear(); stop.mockClear(); });
 
 test('web cannot persist, read or remove native downloads', async () => {
   expect(await listDownloads()).toEqual([]);
@@ -62,4 +62,26 @@ test('native rejects non-PDF files and excludes news from the offline library', 
   native = true; downloadBytes = '<html>Journal</html>';
   await expect(saveDownload(article)).rejects.toThrow('PDF'); expect(await listDownloads()).toEqual([]); expect(files.has('downloads/pdf-1.pdf')).toBe(false);
   await expect(saveDownload({ ...article, content_type: 'news' })).rejects.toThrow('acadêmicas');
+});
+test('offline mode keeps only Baixados reachable in the bottom navigation', () => {
+  expect(offlineNavigationTarget(true, '/todos')).toBe('/baixados');
+  expect(offlineNavigationTarget(true, '/noticias')).toBe('/baixados');
+  expect(offlineNavigationTarget(true, '/profile')).toBe('/baixados');
+  expect(offlineNavigationTarget(true, '/auth')).toBe('/baixados');
+  expect(offlineNavigationTarget(true, '/baixados')).toBeNull();
+  expect(offlineNavigationTarget(false, '/todos')).toBeNull();
+});
+test('native connection loss marks offline mode and the return releases it', async () => {
+  native = true; const lost = mock(() => undefined); const restored = mock(() => undefined);
+  const cleanup = watchNativeConnection(lost, restored);
+  await Promise.resolve(); expect(isOfflineMode()).toBe(false);
+  statusListener?.({ connected: false }); expect(isOfflineMode()).toBe(true); expect(lost).toHaveBeenCalledTimes(1); expect(restored).not.toHaveBeenCalled();
+  statusListener?.({ connected: true }); expect(isOfflineMode()).toBe(false); expect(restored).toHaveBeenCalledTimes(1);
+  statusListener?.({ connected: true }); expect(restored).toHaveBeenCalledTimes(1);
+  cleanup();
+});
+test('offline mode never applies to the web', async () => {
+  native = true; const cleanup = watchNativeConnection(() => undefined, () => undefined);
+  await Promise.resolve(); statusListener?.({ connected: false }); expect(isOfflineMode()).toBe(true);
+  cleanup(); native = false; expect(isOfflineMode()).toBe(false);
 });
