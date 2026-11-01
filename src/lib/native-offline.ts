@@ -109,6 +109,20 @@ export async function readDownload(item: OfflinePublication): Promise<string> {
   return URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
 }
 
+/** Raw bytes of a saved PDF, read as Base64 through Filesystem so PDF.js can render offline. */
+export async function readDownloadData(item: OfflinePublication): Promise<Uint8Array> {
+  requireNative();
+  const result = await Filesystem.readFile({ path: item.path, directory: Directory.Data });
+  return typeof result.data === 'string' ? Uint8Array.from(atob(result.data), char => char.charCodeAt(0)) : new Uint8Array(await result.data.arrayBuffer());
+}
+
+/** WebView-loadable address of a saved PDF (Capacitor.convertFileSrc of the device path). */
+export async function downloadFileSrc(item: OfflinePublication): Promise<string> {
+  requireNative();
+  const { uri } = await Filesystem.getUri({ path: item.path, directory: Directory.Data });
+  return Capacitor.convertFileSrc(uri);
+}
+
 export function watchNativeConnection(onOffline: () => void, onOnline?: () => void): () => void {
   if (!Capacitor.isNativePlatform()) return () => undefined;
   let disposed = false;
