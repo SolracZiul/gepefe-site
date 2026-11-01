@@ -16,6 +16,7 @@ import { collectiveAuthor, formatCitation, publicationPath, recordReading } from
 import { getPublicShareUrl, openExternalUrl, shareContent } from '@/lib/native';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
+import { NativeDownloadButton } from '@/components/repository/NativeDownloadButton';
 
 export default function ArticleDetail() {
   const { id } = useParams();
@@ -120,12 +121,12 @@ export default function ArticleDetail() {
             </TabsList>
           </div>
           <div role="group" aria-label="Ações da publicação" className="flex shrink-0 items-center gap-2">
-          <Tooltip>
+          {Capacitor.isNativePlatform() ? <NativeDownloadButton article={article} /> : <Tooltip>
             <TooltipTrigger asChild><span className="inline-flex"><Button size="icon" disabled={!hasFile || downloading} aria-label={pdf ? 'Baixar PDF' : 'Baixar documento'} onClick={() => void download()}>
               <Download className={downloading ? 'animate-pulse' : ''} />
             </Button></span></TooltipTrigger>
             <TooltipContent>{downloading ? 'Baixando…' : pdf ? 'Baixar PDF' : 'Baixar documento'}</TooltipContent>
-          </Tooltip>
+          </Tooltip>}
           <Tooltip>
             <TooltipTrigger asChild><span className="inline-flex"><Button size="icon" variant="outline" disabled={!hasFile} aria-label={pdf ? 'Ler PDF' : 'Ler documento'} onClick={() => void handleOpenOrRead()}>
               <BookOpen />

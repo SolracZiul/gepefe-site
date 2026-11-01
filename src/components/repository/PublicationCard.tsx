@@ -7,9 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import type { Article } from '@/hooks/useArticles';
 import { collectiveAuthor, formatAcademicAuthor, publicationPath } from '@/lib/repository';
 import { useToast } from '@/hooks/use-toast';
-import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
-import { supabase } from '@/integrations/supabase/client';
+import { NativeDownloadButton } from './NativeDownloadButton';
 
 interface Props {
   article: Article;
@@ -26,21 +25,6 @@ export function PublicationCard({ article, saved, canSave, onSave, onRead }: Pro
   const member = article.authors.some(author => author.includes(' (GEPEFE)'));
   const hasFile = Boolean(article.file_path || article.pdf_url);
 
-  function getAbsoluteFileUrl(): string {
-    const rawPath = article.file_path || article.pdf_url || '';
-    if (!rawPath) return '';
-
-    if (rawPath.startsWith('http://') || rawPath.startsWith('https://')) {
-      return rawPath;
-    }
-
-    const { data } = supabase.storage
-      .from('academic-articles')
-      .getPublicUrl(rawPath);
-
-    return data?.publicUrl || '';
-  }
-
   async function handleDownload(e: React.MouseEvent) {
     e.stopPropagation();
     e.preventDefault();
@@ -49,18 +33,7 @@ export function PublicationCard({ article, saved, canSave, onSave, onRead }: Pro
     setDownloading(true);
 
     try {
-      const url = getAbsoluteFileUrl();
-
-      if (!url) {
-        toast({ title: 'Ficheiro não disponível', variant: 'destructive' });
-        return;
-      }
-
-      if (Capacitor.isNativePlatform()) {
-        await Browser.open({ url });
-      } else {
-        await downloadDocument(article as any);
-      }
+      await downloadDocument(article);
     } catch (error) {
       console.error('Erro ao baixar documento:', error);
       toast({
@@ -109,7 +82,7 @@ export function PublicationCard({ article, saved, canSave, onSave, onRead }: Pro
               Ler / Visualizar PDF
             </Link>
           </Button>
-          <Button
+          {Capacitor.isNativePlatform() ? <NativeDownloadButton article={article} /> : <Button
             type="button"
             variant="outline"
             size="icon"
@@ -120,7 +93,7 @@ export function PublicationCard({ article, saved, canSave, onSave, onRead }: Pro
             onClick={handleDownload}
           >
             <Download className={downloading ? 'animate-pulse h-4 w-4' : 'h-4 w-4'} />
-          </Button>
+          </Button>}
           {canSave && (
             <Button
               type="button"

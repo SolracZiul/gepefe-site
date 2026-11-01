@@ -21,7 +21,7 @@ export async function listDownloads(): Promise<OfflinePublication[]> {
   if (!Capacitor.isNativePlatform()) return [];
   try {
     const result = await Filesystem.readFile({ path: manifest, directory: Directory.Data });
-    const text = typeof result.data === 'string' ? atob(result.data) : await result.data.text();
+    const text = typeof result.data === 'string' ? new TextDecoder().decode(Uint8Array.from(atob(result.data), char => char.charCodeAt(0))) : await result.data.text();
     return JSON.parse(text) as OfflinePublication[];
   } catch (error) {
     // Missing manifest is the normal first launch; other failures must not overwrite saved entries.

@@ -28,3 +28,11 @@ test('signed-out mobile users have no saved-publications shortcut', () => {
 test('signed-in mobile users have favorites and their profile shortcut', () => {
   expect(mobileNavigation(true).map(item => item.href)).toEqual(['/todos', '/noticias', '/favoritos', '/profile']);
 });
+test('Baixados is absent from every web navigation regardless of screen size', () => {
+  expect(mobileNavigation(true, false, true).map(item => item.href)).not.toContain('/baixados');
+  expect(mobileNavigation(true, false, false).map(item => item.href)).not.toContain('/baixados');
+});
+test('Baixados is offered only in native mobile navigation', () => {
+  expect(mobileNavigation(false, true, true).map(item => item.href)).toContain('/baixados');
+  expect(mobileNavigation(true, true, false).map(item => item.href)).not.toContain('/baixados');
+});
