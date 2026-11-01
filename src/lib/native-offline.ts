@@ -17,6 +17,27 @@ export function offlineDestination(native: boolean, connected: boolean): string 
   return native && !connected ? '/baixados' : null;
 }
 
+// Offline mode is a native-only state: the watcher never registers on the web,
+// so the store stays false and browser navigation is never blocked.
+let offline = false;
+const connectionListeners = new Set<() => void>();
+export const subscribeOffline = (listener: () => void) => { connectionListeners.add(listener); return () => { connectionListeners.delete(listener); }; };
+export const isOfflineMode = () => Capacitor.isNativePlatform() && offline;
+export const offlineNavigationMessage = 'Modo offline ativo. Conecte-se à internet para acessar esta seção.';
+export const connectionRestoredMessage = 'Conexão reestabelecida.';
+
+function reportOffline(value: boolean) {
+  if (offline === value) return;
+  offline = value;
+  connectionListeners.forEach(listener => listener());
+}
+
+/** While the native app is offline only the downloaded library stays reachable. */
+export function offlineNavigationTarget(offlineMode: boolean, target: string): string | null {
+  return offlineMode && target !== '/baixados' ? '/baixados' : null;
+}
+
+
 export async function listDownloads(): Promise<OfflinePublication[]> {
   if (!Capacitor.isNativePlatform()) return [];
   try {
@@ -88,19 +109,35 @@ export async function readDownload(item: OfflinePublication): Promise<string> {
   return URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
 }
 
-export function watchNativeConnection(onOffline: () => void): () => void {
+export function watchNativeConnection(onOffline: () => void, onOnline?: () => void): () => void {
   if (!Capacitor.isNativePlatform()) return () => undefined;
   let disposed = false;
   let remove: (() => Promise<void>) | undefined;
   let statusVersion = 0;
-  const apply = (connected: boolean) => { if (!disposed && offlineDestination(true, connected)) onOffline(); };
+  const apply = (connected: boolean) => {
+    if (disposed) return;
+    const wasOffline = offline;
+    reportOffline(!connected);
+    if (!connected) onOffline();
+    else if (wasOffline) onOnline?.();
+  };
   void Network.addListener('networkStatusChange', status => { statusVersion++; apply(status.connected); }).then(handle => {
     if (disposed) void handle.remove(); else remove = () => handle.remove();
   }).catch(() => undefined);
   const initialVersion = statusVersion;
   void Network.getStatus().then(status => { if (statusVersion === initialVersion) apply(status.connected); }).catch(() => undefined);
-  return () => { disposed = true; void remove?.(); };
+  // The webview's own events keep the store correct even if the plugin listener is unavailable.
+  const listening = typeof window !== 'undefined' && typeof window.addEventListener === 'function';
+  const onWindowOffline = () => apply(false);
+  const onWindowOnline = () => apply(true);
+  if (listening) { window.addEventListener('offline', onWindowOffline); window.addEventListener('online', onWindowOnline); }
+  return () => {
+    disposed = true;
+    void remove?.();
+    if (listening) { window.removeEventListener('offline', onWindowOffline); window.removeEventListener('online', onWindowOnline); }
+  };
 }
+
 export async function findDownload(id: string): Promise<OfflinePublication | null> {
   if (!Capacitor.isNativePlatform()) return null;
   return (await listDownloads().catch(() => [])).find(item => item.id === id) ?? null;
