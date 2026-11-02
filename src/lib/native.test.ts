@@ -23,7 +23,7 @@ mock.module('@/integrations/supabase/client', () => ({ supabase: {
   auth: { setSession, exchangeCodeForSession: exchangeCode, signInWithOAuth: oauth },
   storage: { from: () => ({ createSignedUrl: signedUrl }) },
 } }));
-const { openExternalUrl, openStoredFileNative, signInWithGoogle, completeNativeAuth, registerNativeAuthListener, getPublicShareUrl, shareContent } = await import('./native');
+const { openExternalUrl, openStoredFileNative, signInWithGoogle, completeNativeAuth, registerNativeAuthListener, registerNativeAppLinkListener, parseRepositoryAppLink, getPublicShareUrl, shareContent } = await import('./native');
 
 const originalNavigator = globalThis.navigator;
 function useNavigator(value: unknown) {
@@ -41,6 +41,45 @@ test('native Google login uses the exact app callback without navigating the web
   await signInWithGoogle('https://web.example/email-confirmation');
   expect(oauth.mock.calls[0]).toEqual([{ provider: 'google', options: { redirectTo: 'br.com.gepefe.app://login-callback', skipBrowserRedirect: true, queryParams: { prompt: 'select_account' } } }]);
   expect(browserOpen.mock.calls[0]).toEqual([{ url: 'https://auth.example/authorize' }]);
+});
+
+test('shared HTTPS publication links resolve to the requested internal item', () => {
+  expect(parseRepositoryAppLink('https://gepefe.com.br/publicacao/abc-123?from=share#resumo')).toBe('/publicacao/abc-123?from=share#resumo');
+  expect(parseRepositoryAppLink('https://gepefe.netlify.app/artigo/abc-123')).toBe('/publicacao/abc-123');
+});
+
+test('custom scheme publication links route without being treated as OAuth', () => {
+  expect(parseRepositoryAppLink('br.com.gepefe.app://publicacao/abc-123')).toBe('/publicacao/abc-123');
+  expect(parseRepositoryAppLink('br.com.gepefe.app://noticia/news-1')).toBe('/noticia/news-1');
+  expect(parseRepositoryAppLink('br.com.gepefe.app://login-callback?code=x')).toBeUndefined();
+});
+
+test('untrusted hosts and malformed item routes cannot navigate the app', () => {
+  for (const url of ['https://gepefe.com.br.evil/publicacao/a', 'https://evil.example/publicacao/a', 'https://gepefe.netlify.app/publicacao/a/extra', 'https://gepefe.netlify.app/publicacao/%2Fadmin', 'https://gepefe.netlify.app/admin']) {
+    expect(parseRepositoryAppLink(url)).toBeUndefined();
+  }
+});
+
+test('app links navigate on cold start and background return and stop after cleanup', async () => {
+  launchUrl.mockResolvedValue({ url: 'https://gepefe.netlify.app/publicacao/cold-1' });
+  const navigate = mock((_path: string) => undefined);
+  const cleanup = registerNativeAppLinkListener(navigate);
+  await new Promise(resolve => setTimeout(resolve, 0));
+  expect(navigate.mock.calls[0]).toEqual(['/publicacao/cold-1']);
+  await onAppUrl({ url: 'br.com.gepefe.app://publicacao/background-2' });
+  expect(navigate.mock.calls[1]).toEqual(['/publicacao/background-2']);
+  cleanup();
+  await onAppUrl({ url: 'br.com.gepefe.app://publicacao/ignored-3' });
+  expect(navigate).toHaveBeenCalledTimes(2);
+});
+
+test('web never registers native item-link routing', async () => {
+  native = false;
+  const navigate = mock((_path: string) => undefined);
+  const cleanup = registerNativeAppLinkListener(navigate);
+  expect(navigate).not.toHaveBeenCalled();
+  expect(launchUrl).not.toHaveBeenCalled();
+  cleanup();
 });
 test('web Google login preserves its web callback and does not invoke a native plugin', async () => {
   native = false;
