@@ -34,6 +34,7 @@ beforeEach(() => {
   native = true;
   browserOpen.mockClear(); browserClose.mockClear(); setSession.mockClear(); exchangeCode.mockClear(); oauth.mockClear(); signedUrl.mockClear(); removeListener.mockClear();
   shareSheet.mockClear();
+  launchUrl.mockClear();
   launchUrl.mockResolvedValue(undefined);
 });
 
