@@ -1,4 +1,5 @@
 # Institutional design across all pages
+- [ ] Clean profile duplicates, route native publication links, share synchronous favorites/auth state, and preserve publication lists during background refresh; verify tests and browser navigation.
 - [x] Implement native-only Baixados, persistent PDF saving/removal and automatic offline navigation; 66 tests pass, web exclusion verified at 384/1280px, simulated native save/read/remove flow verified.
 - [x] Baixados cards react one at a time: action feedback and the disabled state now follow the clicked card's id only (activeItemId), both buttons stop event propagation, list keys stay item.id, and the hover styles live on the buttons; 69 tests pass and build is OK — visual check needs a phone build.
 - [x] Offline native bottom navigation: tapping Início, Notícias, Salvos or Perfil/Entrar while offline keeps the user on /baixados with the toast "Modo offline ativo. Conecte-se à internet para acessar esta seção." and the Baixados icon active; reconnecting releases navigation and toasts "Conexão reestabelecida."; 69 tests pass and web tabs still navigate normally with no message.
