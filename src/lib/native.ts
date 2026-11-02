@@ -126,14 +126,17 @@ export function registerNativeAuthListener(onSuccess: () => void, onError: () =>
   };
 }
 
-function parseRepositoryAppLink(url: string) {
+export function parseRepositoryAppLink(url: string) {
   try {
     const parsed = new URL(url);
-    return parsed.protocol === 'https:'
-      && parsed.hostname === 'gepefe.netlify.app'
-      && /^\/(?:noticia|publicacao)\/[^/]+\/?$/.test(parsed.pathname)
-      ? `${parsed.pathname}${parsed.search}${parsed.hash}`
-      : undefined;
+    const custom = parsed.protocol === 'br.com.gepefe.app:';
+    if (!custom && (parsed.protocol !== 'https:' || !['gepefe.netlify.app', 'gepefe.com.br', 'www.gepefe.com.br'].includes(parsed.hostname) || parsed.port)) return undefined;
+    if (parsed.username || parsed.password) return undefined;
+    const path = custom ? `/${parsed.hostname}${parsed.pathname}` : parsed.pathname;
+    const match = /^\/(noticia|publicacao|artigo|article)\/([a-zA-Z0-9_-]+)\/?$/.exec(path);
+    if (!match) return undefined;
+    const section = match[1] === 'noticia' ? 'noticia' : 'publicacao';
+    return `/${section}/${match[2]}${parsed.search}${parsed.hash}`;
   } catch { return undefined; }
 }
 
