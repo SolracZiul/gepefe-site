@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Search, BookOpen, ChevronLeft, ChevronRight, RotateCcw, X } from 'lucide-react';
@@ -36,11 +36,12 @@ export function RepositoryCollection({ title = 'Todas as Publicações', categor
   useEffect(() => {
     if (type && !filterPublications(academic, searchQuery, '', '', 'recent', { category }).some(article => article.category === type)) setType('');
   }, [academic, searchQuery, category, type]);
-  const types = Array.from(new Set(academic.map(item => item.category))).sort();
-  const years = Array.from(new Set(academic.map(item => item.publish_date.slice(0, 4)))).sort().reverse();
-  const authors = Array.from(new Set(academic.flatMap(item => item.authors).filter(name => name !== collectiveAuthor).map(name => name.replace(' (GEPEFE)', '')))).sort((a, b) => a.localeCompare(b, 'pt-BR'));
-  const filtered = personal ? filterPublications(articles, quick, '', '', 'recent', {}) : filterPublications(articles, searchQuery, area, type, sort, { year, author, category });
-  const visible = mode === 'favorites' ? filtered.filter(item => isFavorited(item.id)) : mode === 'history' ? history.flatMap(id => filtered.filter(item => item.id === id)) : filtered;
+  const types = useMemo(() => Array.from(new Set(academic.map(item => item.category))).sort(), [academic]);
+  const years = useMemo(() => Array.from(new Set(academic.map(item => item.publish_date.slice(0, 4)))).sort().reverse(), [academic]);
+  const authors = useMemo(() => Array.from(new Set(academic.flatMap(item => item.authors).filter(name => name !== collectiveAuthor).map(name => name.replace(' (GEPEFE)', '')))).sort((a, b) => a.localeCompare(b, 'pt-BR')), [academic]);
+  const filtered = useMemo(() => personal ? filterPublications(articles, quick, '', '', 'recent', {}) : filterPublications(articles, searchQuery, area, type, sort, { year, author, category }), [personal, articles, quick, searchQuery, area, type, sort, year, author, category]);
+  const visible = useMemo(() => mode === 'favorites' ? filtered.filter(item => isFavorited(item.id)) : mode === 'history' ? history.flatMap(id => filtered.filter(item => item.id === id)) : filtered, [mode, filtered, isFavorited, history]);
+  const handleRead = useCallback((id: string) => { if (user) setHistory(recordReading(user.id, id)); }, [user?.id]);
   const pages = Math.max(1, Math.ceil(visible.length / 9));
   const current = Math.min(page, pages);
   const active = personal ? Boolean(quick) : Boolean(searchQuery || area || type || year || author);
