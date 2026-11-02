@@ -112,7 +112,18 @@ export const PublicationCard = memo(function PublicationCard({ article, saved, c
             >
               <Bookmark className={saved ? 'fill-primary text-primary h-4 w-4' : 'h-4 w-4'} />
             </Button>
-          ) : <span aria-hidden="true" className="h-10 w-10 shrink-0" />}
+          ) : (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="shrink-0 hover:bg-muted hover:text-foreground"
+              aria-label="Entre para salvar nos favoritos"
+              title="Entre para salvar nos favoritos"
+              asChild
+            >
+              <Link to="/auth"><Bookmark className="h-4 w-4" /></Link>
+            </Button>
+          )}
         </div>
       </div>
     </article>
