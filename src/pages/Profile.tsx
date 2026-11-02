@@ -1,39 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { User, Heart, Download, History, LogOut } from "lucide-react";
+import { User, History, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 
 export default function Profile() {
   const { user, userRole, loading } = useAuth();
   const navigate = useNavigate();
-  const [displayName, setDisplayName] = useState<string>("");
-
   useEffect(() => {
-    if (!loading && !user) {
-      navigate("/auth");
-    }
-    
-    // Fetch user display name from profile
-    if (user) {
-      const fetchDisplayName = async () => {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('display_name')
-          .eq('user_id', user.id)
-          .single();
-        
-        if (profile?.display_name) {
-          setDisplayName(profile.display_name);
-        } else {
-          setDisplayName(user.email?.split('@')[0] || 'Usuário');
-        }
-      };
-      
-      fetchDisplayName();
-    }
+    if (!loading && !user) navigate('/auth', { replace: true });
   }, [user, loading, navigate]);
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -91,20 +68,8 @@ export default function Profile() {
             <Card>
               <CardHeader>
                 <CardTitle>Ações Rápidas</CardTitle>
-                <CardDescription>
-                  Acesse rapidamente suas funcionalidades favoritas
-                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start"
-                  onClick={() => navigate("/favoritos")}
-                >
-                  <Heart className="h-4 w-4 mr-2" />
-                  Meus Favoritos
-                </Button>
-
                 <Button
                   variant="outline"
                   className="w-full justify-start lg:hidden"
@@ -114,15 +79,6 @@ export default function Profile() {
                   Histórico de Leitura
                 </Button>
                 
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start"
-                  onClick={() => navigate("/todos")}
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Explorar Publicações
-                </Button>
-
                 {userRole === 'admin' && (
                   <Button 
                     variant="outline" 
@@ -146,21 +102,6 @@ export default function Profile() {
             </Card>
           </div>
 
-          {/* Welcome Message */}
-          <Card className="mt-6">
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <h3 className="text-lg font-semibold mb-2">
-                  Bem-vindo ao GEPEFE, {displayName}!
-                </h3>
-                <p className="text-muted-foreground">
-                  Explore nosso repositório acadêmico com artigos, textos e pesquisas 
-                  em Educação Física e Escola. Use os favoritos para salvar os conteúdos 
-                  mais importantes para você.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </main>
       
