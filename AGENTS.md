@@ -16,7 +16,7 @@
 - Admin forms use FileDropzone/FormSection/FormPageHeader from `src/components/repository/FileDropzone.tsx` so PDF and image uploads share one drag & drop area and section layout.
 
 - Quick category chips derive from shared academic search matches before refinement; the full category selector remains independent of the quick-chip limit, and Tudo clears refinement without discarding search so advanced categories remain selectable.
-- The quick-filter chip bar renders one non-wrapping row through the shared `.repository-chip-scroll` class in `src/index.css` (nowrap, horizontal overflow, scrollbar hidden in every engine, vertical overflow hidden and touch-action left automatic) with each chip shrink-0, so pills never stack, no scroll indicator shows, thumb swipe and vertical page swiping from the row both still work, and the advanced-filters icon stays on the same line.
+- The quick-filter chip bar keeps one non-wrapping row via `.repository-chip-scroll` in `src/index.css` (overflow-x auto, scrollbar hidden, touch-action untouched, chips shrink-0), so pills never stack, no scrollbar shows, thumb swipe and vertical page swiping still work, and the advanced-filters icon stays on the same line.
 - Admin content cards keep the text column min-w-0, 40x40 shrink-0 icon actions and flex-wrap metadata/tags (gap-1.5), so edit/delete never leave the screen at phone widths; titles stay text-base leading-snug, secondary metadata text-xs, and cards/pages keep px-4 py-3 with bottom padding clear of the mobile bottom bar.
 - Account actions live on one surface each: the admin panel has no "Ver Site"/"Sair" header buttons (shell navigation covers them), while the profile quick actions carry sign-out (`supabase.auth.signOut()` then `/auth`).
 - The document viewer offers each opening action once: externally hosted documents keep the header free of "Abrir em nova aba" and open only through the central "Acessar documento", while embedded readers keep that header button.
@@ -28,3 +28,4 @@
 
 - AuthProvider shares one live Supabase session subscription across routes; never persist permissions.
 - Favorites share user-keyed React Query and ID-only local cache with optimistic item rollback; articles share stale-while-revalidate queries so populated lists survive refresh errors.
+- `hover:` utilities apply only on pointer devices (custom variant in `tailwind.config.ts`): a touch tap leaves `:hover` stuck and buttons look permanently selected; use `active:`/state props for touch feedback.
