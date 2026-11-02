@@ -33,6 +33,14 @@ The Capacitor configuration uses bundled `dist` assets without a remote `server.
 
 ## Native offline PDFs
 
+## Shared publication and news links
+
+The root listener routes trusted HTTPS publication/news links and `br.com.gepefe.app://publicacao/{id}` / `br.com.gepefe.app://noticia/{id}` on cold launch and while running. OAuth callbacks remain separate. Android includes matching intent filters and uses singleTask.
+
+HTTPS auto-opening additionally requires each website owner to serve `/.well-known/assetlinks.json` with the actual Android application ID and release signing certificate SHA-256 fingerprint. Do not invent a fingerprint. The `gepefe.com.br` addresses in the brief are supported aliases, not confirmed deployed domains. Verify ownership and publish the association before expecting Android auto-verification. This checkout has no iOS project: after generating it, add Associated Domains for owned hosts and serve an `apple-app-site-association` file with the actual Apple Team ID and bundle ID. These website/signing steps cannot be completed from JavaScript alone.
+
+## Native offline PDF verification
+
 Update the local project from the connected repository, run `npm install`, `npm run build`, then `npx cap sync`, and rebuild/reinstall the app. Filesystem and Network plugins must be included in the new installation. No web service worker is used.
 
 On the native device, save a real PDF using the publication download icon. Confirm it appears in Baixados. Enable airplane mode: the app should navigate to Baixados; open the PDF and turn pages. Force-close and reopen while offline, confirm the PDF remains readable, then remove it and confirm it stays removed after another restart. On Chrome/Safari and desktop browsers, Baixados and remove-download controls must never appear; opening /baixados returns to the home page and losing connectivity never redirects there. Remote authentication, news and unsaved publications still require internet. Downloads stay on this device until removed or app data is cleared.

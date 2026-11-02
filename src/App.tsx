@@ -35,6 +35,7 @@ import NoticiaDetail from "./pages/NoticiaDetail";
 import Privacidade from "./pages/Privacidade";
 import { ArticlesProvider } from "./contexts/ArticlesContext";
 import { SearchProvider } from "./contexts/SearchContext";
+import { AuthProvider } from './hooks/useAuth';
 
 const queryClient = new QueryClient();
 
@@ -52,7 +53,7 @@ const App = () => {
         enableSystem={false}
         disableTransitionOnChange={false}
       >
-        <ArticlesProvider>
+        <AuthProvider><ArticlesProvider>
           <SearchProvider>
             <TooltipProvider>
               <Toaster />
@@ -82,6 +83,7 @@ const App = () => {
                       <Route path="/email-confirmation" element={<EmailConfirmation />} />
                       <Route path="/reset-password" element={<ResetPassword />} />
                       <Route path="/profile" element={<Profile />} />
+                      <Route path="/perfil" element={<Navigate to="/profile" replace />} />
                     <Route path="/admin" element={<Admin />} />
                       <Route path="/publicacao/:id" element={<ArticleDetail />} />
                       <Route path="/article/:id" element={<LegacyArticleRedirect />} />
@@ -97,7 +99,7 @@ const App = () => {
               </BrowserRouter>
             </TooltipProvider>
           </SearchProvider>
-        </ArticlesProvider>
+        </ArticlesProvider></AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

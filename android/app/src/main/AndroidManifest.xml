@@ -26,6 +26,16 @@
                 <data android:scheme="br.com.gepefe.app" android:host="login-callback" />
             </intent-filter>
 
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="br.com.gepefe.app" android:host="publicacao" />
+                <data android:scheme="br.com.gepefe.app" android:host="noticia" />
+                <data android:scheme="br.com.gepefe.app" android:host="artigo" />
+                <data android:scheme="br.com.gepefe.app" android:host="article" />
+            </intent-filter>
+
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -45,6 +55,12 @@
                     android:scheme="https"
                     android:host="gepefe.netlify.app"
                     android:pathPrefix="/publicacao" />
+                <data android:scheme="https" android:host="gepefe.netlify.app" android:pathPrefix="/artigo/" />
+                <data android:scheme="https" android:host="gepefe.netlify.app" android:pathPrefix="/article/" />
+                <data android:scheme="https" android:host="gepefe.com.br" android:pathPrefix="/publicacao/" />
+                <data android:scheme="https" android:host="gepefe.com.br" android:pathPrefix="/noticia/" />
+                <data android:scheme="https" android:host="www.gepefe.com.br" android:pathPrefix="/publicacao/" />
+                <data android:scheme="https" android:host="www.gepefe.com.br" android:pathPrefix="/noticia/" />
             </intent-filter>
         </activity>
 

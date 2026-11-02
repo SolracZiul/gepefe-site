@@ -1,14 +1,14 @@
 # Project conventions
-- Native OAuth and outbound HTTP links use shared helpers in `src/lib/native.ts`, mounted once by App.tsx with cleanup and cold-start handling; native OAuth suppresses automatic redirects and closes Capacitor Browser immediately on the validated callback before session I/O, while document previews and rich-content anchors use Capacitor Browser to prevent external navigation.
+- Native helpers in `src/lib/native.ts` handle OAuth and allowlisted item links at root with cleanup/cold starts; close Browser before OAuth session I/O, suppress redirects, and use Browser for external documents. HTTPS app association needs real signing identifiers.
 - Web downloads share `src/lib/downloads.ts` (Storage attachments, blobs, reserved-tab fallback). Native cards/details use `native-offline.ts`: PDFs and minimal metadata in Filesystem Directory.Data, guarded local reads/removal and one cleaned-up Network listener; /baixados is native-only. Keep bundled startup without server.url for cold offline launch.
-- Keep the institutional repository UI in `src/components/repository` and use shared article data and existing reader/favorites services; homepage presentation must not require schema changes.
+- Repository UI lives in `src/components/repository`; presentation changes never require schema changes.
 - Keep academic filtering, author formatting and browser-only reading history in `src/lib/repository.ts` with focused behavior tests; these rules must be reusable and independently verifiable.
 - Test files stub platform plugins (Capacitor) rather than the app's own modules, because `mock.module` persists into later test files in one `bun test` run and would blank the real exports other suites import.
 - Reading history stores only article IDs under a user-scoped browser key, not account permissions or article snapshots; it is device-local and does not imply synced analytics.
 - All routes use RepositoryShell as the sole owner of institutional header/sidebar/footer, so navigation and theme remain identical without page-level chrome.
 - Institutional link ordering and mobile account shortcuts come from shared navigation definitions; the shell provides bottom navigation below the desktop breakpoint to prevent per-page drift.
 - RepositoryShell measures the fixed header height for content and full-height sidebar offsets; page wrappers stay fluid to keep routes edge-to-edge, except the privacy page's centered inner desktop grid.
-- Collection routes and Home use RepositoryCollection with PublicationCard and repository utilities, so filters and bibliographic actions cannot drift between pages.
+- Collections share RepositoryCollection and memoized PublicationCard with stable ID callbacks to prevent list-wide rerenders.
 - Mobile filter chips and the year/author bottom sheet share RepositoryCollection filter state with desktop controls, so changing presentation never changes academic filtering rules.
 - The sidebar menu lists only collection and section destinations while institutional identity lives in the sidebar's institutional block, and each article page renders its citation once, so no destination or bibliographic string is offered twice.
 - Article citations use only existing metadata; absent DOI, affiliation or translated abstract must never be invented.
@@ -24,4 +24,7 @@
 - Detail pages share one item through `shareContent` in `src/lib/native.ts`, which passes the item title and its canonical public link to the platform sheet (Capacitor on native, `navigator.share` on web) and copies the link when no sheet exists; the helper reports which channel delivered it so the page can confirm a copy, and a sheet the user closed is never treated as a failure.
 - Academic items have one canonical address, `/publicacao/{id}` through `publicationPath` in `src/lib/repository.ts`, so cards, citation, sharing and routing never disagree; older `/artigo` and `/article` links redirect there and news keeps its own `/noticia/{id}`.
 - Collection read actions link to the canonical detail page, never a modal; DocumentPreview uses the shared file URL helper and PDF.js beneath the abstract for cross-device rendering, while blocked/non-PDF destinations use the integrated-browser helper.
-- Publication detail tabs and tooltip-equipped icon actions share one desktop toolbar; mobile tabs scroll independently so action controls never squeeze or wrap the tabs.
+- Detail tabs/actions share a desktop toolbar; mobile tabs scroll independently.
+
+- AuthProvider shares one live Supabase session subscription across routes; never persist permissions.
+- Favorites share user-keyed React Query and ID-only local cache with optimistic item rollback; articles share stale-while-revalidate queries so populated lists survive refresh errors.

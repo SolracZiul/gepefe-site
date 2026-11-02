@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-
-console.log("useArticles hook: Starting imports...");
 
 export interface Article {
   id: string;
@@ -25,46 +24,18 @@ export interface Article {
   images?: string[];
 }
 
+export const articlesQueryKey = ['articles'] as const;
+
 export const useArticles = () => {
-  console.log("useArticles hook: Called");
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchArticles = async () => {
-    console.log("useArticles hook: Fetching articles...");
-    try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('articles')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        throw error;
-      }
-
-      console.log("useArticles hook: Articles fetched successfully", data);
-      setArticles(data || []);
-      setError(null);
-    } catch (err: any) {
-      console.log("useArticles hook: Error fetching articles", err);
-      setError(err.message);
-      setArticles([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    console.log("useArticles hook: useEffect triggered");
-    fetchArticles();
-  }, []);
-
-  return {
-    articles,
-    loading,
-    error,
-    refetch: fetchArticles,
-  };
+  const query = useQuery({
+    queryKey: articlesQueryKey,
+    staleTime: 60_000,
+    queryFn: async (): Promise<Article[]> => {
+      const { data, error } = await supabase.from('articles').select('*').order('created_at', { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+  const refetch = useCallback(async () => { await query.refetch(); }, [query.refetch]);
+  return { articles: query.data ?? [], loading: query.isPending, error: query.error?.message ?? null, refetch };
 };

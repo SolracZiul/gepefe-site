@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import { downloadDocument } from '@/lib/downloads';
 import { Link } from 'react-router-dom';
 import { Bookmark, Download, ArrowUpRight, User, Users } from 'lucide-react';
@@ -14,16 +14,21 @@ interface Props {
   article: Article;
   saved: boolean;
   canSave: boolean;
-  onSave: () => void;
-  onRead: () => void;
+  onSave: (id: string) => void;
+  onRead: (id: string) => void;
 }
 
-export function PublicationCard({ article, saved, canSave, onSave, onRead }: Props) {
+export const PublicationCard = memo(function PublicationCard({ article, saved, canSave, onSave, onRead }: Props) {
   const [downloading, setDownloading] = useState(false);
   const { toast } = useToast();
   const collective = article.authors.length === 1 && article.authors[0] === collectiveAuthor;
   const member = article.authors.some(author => author.includes(' (GEPEFE)'));
   const hasFile = Boolean(article.file_path || article.pdf_url);
+  const handleRead = useCallback(() => onRead(article.id), [onRead, article.id]);
+  const handleSave = useCallback((event: React.MouseEvent) => {
+    event.stopPropagation();
+    onSave(article.id);
+  }, [onSave, article.id]);
 
   async function handleDownload(e: React.MouseEvent) {
     e.stopPropagation();
@@ -56,7 +61,7 @@ export function PublicationCard({ article, saved, canSave, onSave, onRead }: Pro
         </span>
       </div>
       <h3 className="mb-3 text-lg font-semibold leading-tight sm:text-xl">
-        <Link to={publicationPath(article)} onClick={onRead} className="line-clamp-3 break-words hover:underline underline-offset-4">
+        <Link to={publicationPath(article)} onClick={handleRead} className="line-clamp-3 break-words hover:underline underline-offset-4">
           {article.title}
         </Link>
       </h3>
@@ -72,12 +77,12 @@ export function PublicationCard({ article, saved, canSave, onSave, onRead }: Pro
       </div>
       <p className="mb-5 line-clamp-3 text-sm leading-6 text-muted-foreground">{article.abstract}</p>
       <div className="mt-auto">
-        <div className="flex flex-wrap gap-2 border-t border-border pt-4">
+        <div className="flex min-h-14 flex-wrap gap-2 border-t border-border pt-4">
           <Button
             className="min-w-0 flex-1 px-3 text-xs"
             asChild
           >
-            <Link to={publicationPath(article)} onClick={onRead}>
+            <Link to={publicationPath(article)} onClick={handleRead}>
               <ArrowUpRight className="mr-1 h-3.5 w-3.5" />
               Ler / Visualizar PDF
             </Link>
@@ -94,7 +99,7 @@ export function PublicationCard({ article, saved, canSave, onSave, onRead }: Pro
           >
             <Download className={downloading ? 'animate-pulse h-4 w-4' : 'h-4 w-4'} />
           </Button>}
-          {canSave && (
+          {canSave ? (
             <Button
               type="button"
               variant="ghost"
@@ -103,13 +108,13 @@ export function PublicationCard({ article, saved, canSave, onSave, onRead }: Pro
               aria-label={saved ? 'Remover dos favoritos' : 'Salvar nos favoritos'}
               aria-pressed={saved}
               title={saved ? 'Remover dos favoritos' : 'Salvar nos favoritos'}
-              onClick={onSave}
+              onClick={handleSave}
             >
               <Bookmark className={saved ? 'fill-primary text-primary h-4 w-4' : 'h-4 w-4'} />
             </Button>
-          )}
+          ) : <span aria-hidden="true" className="h-10 w-10 shrink-0" />}
         </div>
       </div>
     </article>
   );
-}
+});
