@@ -108,5 +108,13 @@ export default {
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [
+		require("tailwindcss-animate"),
+		// Touch screens keep :hover stuck after a tap, which made action buttons
+		// (e.g. the bookmark/save icon) look permanently selected. Restrict hover
+		// styling to devices that actually have a pointer.
+		function ({ addVariant }: any) {
+			addVariant("hover", "@media (hover: hover) and (pointer: fine) { &:hover }");
+		},
+	],
 } satisfies Config;
