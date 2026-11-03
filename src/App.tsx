@@ -28,7 +28,8 @@ import Admin from "./pages/Admin";
 import Profile from "./pages/Profile";
 import EmailConfirmation from "./pages/EmailConfirmation";
 import ResetPassword from "./pages/ResetPassword";
-import Favoritos from "./pages/Favoritos";
+import Biblioteca from "./pages/Biblioteca";
+import { bibliotecaHref } from "./lib/repository-navigation";
 import ArticleDetail from "./pages/ArticleDetail";
 import Noticias from "./pages/Noticias";
 import NoticiaDetail from "./pages/NoticiaDetail";
@@ -66,7 +67,8 @@ const App = () => {
                       <Route path="/" element={<Index />} />
                       <Route path="/repositorio" element={<Todos />} />
                       <Route path="/busca" element={<Todos />} />
-                      <Route path="/historico" element={<RepositoryCollection title="Histórico de Leitura" mode="history" />} />
+                      <Route path="/historico" element={<Navigate to={bibliotecaHref('historico')} replace />} />
+                      <Route path="/biblioteca" element={<Biblioteca />} />
                       <Route path="/artigo/:id" element={<LegacyArticleRedirect />} />
                       <Route path="/todos" element={<Todos />} />
                       <Route path="/linhas-de-pesquisa" element={<LinhasDePesquisa />} />
@@ -77,7 +79,7 @@ const App = () => {
                       <Route path="/pesquisas" element={<Pesquisas />} />
                       <Route path="/dissertacoes" element={<Dissertacoes />} />
                       <Route path="/teses" element={<Teses />} />
-                      <Route path="/favoritos" element={<Favoritos />} />
+                      <Route path="/favoritos" element={<Navigate to={bibliotecaHref('salvos')} replace />} />
                       <Route path="/baixados" element={<Baixados />} />
                       <Route path="/auth" element={<Auth />} />
                       <Route path="/email-confirmation" element={<EmailConfirmation />} />
@@ -115,7 +117,7 @@ function NativeEvents() {
     );
     const removeAppLinks = registerNativeAppLinkListener(path => navigate(path, { replace: true }));
     const removeLinks = registerNativeLinkListener(() => toast({ title: 'Não foi possível abrir o documento', variant: 'destructive' }));
-    const removeNetwork = watchNativeConnection(() => navigate('/baixados', { replace: true }), () => toast({ title: connectionRestoredMessage }));
+    const removeNetwork = watchNativeConnection(() => navigate('/biblioteca', { replace: true }), () => toast({ title: connectionRestoredMessage }));
     return () => { removeAuth(); removeAppLinks(); removeLinks(); removeNetwork(); };
   }, [navigate, toast]);
   return null;

@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Bookmark, FlaskConical, History, Library, LockKeyholeOpen, Newspaper } from 'lucide-react';
+import { FlaskConical, Library, LibraryBig, LockKeyholeOpen, Newspaper } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useSearch } from '@/contexts/SearchContext';
@@ -13,7 +13,7 @@ export function RepositorySidebar({ collapsed = false, onNavigate }: { collapsed
   const { setSearchQuery, setSelectedCategory } = useSearch();
   const items = [
     ...sidebarLinks.map(item => ({ ...item, icon: icons[item.icon], active: item.href === '/todos' ? isCollectionRoute(location.pathname) : item.href === '/noticias' ? location.pathname.startsWith('/noticia') : location.pathname === item.href })),
-    ...(user ? [{ label: 'Meus Favoritos', icon: Bookmark, href: '/favoritos', active: location.pathname === '/favoritos' }, { label: 'Histórico de Leitura', icon: History, href: '/historico', active: location.pathname === '/historico' }] : []),
+    ...(user ? [{ label: 'Biblioteca', icon: LibraryBig, href: '/biblioteca', active: location.pathname === '/biblioteca' }] : []),
   ];
   return <>
     {!collapsed && <p className="mb-4 px-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Repositório</p>}
