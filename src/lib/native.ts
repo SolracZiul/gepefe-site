@@ -97,6 +97,16 @@ export async function completeNativeAuth(url: string) {
   return Boolean(result?.data.session);
 }
 
+// The launch URL never changes during a process; replaying it on every
+// listener re-registration would pull the user back to the opened link.
+const consumedLaunchUrls = new Set<string>();
+function consumeLaunchUrl(scope: string, url: string) {
+  const key = `${scope}:${url}`;
+  if (consumedLaunchUrls.has(key)) return false;
+  consumedLaunchUrls.add(key);
+  return true;
+}
+
 /** Mounted by App.tsx, including cold starts and cleanup on unmount. */
 export function registerNativeAuthListener(onSuccess: () => void, onError: () => void) {
   if (!isNative()) return () => undefined;
@@ -118,7 +128,7 @@ export function registerNativeAuthListener(onSuccess: () => void, onError: () =>
   void listener.then(async () => {
     if (disposed) return;
     const launch = await CapacitorApp.getLaunchUrl();
-    if (launch?.url) await handleUrl(launch);
+    if (launch?.url && consumeLaunchUrl('auth', launch.url)) await handleUrl(launch);
   }).catch(() => { if (!disposed) onError(); });
   return () => {
     disposed = true;
@@ -152,7 +162,7 @@ export function registerNativeAppLinkListener(onNavigate: (path: string) => void
   void listener.then(async () => {
     if (disposed) return;
     const launch = await CapacitorApp.getLaunchUrl();
-    if (launch?.url) handleUrl(launch.url);
+    if (launch?.url && consumeLaunchUrl('links', launch.url)) handleUrl(launch.url);
   }).catch(() => undefined);
   return () => {
     disposed = true;

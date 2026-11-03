@@ -109,7 +109,14 @@ const App = () => {
 function NativeEvents() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  // useNavigate changes identity on every route change; keep listeners mounted once.
+  const navigateRef = useRef(navigate);
+  const toastRef = useRef(toast);
+  navigateRef.current = navigate;
+  toastRef.current = toast;
   useEffect(() => {
+    const navigate: typeof navigateRef.current = (...args: Parameters<typeof navigateRef.current>) => navigateRef.current(...args);
+    const toast: typeof toastRef.current = (...args: Parameters<typeof toastRef.current>) => toastRef.current(...args);
     const removeAuth = registerNativeAuthListener(
       () => navigate('/', { replace: true }),
       () => toast({ title: 'Não foi possível concluir o login com Google', description: 'Tente novamente.', variant: 'destructive' }),
@@ -118,7 +125,7 @@ function NativeEvents() {
     const removeLinks = registerNativeLinkListener(() => toast({ title: 'Não foi possível abrir o documento', variant: 'destructive' }));
     const removeNetwork = watchNativeConnection(() => navigate('/biblioteca', { replace: true }), () => toast({ title: connectionRestoredMessage }));
     return () => { removeAuth(); removeAppLinks(); removeLinks(); removeNetwork(); };
-  }, [navigate, toast]);
+  }, []);
   return null;
 }
 
