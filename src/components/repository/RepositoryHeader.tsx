@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
-import { ChevronLeft, Search, PanelLeft, User, LogOut, Shield, X } from 'lucide-react';
+import { ArrowLeft, ArrowUpLeft, History, Search, PanelLeft, User, LogOut, Shield, X } from 'lucide-react';
+import { addRecentSearch, loadRecentSearches, saveRecentSearches } from '@/lib/recent-searches';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -24,6 +25,8 @@ export function RepositoryHeader({ query, onQueryChange, onToggleSidebar, onSear
   const avatar = user?.user_metadata?.avatar_url as string | undefined;
   const [accountOpen, setAccountOpen] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
+  const [recent, setRecent] = useState<string[]>(() => loadRecentSearches());
+  const remember = (term: string) => setRecent(list => { const next = addRecentSearch(list, term); saveRecentSearches(next); return next; });
   // The mobile search bar opens ready to type, without scrolling the page.
   useEffect(() => {
     if (!searchMode) return;
@@ -33,12 +36,18 @@ export function RepositoryHeader({ query, onQueryChange, onToggleSidebar, onSear
   return <header className="w-full bg-background lg:border-b lg:border-border lg:bg-card">
     <div className="flex h-14 items-center justify-between gap-2 px-4 pt-[env(safe-area-inset-top)] lg:hidden">
       {searchMode ? <>
-        <Button variant="ghost" size="icon" aria-label="Fechar busca" title="Fechar busca" onClick={onExitSearch} className="shrink-0 rounded-full hover:bg-muted hover:text-foreground"><ChevronLeft /></Button>
-        <form role="search" onSubmit={event => { event.preventDefault(); searchRef.current?.blur(); }} className="relative min-w-0 flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input ref={searchRef} type="search" enterKeyHint="search" aria-label="Buscar por título, autor, palavra-chave ou ano" placeholder="Título, autor, palavra-chave ou ano" value={query} onChange={event => onQueryChange(event.target.value)} onKeyDown={event => { if (event.key === 'Escape') onExitSearch(); }} className="h-10 rounded-full bg-background pl-9 pr-9 text-sm" />
-          {query && <Button type="button" variant="ghost" size="icon" aria-label="Limpar busca" title="Limpar busca" onClick={() => { onQueryChange(''); searchRef.current?.focus(); }} className="absolute right-0 top-1/2 h-9 w-9 -translate-y-1/2 hover:bg-muted hover:text-foreground"><X /></Button>}
+        <form role="search" onSubmit={event => { event.preventDefault(); remember(query); searchRef.current?.blur(); }} className="flex h-12 min-w-0 flex-1 items-center rounded-full bg-muted pl-1 pr-1">
+          <Button type="button" variant="ghost" size="icon" aria-label="Fechar busca" title="Fechar busca" onClick={onExitSearch} className="h-10 w-10 shrink-0 rounded-full active:bg-background/60"><ArrowLeft className="h-5 w-5" /></Button>
+          <input ref={searchRef} type="search" enterKeyHint="search" aria-label="Buscar por título, autor, palavra-chave ou ano" placeholder="Digite para pesquisar" value={query} onChange={event => onQueryChange(event.target.value)} onKeyDown={event => { if (event.key === 'Escape') onExitSearch(); }} className="h-full min-w-0 flex-1 bg-transparent px-2 text-base text-foreground outline-none placeholder:text-muted-foreground" />
+          {query && <Button type="button" variant="ghost" size="icon" aria-label="Limpar busca" title="Limpar busca" onClick={() => { onQueryChange(''); searchRef.current?.focus(); }} className="h-10 w-10 shrink-0 rounded-full active:bg-background/60"><X className="h-5 w-5" /></Button>}
         </form>
+        {!query && recent.length > 0 && <div className="fixed inset-x-0 bottom-0 top-[calc(3.5rem+env(safe-area-inset-top))] z-40 overflow-y-auto bg-background px-4 pb-24 pt-3">
+          <div className="mb-2 flex items-center justify-between"><h2 className="text-base font-medium text-muted-foreground">Pesquisas recentes</h2><button type="button" onClick={() => { setRecent([]); saveRecentSearches([]); }} className="text-sm text-muted-foreground active:text-foreground">Limpar</button></div>
+          <ul>{recent.map(term => <li key={term} className="flex items-center">
+            <button type="button" onClick={() => { onQueryChange(term); remember(term); searchRef.current?.blur(); }} className="flex min-w-0 flex-1 items-center gap-5 py-3 text-left active:opacity-70"><History className="h-5 w-5 shrink-0 text-muted-foreground" /><span className="truncate text-base text-foreground">{term}</span></button>
+            <button type="button" aria-label={`Editar "${term}"`} onClick={() => { onQueryChange(term); searchRef.current?.focus(); }} className="flex h-10 w-10 shrink-0 items-center justify-center text-muted-foreground active:text-foreground"><ArrowUpLeft className="h-5 w-5" /></button>
+          </li>)}</ul>
+        </div>}
       </> : <>
         <Link to="/" aria-label="GEPEFE — início" className="shrink-0"><img src="/lovable-uploads/24fb75f9-0b2a-410a-8f90-d6d3efcf52e4.png" alt="GEPEFE" className="h-8 w-auto" /></Link>
         {user ? <button type="button" aria-label="Abrir conta" title="Conta" onClick={() => setAccountOpen(true)} className="rounded-full">
