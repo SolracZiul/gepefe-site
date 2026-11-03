@@ -27,12 +27,18 @@ export function institutionalRedirectTarget(hash: string) {
   return institutionalPath + (institutionalSections.includes(hash) ? hash : '');
 }
 
+// The search tab opens the search bar; keeping it on its own route preserves deep links and offline blocking.
+export const searchPath = '/busca';
+export function isSearchRoute(path: string) {
+  return path === searchPath;
+}
+
 // The bottom navigation is always the same four destinations, signed in or out, web or native.
 export function mobileNavigation() {
   return [
     { label: 'Início', href: '/todos', icon: 'home' },
     { label: 'Notícias', href: '/noticias', icon: 'news' },
-    { label: 'Pesquisar', href: '/busca', icon: 'search' },
+    { label: 'Pesquisar', href: searchPath, icon: 'search' },
     { label: 'Biblioteca', href: '/biblioteca', icon: 'library' },
   ];
 }
