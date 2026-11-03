@@ -1,14 +1,10 @@
-import { memo, useCallback, useState } from 'react';
-import { downloadDocument } from '@/lib/downloads';
+import { memo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Bookmark, Download, ArrowUpRight, User, Users } from 'lucide-react';
+import { Bookmark, ArrowUpRight, User, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import type { Article } from '@/hooks/useArticles';
 import { collectiveAuthor, formatAcademicAuthor, publicationPath } from '@/lib/repository';
-import { useToast } from '@/hooks/use-toast';
-import { Capacitor } from '@capacitor/core';
-import { NativeDownloadButton } from './NativeDownloadButton';
 
 interface Props {
   article: Article;
@@ -19,36 +15,13 @@ interface Props {
 }
 
 export const PublicationCard = memo(function PublicationCard({ article, saved, canSave, onSave, onRead }: Props) {
-  const [downloading, setDownloading] = useState(false);
-  const { toast } = useToast();
   const collective = article.authors.length === 1 && article.authors[0] === collectiveAuthor;
   const member = article.authors.some(author => author.includes(' (GEPEFE)'));
-  const hasFile = Boolean(article.file_path || article.pdf_url);
   const handleRead = useCallback(() => onRead(article.id), [onRead, article.id]);
   const handleSave = useCallback((event: React.MouseEvent) => {
     event.stopPropagation();
     onSave(article.id);
   }, [onSave, article.id]);
-
-  async function handleDownload(e: React.MouseEvent) {
-    e.stopPropagation();
-    e.preventDefault();
-
-    if (downloading) return;
-    setDownloading(true);
-
-    try {
-      await downloadDocument(article);
-    } catch (error) {
-      console.error('Erro ao baixar documento:', error);
-      toast({
-        title: 'Não foi possível baixar o documento',
-        variant: 'destructive',
-      });
-    } finally {
-      setDownloading(false);
-    }
-  }
 
   return (
     <article className="publication-card flex h-full min-w-0 flex-col rounded-lg border border-border bg-card p-5 transition-shadow hover:shadow-card sm:p-6">
@@ -87,18 +60,6 @@ export const PublicationCard = memo(function PublicationCard({ article, saved, c
               Ler / Visualizar PDF
             </Link>
           </Button>
-          {Capacitor.isNativePlatform() ? <NativeDownloadButton article={article} /> : <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            disabled={!hasFile || downloading}
-            aria-label="Download"
-            title="Download"
-            className="shrink-0 hover:bg-muted hover:text-foreground"
-            onClick={handleDownload}
-          >
-            <Download className={downloading ? 'animate-pulse h-4 w-4' : 'h-4 w-4'} />
-          </Button>}
           {canSave ? (
             <Button
               type="button"

@@ -73,7 +73,7 @@ export default function Profile() {
                 <Button
                   variant="outline"
                   className="w-full justify-start lg:hidden"
-                  onClick={() => navigate("/historico")}
+                  onClick={() => navigate("/biblioteca?filtro=historico")}
                 >
                   <History className="h-4 w-4 mr-2" />
                   Histórico de Leitura

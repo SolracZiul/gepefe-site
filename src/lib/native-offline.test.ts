@@ -37,8 +37,8 @@ test('web cannot persist, read or remove native downloads', async () => {
   await expect(readDownload({ ...article, path: 'downloads/pdf-1.pdf' })).rejects.toThrow('aplicativo');
   expect(downloadFile).not.toHaveBeenCalled(); expect(readFile).not.toHaveBeenCalled();
 });
-test('only native disconnected devices receive /baixados', () => {
-  expect(offlineDestination(true, false)).toBe('/baixados');
+test('only native disconnected devices receive the library', () => {
+  expect(offlineDestination(true, false)).toBe('/biblioteca');
   expect(offlineDestination(false, false)).toBeNull();
   expect(offlineDestination(true, true)).toBeNull();
 });
@@ -63,12 +63,12 @@ test('native rejects non-PDF files and excludes news from the offline library', 
   await expect(saveDownload(article)).rejects.toThrow('PDF'); expect(await listDownloads()).toEqual([]); expect(files.has('downloads/pdf-1.pdf')).toBe(false);
   await expect(saveDownload({ ...article, content_type: 'news' })).rejects.toThrow('acadêmicas');
 });
-test('offline mode keeps only Baixados reachable in the bottom navigation', () => {
-  expect(offlineNavigationTarget(true, '/todos')).toBe('/baixados');
-  expect(offlineNavigationTarget(true, '/noticias')).toBe('/baixados');
-  expect(offlineNavigationTarget(true, '/profile')).toBe('/baixados');
-  expect(offlineNavigationTarget(true, '/auth')).toBe('/baixados');
-  expect(offlineNavigationTarget(true, '/baixados')).toBeNull();
+test('offline mode keeps only the library reachable in the bottom navigation', () => {
+  expect(offlineNavigationTarget(true, '/todos')).toBe('/biblioteca');
+  expect(offlineNavigationTarget(true, '/noticias')).toBe('/biblioteca');
+  expect(offlineNavigationTarget(true, '/busca')).toBe('/biblioteca');
+  expect(offlineNavigationTarget(true, '/profile')).toBe('/biblioteca');
+  expect(offlineNavigationTarget(true, '/biblioteca')).toBeNull();
   expect(offlineNavigationTarget(false, '/todos')).toBeNull();
 });
 test('native connection loss marks offline mode and the return releases it', async () => {

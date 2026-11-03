@@ -14,7 +14,7 @@ function changed() { revision++; listeners.forEach(listener => listener()); }
 function requireNative() { if (!Capacitor.isNativePlatform()) throw new Error('Disponível apenas no aplicativo.'); }
 
 export function offlineDestination(native: boolean, connected: boolean): string | null {
-  return native && !connected ? '/baixados' : null;
+  return native && !connected ? '/biblioteca' : null;
 }
 
 // Offline mode is a native-only state: the watcher never registers on the web,
@@ -32,9 +32,9 @@ function reportOffline(value: boolean) {
   connectionListeners.forEach(listener => listener());
 }
 
-/** While the native app is offline only the downloaded library stays reachable. */
+/** While the native app is offline only the library (Baixados) stays reachable. */
 export function offlineNavigationTarget(offlineMode: boolean, target: string): string | null {
-  return offlineMode && target !== '/baixados' ? '/baixados' : null;
+  return offlineMode && target !== '/biblioteca' ? '/biblioteca' : null;
 }
 
 
