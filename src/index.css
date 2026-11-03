@@ -217,4 +217,11 @@ html body[data-scroll-locked] {
   min-height: 0;
   background: transparent;
 }
+/* Search fields keep one clear action: the browser's own cancel button is hidden. */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
 
