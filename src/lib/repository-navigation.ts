@@ -42,13 +42,13 @@ export const bibliotecaPath = '/biblioteca';
 export type BibliotecaFilter = 'todos' | 'salvos' | 'baixados' | 'historico';
 
 // Baixados exists only inside the native app; on the web the pill is never offered.
-export function bibliotecaTabs(isNative: boolean) {
+export function bibliotecaTabs(isNative: boolean): { key: BibliotecaFilter; label: string }[] {
   return [
     { key: 'todos', label: 'Todos' },
     { key: 'salvos', label: 'Salvos' },
-    ...(isNative ? [{ key: 'baixados', label: 'Baixados' }] : []),
+    ...(isNative ? [{ key: 'baixados' as const, label: 'Baixados' }] : []),
     { key: 'historico', label: 'Histórico' },
-  ] as const;
+  ];
 }
 
 export function normalizeBibliotecaFilter(value: string | null, isNative: boolean): BibliotecaFilter {
