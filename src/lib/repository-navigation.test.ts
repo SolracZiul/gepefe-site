@@ -44,3 +44,10 @@ test('legacy personal addresses land on the matching library filter', () => {
   expect(bibliotecaHref('baixados')).toBe('/biblioteca?filtro=baixados');
   expect(bibliotecaHref('historico')).toBe('/biblioteca?filtro=historico');
 });
+test('the search tab opens the search bar on its own route only', () => {
+  expect(searchPath).toBe('/busca');
+  expect(mobileNavigation().find(item => item.icon === 'search')?.href).toBe(searchPath);
+  expect(isSearchRoute('/busca')).toBe(true);
+  expect(isSearchRoute('/todos')).toBe(false);
+  expect(isSearchRoute('/publicacao/abc123')).toBe(false);
+});
