@@ -1,6 +1,6 @@
 # Project conventions
 - Native helpers in `src/lib/native.ts` handle OAuth and allowlisted item links at root with cleanup/cold starts; close Browser before OAuth session I/O, suppress redirects, and use Browser for external documents. HTTPS app association needs real signing identifiers.
-- Web downloads share `src/lib/downloads.ts` (Storage attachments, blobs, reserved-tab fallback). Native cards/details use `native-offline.ts`: PDFs and minimal metadata in Filesystem Directory.Data, guarded local reads/removal and one cleaned-up Network listener; /baixados is native-only. Keep bundled startup without server.url for cold offline launch.
+- Web downloads share `src/lib/downloads.ts` (Storage attachments, blobs, reserved-tab fallback). Native details use `native-offline.ts`: PDFs and minimal metadata in Filesystem Directory.Data, guarded local reads/removal and one cleaned-up Network listener; the Baixados filter of /biblioteca is native-only. Keep bundled startup without server.url for cold offline launch.
 - Repository UI lives in `src/components/repository`; presentation changes never require schema changes.
 - Keep academic filtering, author formatting and browser-only reading history in `src/lib/repository.ts` with focused behavior tests; these rules must be reusable and independently verifiable.
 - Test files stub platform plugins (Capacitor) rather than the app's own modules, because `mock.module` persists into later test files in one `bun test` run and would blank the real exports other suites import.
