@@ -1,6 +1,6 @@
 /// <reference types="bun" />
 import { expect, test } from 'bun:test';
-import { footerLinks, institutionalLinks, institutionalRedirectTarget, mobileNavigation, privacyPath, sidebarLinks } from './repository-navigation';
+import { bibliotecaHref, bibliotecaTabs, footerLinks, institutionalLinks, institutionalRedirectTarget, mobileNavigation, normalizeBibliotecaFilter, privacyPath, sidebarLinks } from './repository-navigation';
 
 test('the footer links to the privacy policy while the sidebar menu stays collections-only', () => {
   expect(footerLinks.map(item => item.href)).toEqual(['/todos', '/noticias', '/linhas-de-pesquisa', '/privacidade']);
@@ -22,17 +22,25 @@ test('legacy institutional addresses redirect to the unified page', () => {
   expect(institutionalRedirectTarget('#qualquer-coisa')).toBe('/linhas-de-pesquisa');
 });
 
-test('signed-out mobile users have no saved-publications shortcut', () => {
-  expect(mobileNavigation(false).map(item => item.href)).toEqual(['/todos', '/noticias', '/auth']);
+test('the bottom navigation is always the same four tabs', () => {
+  expect(mobileNavigation().map(item => item.href)).toEqual(['/todos', '/noticias', '/busca', '/biblioteca']);
+  expect(mobileNavigation().map(item => item.label)).toEqual(['Início', 'Notícias', 'Pesquisar', 'Biblioteca']);
 });
-test('signed-in mobile users have favorites and their profile shortcut', () => {
-  expect(mobileNavigation(true).map(item => item.href)).toEqual(['/todos', '/noticias', '/favoritos', '/profile']);
+test('the library offers Baixados only inside the native app', () => {
+  expect(bibliotecaTabs(true).map(tab => tab.key)).toEqual(['todos', 'salvos', 'baixados', 'historico']);
+  expect(bibliotecaTabs(false).map(tab => tab.key)).toEqual(['todos', 'salvos', 'historico']);
 });
-test('Baixados is absent from every web navigation regardless of screen size', () => {
-  expect(mobileNavigation(true, false, true).map(item => item.href)).not.toContain('/baixados');
-  expect(mobileNavigation(true, false, false).map(item => item.href)).not.toContain('/baixados');
+test('library filters fall back to Todos and Baixados is native-only', () => {
+  expect(normalizeBibliotecaFilter('salvos', false)).toBe('salvos');
+  expect(normalizeBibliotecaFilter('historico', false)).toBe('historico');
+  expect(normalizeBibliotecaFilter('baixados', true)).toBe('baixados');
+  expect(normalizeBibliotecaFilter('baixados', false)).toBe('todos');
+  expect(normalizeBibliotecaFilter('qualquer', true)).toBe('todos');
+  expect(normalizeBibliotecaFilter(null, true)).toBe('todos');
 });
-test('Baixados is offered only in native mobile navigation', () => {
-  expect(mobileNavigation(false, true, true).map(item => item.href)).toContain('/baixados');
-  expect(mobileNavigation(true, true, false).map(item => item.href)).not.toContain('/baixados');
+test('legacy personal addresses land on the matching library filter', () => {
+  expect(bibliotecaHref('todos')).toBe('/biblioteca');
+  expect(bibliotecaHref('salvos')).toBe('/biblioteca?filtro=salvos');
+  expect(bibliotecaHref('baixados')).toBe('/biblioteca?filtro=baixados');
+  expect(bibliotecaHref('historico')).toBe('/biblioteca?filtro=historico');
 });

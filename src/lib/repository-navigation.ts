@@ -27,16 +27,40 @@ export function institutionalRedirectTarget(hash: string) {
   return institutionalPath + (institutionalSections.includes(hash) ? hash : '');
 }
 
-export function mobileNavigation(signedIn: boolean, isNative = false, isMobile = false) {
+// The bottom navigation is always the same four destinations, signed in or out, web or native.
+export function mobileNavigation() {
   return [
     { label: 'Início', href: '/todos', icon: 'home' },
     { label: 'Notícias', href: '/noticias', icon: 'news' },
-    ...(signedIn ? [{ label: 'Salvos', href: '/favoritos', icon: 'saved' }] : []),
-    ...(isNative && isMobile ? [{ label: 'Baixados', href: '/baixados', icon: 'downloads' }] : []),
-    { label: signedIn ? 'Perfil' : 'Entrar', href: signedIn ? '/profile' : '/auth', icon: 'user' },
+    { label: 'Pesquisar', href: '/busca', icon: 'search' },
+    { label: 'Biblioteca', href: '/biblioteca', icon: 'library' },
   ];
 }
 
+export const bibliotecaPath = '/biblioteca';
+
+export type BibliotecaFilter = 'todos' | 'salvos' | 'baixados' | 'historico';
+
+// Baixados exists only inside the native app; on the web the pill is never offered.
+export function bibliotecaTabs(isNative: boolean): { key: BibliotecaFilter; label: string }[] {
+  return [
+    { key: 'todos', label: 'Todos' },
+    { key: 'salvos', label: 'Salvos' },
+    ...(isNative ? [{ key: 'baixados' as const, label: 'Baixados' }] : []),
+    { key: 'historico', label: 'Histórico' },
+  ];
+}
+
+export function normalizeBibliotecaFilter(value: string | null, isNative: boolean): BibliotecaFilter {
+  if (value === 'salvos' || value === 'historico') return value;
+  if (value === 'baixados' && isNative) return 'baixados';
+  return 'todos';
+}
+
+export function bibliotecaHref(filter: BibliotecaFilter) {
+  return filter === 'todos' ? bibliotecaPath : `${bibliotecaPath}?filtro=${filter}`;
+}
+
 export function isCollectionRoute(path: string) {
-  return ['/', '/todos', '/repositorio', '/busca', '/artigos-completos', '/textos-academicos', '/pesquisas', '/dissertacoes', '/teses'].includes(path);
+  return ['/', '/todos', '/repositorio', '/artigos-completos', '/textos-academicos', '/pesquisas', '/dissertacoes', '/teses'].includes(path);
 }
