@@ -1,6 +1,6 @@
 /// <reference types="bun" />
 import { expect, test } from 'bun:test';
-import { bibliotecaHref, bibliotecaTabs, footerLinks, institutionalLinks, institutionalRedirectTarget, mobileNavigation, normalizeBibliotecaFilter, privacyPath, sidebarLinks } from './repository-navigation';
+import { bibliotecaHref, bibliotecaTabs, footerLinks, institutionalLinks, institutionalRedirectTarget, isSearchRoute, mobileNavigation, normalizeBibliotecaFilter, privacyPath, searchPath, sidebarLinks } from './repository-navigation';
 
 test('the footer links to the privacy policy while the sidebar menu stays collections-only', () => {
   expect(footerLinks.map(item => item.href)).toEqual(['/todos', '/noticias', '/linhas-de-pesquisa', '/privacidade']);
@@ -43,4 +43,11 @@ test('legacy personal addresses land on the matching library filter', () => {
   expect(bibliotecaHref('salvos')).toBe('/biblioteca?filtro=salvos');
   expect(bibliotecaHref('baixados')).toBe('/biblioteca?filtro=baixados');
   expect(bibliotecaHref('historico')).toBe('/biblioteca?filtro=historico');
+});
+test('the search tab opens the search bar on its own route only', () => {
+  expect(searchPath).toBe('/busca');
+  expect(mobileNavigation().find(item => item.icon === 'search')?.href).toBe(searchPath);
+  expect(isSearchRoute('/busca')).toBe(true);
+  expect(isSearchRoute('/todos')).toBe(false);
+  expect(isSearchRoute('/publicacao/abc123')).toBe(false);
 });
