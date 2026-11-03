@@ -115,7 +115,7 @@ function NativeEvents() {
   navigateRef.current = navigate;
   toastRef.current = toast;
   useEffect(() => {
-    const navigate: typeof navigateRef.current = (...args: Parameters<typeof navigateRef.current>) => navigateRef.current(...args);
+    const navigate = (path: string, options?: { replace?: boolean }) => navigateRef.current(path, options);
     const toast: typeof toastRef.current = (...args: Parameters<typeof toastRef.current>) => toastRef.current(...args);
     const removeAuth = registerNativeAuthListener(
       () => navigate('/', { replace: true }),
