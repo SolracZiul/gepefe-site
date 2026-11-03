@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/hooks/useAuth';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { AccountSheet } from './AccountSheet';
 
 interface Props {
   query: string;
@@ -19,13 +19,16 @@ interface Props {
 export function RepositoryHeader({ query, onQueryChange, onToggleSidebar, onSearch }: Props) {
   const { user, isAdmin, signOut } = useAuth();
   const name = user?.user_metadata?.display_name || user?.user_metadata?.full_name || 'Meu perfil';
-  const [searchOpen, setSearchOpen] = useState(false);
-  return <header className="w-full border-b border-border bg-card">
-    <div className="flex h-14 items-center justify-between px-3 lg:hidden">
+  const avatar = user?.user_metadata?.avatar_url as string | undefined;
+  const [accountOpen, setAccountOpen] = useState(false);
+  return <header className="w-full bg-background lg:border-b lg:border-border lg:bg-card">
+    <div className="flex h-14 items-center justify-between px-4 pt-[env(safe-area-inset-top)] lg:hidden">
       <Link to="/" aria-label="GEPEFE — início"><img src="/lovable-uploads/24fb75f9-0b2a-410a-8f90-d6d3efcf52e4.png" alt="GEPEFE" className="h-8 w-auto" /></Link>
-      <div className="flex items-center gap-2"><Button variant="ghost" size="icon" aria-label="Abrir busca" title="Buscar" onClick={() => setSearchOpen(true)}><Search /></Button><ThemeToggle /></div>
+      {user ? <button type="button" aria-label="Abrir conta" title="Conta" onClick={() => setAccountOpen(true)} className="rounded-full">
+        {avatar ? <img src={avatar} alt="" className="h-9 w-9 rounded-full object-cover" /> : <span aria-hidden className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold text-primary">{name.trim().charAt(0).toUpperCase() || 'G'}</span>}
+      </button> : <Button variant="ghost" size="icon" asChild aria-label="Entrar" title="Entrar" className="rounded-full hover:bg-muted hover:text-foreground"><Link to="/auth"><User /></Link></Button>}
     </div>
-    <Sheet open={searchOpen} onOpenChange={setSearchOpen}><SheetContent side="top" className="repository"><SheetHeader><SheetTitle className="mb-4 text-left">Buscar no acervo</SheetTitle></SheetHeader><form role="search" onSubmit={event => { event.preventDefault(); setSearchOpen(false); onSearch(); }} className="flex gap-2"><Input autoFocus aria-label="Busca no acervo" placeholder="Título, autor, palavra-chave ou ano" value={query} onChange={event => onQueryChange(event.target.value)} className="min-w-0" /><Button type="submit" size="icon" aria-label="Pesquisar"><Search /></Button></form></SheetContent></Sheet>
+    <AccountSheet open={accountOpen} onOpenChange={setAccountOpen} />
     <div className="hidden w-full grid-cols-[240px_minmax(0,1fr)_240px] items-center gap-x-5 px-4 py-4 lg:grid">
       <div className="flex items-center gap-2 sm:gap-3">
         <Button variant="ghost" size="icon" aria-label="Alternar navegação" title="Alternar navegação" onClick={onToggleSidebar} className="shrink-0 hover:bg-muted hover:text-foreground"><PanelLeft /></Button>
