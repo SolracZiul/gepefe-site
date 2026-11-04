@@ -5,11 +5,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Switch } from '@/components/ui/switch';
 import { useAuth } from '@/hooks/useAuth';
 import { bibliotecaHref, privacyPath } from '@/lib/repository-navigation';
-
-function AccountAvatar({ name, avatar, className }: { name: string; avatar?: string; className: string }) {
-  if (avatar) return <img src={avatar} alt="" className={`${className} rounded-full object-cover`} />;
-  return <span aria-hidden className={`${className} flex items-center justify-center rounded-full bg-primary/15 font-semibold text-primary`}>{name.trim().charAt(0).toUpperCase() || 'G'}</span>;
-}
+import { userAvatarUrl, userDisplayName } from '@/lib/user-avatar';
+import { UserAvatar } from './UserAvatar';
 
 export function AccountSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const { user, isAdmin, signOut } = useAuth();

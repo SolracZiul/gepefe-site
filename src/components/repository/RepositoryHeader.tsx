@@ -7,7 +7,9 @@ import { Input } from '@/components/ui/input';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/hooks/useAuth';
+import { userAvatarUrl, userDisplayName } from '@/lib/user-avatar';
 import { AccountSheet } from './AccountSheet';
+import { UserAvatar } from './UserAvatar';
 
 interface Props {
   query: string;
