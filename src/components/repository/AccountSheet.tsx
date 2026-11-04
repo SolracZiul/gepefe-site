@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { History, LogOut, Moon, Settings, Shield, Sun, User } from 'lucide-react';
+import { History, LogOut, Moon, Shield, Sun, User } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Switch } from '@/components/ui/switch';
