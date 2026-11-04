@@ -12,8 +12,8 @@ export function AccountSheet({ open, onOpenChange }: { open: boolean; onOpenChan
   const { user, isAdmin, signOut } = useAuth();
   const { resolvedTheme, setTheme } = useTheme();
   const navigate = useNavigate();
-  const name = user?.user_metadata?.display_name || user?.user_metadata?.full_name || 'Minha conta';
-  const avatar = user?.user_metadata?.avatar_url as string | undefined;
+  const name = userDisplayName(user, 'Minha conta');
+  const avatar = userAvatarUrl(user);
   const dark = resolvedTheme === 'dark';
   const close = () => onOpenChange(false);
   const options = [

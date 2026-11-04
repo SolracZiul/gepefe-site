@@ -23,8 +23,8 @@ interface Props {
 
 export function RepositoryHeader({ query, onQueryChange, onToggleSidebar, onSearch, searchMode, onExitSearch }: Props) {
   const { user, isAdmin, signOut } = useAuth();
-  const name = user?.user_metadata?.display_name || user?.user_metadata?.full_name || 'Meu perfil';
-  const avatar = user?.user_metadata?.avatar_url as string | undefined;
+  const name = userDisplayName(user, 'Meu perfil');
+  const avatar = userAvatarUrl(user);
   const [accountOpen, setAccountOpen] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
   const [recent, setRecent] = useState<string[]>(() => loadRecentSearches());
