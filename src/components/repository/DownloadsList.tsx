@@ -22,7 +22,7 @@ export function DownloadsList() {
     finally { setActiveItemId(current => (current === item.id ? null : current)); }
   }
   return <>
-    {loading ? <p role="status" className="text-muted-foreground">Carregando downloads…</p> : error ? <p role="alert" className="text-destructive">Não foi possível carregar os downloads.</p> : !items.length ? <p className="text-sm text-muted-foreground">Nenhum PDF baixado.</p> : null}
+    {loading ? <p role="status" className="text-muted-foreground">Carregando downloads…</p> : error ? <p role="alert" className="text-destructive">Não foi possível carregar os downloads.</p> : !items.length ? <div className="py-16 text-center"><BookOpen className="mx-auto mb-4 h-8 w-8 text-muted-foreground" /><p className="text-sm text-muted-foreground">Nenhuma publicação baixada.</p></div> : null}
     <div className="grid gap-4 md:grid-cols-2">
       {items.map(item => {
         const active = item.id === activeItemId;
