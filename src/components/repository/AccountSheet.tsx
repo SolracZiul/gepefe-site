@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { History, LogOut, Moon, Shield, Sun, User } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { Switch } from '@/components/ui/switch';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useAuth } from '@/hooks/useAuth';
 import { bibliotecaHref, privacyPath } from '@/lib/repository-navigation';
 import { userAvatarUrl, userDisplayName } from '@/lib/user-avatar';
@@ -10,7 +10,7 @@ import { UserAvatar } from './UserAvatar';
 
 export function AccountSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const { user, isAdmin, signOut } = useAuth();
-  const { resolvedTheme, setTheme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const navigate = useNavigate();
   const name = userDisplayName(user, 'Minha conta');
   const avatar = userAvatarUrl(user);
