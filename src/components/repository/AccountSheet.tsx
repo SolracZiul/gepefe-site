@@ -20,7 +20,6 @@ export function AccountSheet({ open, onOpenChange }: { open: boolean; onOpenChan
     { label: 'Informações Pessoais', icon: User, href: '/profile' },
     { label: 'Histórico de Leitura', icon: History, href: bibliotecaHref('historico') },
     ...(isAdmin ? [{ label: 'Painel Administrativo', icon: Shield, href: '/admin' }] : []),
-    { label: 'Configurações', icon: Settings, href: '/profile' },
   ];
   return <Sheet open={open} onOpenChange={onOpenChange}>
     <SheetContent side="right" className="repository w-full overflow-y-auto sm:max-w-sm">
