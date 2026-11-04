@@ -26,7 +26,7 @@ export function AccountSheet({ open, onOpenChange }: { open: boolean; onOpenChan
     <SheetContent side="right" className="repository w-full overflow-y-auto sm:max-w-sm">
       <SheetHeader><SheetTitle className="text-left text-xl">Conta</SheetTitle></SheetHeader>
       <div className="mt-6 flex items-center gap-4">
-        <AccountAvatar name={name} avatar={avatar} className="h-14 w-14 shrink-0 text-xl" />
+        <UserAvatar name={name} avatar={avatar} className="h-14 w-14 shrink-0 text-xl" />
         <div className="min-w-0">
           <p className="truncate text-base font-semibold">{name}</p>
           <p className="truncate text-sm text-muted-foreground">{user?.email}</p>
