@@ -49,8 +49,9 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider
         attribute="class"
-        defaultTheme="light"
-        enableSystem={false}
+        defaultTheme="system"
+        enableSystem
+        storageKey="theme"
         disableTransitionOnChange={false}
       >
         <AuthProvider><ArticlesProvider>

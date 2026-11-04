@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { History, LogOut, Moon, Shield, Sun, User } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { Switch } from '@/components/ui/switch';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useAuth } from '@/hooks/useAuth';
 import { bibliotecaHref, privacyPath } from '@/lib/repository-navigation';
 import { userAvatarUrl, userDisplayName } from '@/lib/user-avatar';
@@ -10,7 +10,7 @@ import { UserAvatar } from './UserAvatar';
 
 export function AccountSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const { user, isAdmin, signOut } = useAuth();
-  const { resolvedTheme, setTheme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const navigate = useNavigate();
   const name = userDisplayName(user, 'Minha conta');
   const avatar = userAvatarUrl(user);
@@ -34,8 +34,7 @@ export function AccountSheet({ open, onOpenChange }: { open: boolean; onOpenChan
       <div className="mt-6 flex items-center gap-3 border-y border-border py-4">
         {dark ? <Moon className="h-5 w-5 shrink-0 text-muted-foreground" /> : <Sun className="h-5 w-5 shrink-0 text-muted-foreground" />}
         <span className="flex-1 text-sm font-medium">Tema do Aplicativo</span>
-        <span className="text-xs text-muted-foreground">{dark ? 'Escuro' : 'Claro'}</span>
-        <Switch aria-label="Alternar entre modo claro e escuro" checked={dark} onCheckedChange={checked => setTheme(checked ? 'dark' : 'light')} />
+        <ThemeToggle />
       </div>
       <nav aria-label="Opções da conta" className="mt-2">
         {options.map(option => <Link key={option.label} to={option.href} onClick={close} className="flex items-center gap-4 rounded-md px-2 py-3.5 text-sm hover:bg-muted">

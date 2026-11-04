@@ -1,3 +1,4 @@
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useCallback, useState, useEffect } from "react";
 import { signInWithGoogle } from '@/lib/native';
 import { useNavigate } from "react-router-dom";
@@ -192,7 +193,11 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-[65vh] flex items-center justify-center py-8">
+    <div className="min-h-[65vh] flex flex-col items-center justify-center gap-4 py-8">
+      <div className="flex w-full max-w-md items-center justify-end gap-2">
+        <span className="text-xs text-muted-foreground">Tema</span>
+        <ThemeToggle />
+      </div>
       <Card className="w-full max-w-md border-border bg-card shadow-card">
         <CardHeader className="text-center space-y-2 pb-6">
           <CardTitle className="text-3xl font-bold text-foreground">
