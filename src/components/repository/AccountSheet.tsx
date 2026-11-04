@@ -5,18 +5,15 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Switch } from '@/components/ui/switch';
 import { useAuth } from '@/hooks/useAuth';
 import { bibliotecaHref, privacyPath } from '@/lib/repository-navigation';
-
-function AccountAvatar({ name, avatar, className }: { name: string; avatar?: string; className: string }) {
-  if (avatar) return <img src={avatar} alt="" className={`${className} rounded-full object-cover`} />;
-  return <span aria-hidden className={`${className} flex items-center justify-center rounded-full bg-primary/15 font-semibold text-primary`}>{name.trim().charAt(0).toUpperCase() || 'G'}</span>;
-}
+import { userAvatarUrl, userDisplayName } from '@/lib/user-avatar';
+import { UserAvatar } from './UserAvatar';
 
 export function AccountSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const { user, isAdmin, signOut } = useAuth();
   const { resolvedTheme, setTheme } = useTheme();
   const navigate = useNavigate();
-  const name = user?.user_metadata?.display_name || user?.user_metadata?.full_name || 'Minha conta';
-  const avatar = user?.user_metadata?.avatar_url as string | undefined;
+  const name = userDisplayName(user, 'Minha conta');
+  const avatar = userAvatarUrl(user);
   const dark = resolvedTheme === 'dark';
   const close = () => onOpenChange(false);
   const options = [
@@ -29,7 +26,7 @@ export function AccountSheet({ open, onOpenChange }: { open: boolean; onOpenChan
     <SheetContent side="right" className="repository w-full overflow-y-auto sm:max-w-sm">
       <SheetHeader><SheetTitle className="text-left text-xl">Conta</SheetTitle></SheetHeader>
       <div className="mt-6 flex items-center gap-4">
-        <AccountAvatar name={name} avatar={avatar} className="h-14 w-14 shrink-0 text-xl" />
+        <UserAvatar name={name} avatar={avatar} className="h-14 w-14 shrink-0 text-xl" />
         <div className="min-w-0">
           <p className="truncate text-base font-semibold">{name}</p>
           <p className="truncate text-sm text-muted-foreground">{user?.email}</p>

@@ -7,7 +7,9 @@ import { Input } from '@/components/ui/input';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/hooks/useAuth';
+import { userAvatarUrl, userDisplayName } from '@/lib/user-avatar';
 import { AccountSheet } from './AccountSheet';
+import { UserAvatar } from './UserAvatar';
 
 interface Props {
   query: string;
@@ -21,8 +23,8 @@ interface Props {
 
 export function RepositoryHeader({ query, onQueryChange, onToggleSidebar, onSearch, searchMode, onExitSearch }: Props) {
   const { user, isAdmin, signOut } = useAuth();
-  const name = user?.user_metadata?.display_name || user?.user_metadata?.full_name || 'Meu perfil';
-  const avatar = user?.user_metadata?.avatar_url as string | undefined;
+  const name = userDisplayName(user, 'Meu perfil');
+  const avatar = userAvatarUrl(user);
   const [accountOpen, setAccountOpen] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
   const [recent, setRecent] = useState<string[]>(() => loadRecentSearches());
@@ -51,7 +53,7 @@ export function RepositoryHeader({ query, onQueryChange, onToggleSidebar, onSear
       </> : <>
         <Link to="/" aria-label="GEPEFE — início" className="shrink-0"><img src="/lovable-uploads/24fb75f9-0b2a-410a-8f90-d6d3efcf52e4.png" alt="GEPEFE" className="h-8 w-auto" /></Link>
         {user ? <button type="button" aria-label="Abrir conta" title="Conta" onClick={() => setAccountOpen(true)} className="rounded-full">
-          {avatar ? <img src={avatar} alt="" className="h-9 w-9 rounded-full object-cover" /> : <span aria-hidden className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold text-primary">{name.trim().charAt(0).toUpperCase() || 'G'}</span>}
+          <UserAvatar name={name} avatar={avatar} className="h-9 w-9 text-sm" />
         </button> : <Button variant="ghost" size="icon" asChild aria-label="Entrar" title="Entrar" className="rounded-full hover:bg-muted hover:text-foreground"><Link to="/auth"><User /></Link></Button>}
       </>}
     </div>
