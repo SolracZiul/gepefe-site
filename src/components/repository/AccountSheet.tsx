@@ -110,5 +110,6 @@ export function AccountSheet({ open, onOpenChange }: { open: boolean; onOpenChan
         </div>
       </div>}
     </SheetContent>
-  </Sheet>;
+  </Sheet>
+  </>;
 }
