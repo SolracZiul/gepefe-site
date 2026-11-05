@@ -46,4 +46,4 @@
 
 - [x] Auth signup no longer clipped: removed the page scroll lock so the taller signup form scrolls to "Criar conta"; verified at 393px. Account sheet "Sair" moved back directly below "Configurações".
 - [x] Account sheet Configurações view now animates like other screens (fade + slide-in from the right; menu slides back from the left).
-- [ ] Mobile web header gets the desktop-style single theme icon button next to the account photo; verify at 393px in preview.
+- [x] Mobile web header now has the desktop-style single theme icon button next to the account photo; verified at 393px (light to dark flip) and the Configurações view animates in the account sheet.
