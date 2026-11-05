@@ -39,7 +39,7 @@ export function AccountSheet({ open, onOpenChange }: { open: boolean; onOpenChan
 
   return <Sheet open={open} onOpenChange={onOpenChange}>
     <SheetContent side="right" className="repository flex w-full flex-col overflow-y-auto sm:max-w-sm">
-      {view === 'settings' ? <>
+      {view === 'settings' ? <div className="flex flex-1 flex-col animate-in fade-in slide-in-from-right-4 duration-200">
         <SheetHeader className="flex-row items-center gap-2 space-y-0">
           <Button variant="ghost" size="icon" aria-label="Voltar" onClick={() => setView('menu')} className="-ml-2 h-9 w-9"><ArrowLeft /></Button>
           <SheetTitle className="text-left text-xl">Configurações</SheetTitle>
