@@ -1,11 +1,10 @@
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { useCallback, useState, useEffect } from "react";
 import { signInWithGoogle } from '@/lib/native';
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,6 +32,15 @@ export default function Auth() {
     });
     navigate(isAdmin ? '/admin' : '/');
   }, [navigate]);
+
+  // The login screen stays fixed: lock page scrolling while it is mounted.
+  useEffect(() => {
+    const root = document.documentElement;
+    const previous = root.style.overflow;
+    root.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    return () => { root.style.overflow = previous; document.body.style.overflow = ''; };
+  }, []);
 
   useEffect(() => {
 
@@ -193,16 +201,9 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-[65vh] flex flex-col items-center justify-center gap-4 py-8">
-      <div className="flex w-full max-w-md items-center justify-end gap-2 lg:hidden">
-        <span className="text-xs text-muted-foreground">Tema</span>
-        <ThemeToggle />
-      </div>
+    <div className="flex flex-col items-center justify-center gap-4 py-2">
       <Card className="w-full max-w-md border-border bg-card shadow-card">
-        <CardHeader className="text-center space-y-2 pb-6">
-          <CardTitle className="text-3xl font-bold text-foreground">
-            GEPEFE
-          </CardTitle>
+        <CardHeader className="text-center space-y-2 pb-4">
           <CardDescription className="text-base text-muted-foreground">
             Acesse sua conta ou crie uma nova para começar
           </CardDescription>
