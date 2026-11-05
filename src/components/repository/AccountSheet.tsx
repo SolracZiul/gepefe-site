@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Languages, History, LogIn, LogOut, Moon, Settings, Shield, Sun, User } from 'lucide-react';
+import { ChevronRight, ArrowLeft, Languages, History, LogIn, LogOut, Moon, Settings, Shield, Sun, User } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useAuth } from '@/hooks/useAuth';
 import { accountLinks, bibliotecaHref } from '@/lib/repository-navigation';
 import { readLanguage, saveLanguage, type AppLanguage } from '@/lib/app-language';
 import { userAvatarUrl, userDisplayName } from '@/lib/user-avatar';
 import { cn } from '@/lib/utils';
+import { isNative } from '@/lib/native';
 import { UserAvatar } from './UserAvatar';
 
 function Segmented<T extends string>({ label, value, options, onChange }: { label: string; value: T; options: { value: T; label: string; icon?: typeof Sun }[]; onChange: (v: T) => void }) {
@@ -26,7 +28,19 @@ export function AccountSheet({ open, onOpenChange }: { open: boolean; onOpenChan
   const navigate = useNavigate();
   const [view, setView] = useState<'menu' | 'settings'>('menu');
   const [language, setLanguage] = useState<AppLanguage>(readLanguage);
+  const [langOpen, setLangOpen] = useState(false);
   useEffect(() => { if (!open) setView('menu'); }, [open]);
+  const pickLanguage = (v: AppLanguage) => {
+    setLangOpen(false);
+    if (v === language) return;
+    setLanguage(v); saveLanguage(v); window.location.reload();
+  };
+  const langOption = (v: AppLanguage) => <button key={v} type="button" role="radio" aria-checked={language === v} onClick={() => pickLanguage(v)} className="flex w-full items-center gap-4 px-6 py-3 text-left">
+    <span className={cn('flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2', language === v ? 'border-primary' : 'border-muted-foreground')}>{language === v && <span className="h-2.5 w-2.5 rounded-full bg-primary" />}</span>
+    <span><span className="block text-base font-semibold">{v === 'en' ? 'inglês' : 'português (Brasil)'}</span>
+      <span data-no-translate className="block text-sm text-muted-foreground">{v === 'en' ? 'English' : 'Português'}</span></span>
+  </button>;
+  const other: AppLanguage = language === 'en' ? 'pt' : 'en';
   const name = userDisplayName(user, 'Minha conta');
   const avatar = userAvatarUrl(user);
   const close = () => onOpenChange(false);
@@ -37,7 +51,20 @@ export function AccountSheet({ open, onOpenChange }: { open: boolean; onOpenChan
     ...(isAdmin ? [{ label: 'Painel Administrativo', icon: Shield, href: '/admin' }] : []),
   ] : [];
 
-  return <Sheet open={open} onOpenChange={onOpenChange}>
+  return <>
+  <Dialog open={langOpen} onOpenChange={setLangOpen}>
+    <DialogContent className="repository max-w-sm gap-0 p-0">
+      <DialogHeader className="border-b border-border px-6 py-5"><DialogTitle className="text-left text-xl">Idioma do app</DialogTitle></DialogHeader>
+      <div role="radiogroup" aria-label="Idioma do aplicativo" className="py-2">
+        <p className="px-6 pb-1 pt-3 text-sm font-semibold text-muted-foreground">Idioma atual</p>
+        {langOption(language)}
+        <p className="px-6 pb-1 pt-3 text-sm font-semibold text-muted-foreground">Idiomas sugeridos</p>
+        {langOption(other)}
+      </div>
+      <DialogFooter className="border-t border-border px-6 py-3"><Button variant="ghost" onClick={() => setLangOpen(false)}>Cancelar</Button></DialogFooter>
+    </DialogContent>
+  </Dialog>
+  <Sheet open={open} onOpenChange={onOpenChange}>
     <SheetContent side="right" className="repository flex w-full flex-col overflow-y-auto sm:max-w-sm">
       {view === 'settings' ? <div className="flex flex-1 flex-col animate-in fade-in slide-in-from-right-4 duration-200">
         <SheetHeader className="flex-row items-center gap-2 space-y-0">
@@ -46,15 +73,16 @@ export function AccountSheet({ open, onOpenChange }: { open: boolean; onOpenChan
         </SheetHeader>
         <div className="mt-6 divide-y divide-border border-y border-border">
           <div className="flex flex-wrap items-center justify-between gap-3 py-4">
-            <span className="flex items-center gap-3 text-sm font-medium">{resolvedTheme === 'dark' ? <Moon className="h-5 w-5 text-muted-foreground" /> : <Sun className="h-5 w-5 text-muted-foreground" />}Tema do Aplicativo</span>
+            <span className="flex items-center gap-3 text-sm font-medium">{resolvedTheme === 'dark' ? <Moon className="h-5 w-5 text-muted-foreground" /> : <Sun className="h-5 w-5 text-muted-foreground" />}Tema</span>
             <Segmented label="Tema do aplicativo" value={resolvedTheme === 'dark' ? 'dark' : 'light'} onChange={setTheme}
               options={[{ value: 'light', label: 'Claro', icon: Sun }, { value: 'dark', label: 'Escuro', icon: Moon }]} />
           </div>
-          <div className="flex flex-wrap items-center justify-between gap-3 py-4">
-            <span className="flex items-center gap-3 text-sm font-medium"><Languages className="h-5 w-5 text-muted-foreground" />Idioma do Aplicativo</span>
-            <Segmented label="Idioma do aplicativo" value={language} onChange={v => { setLanguage(v); saveLanguage(v); }}
-              options={[{ value: 'pt', label: 'Português' }, { value: 'en', label: 'Inglês' }]} />
-          </div>
+          {isNative() && <button type="button" onClick={() => setLangOpen(true)} className="flex w-full items-center gap-3 py-4 text-left">
+            <Languages className="h-5 w-5 shrink-0 text-muted-foreground" />
+            <span className="min-w-0 flex-1"><span className="block text-sm font-medium">Idioma</span>
+              <span className="block text-xs text-muted-foreground">{language === 'en' ? 'inglês' : 'português (Brasil)'}</span></span>
+            <ChevronRight className="h-5 w-5 text-muted-foreground" />
+          </button>}
         </div>
       </div> : <div className="flex flex-1 flex-col animate-in fade-in slide-in-from-left-4 duration-200">
         <SheetHeader><SheetTitle className="text-left text-xl">Conta</SheetTitle></SheetHeader>
@@ -83,5 +111,6 @@ export function AccountSheet({ open, onOpenChange }: { open: boolean; onOpenChan
         </div>
       </div>}
     </SheetContent>
-  </Sheet>;
+  </Sheet>
+  </>;
 }
