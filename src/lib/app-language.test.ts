@@ -6,3 +6,4 @@ const { readLanguage, saveLanguage } = await import('./app-language');
 beforeEach(() => store.clear());
 test('defaults to Portuguese', () => expect(readLanguage()).toBe('pt'));
 test('persists English choice under "language"', () => { saveLanguage('en'); expect(store.get('language')).toBe('en'); expect(readLanguage()).toBe('en'); });
+test('persists Spanish choice under "language"', () => { saveLanguage('es'); expect(store.get('language')).toBe('es'); expect(readLanguage()).toBe('es'); });
