@@ -194,7 +194,7 @@ export default function Auth() {
 
   return (
     <div className="min-h-[65vh] flex flex-col items-center justify-center gap-4 py-8">
-      <div className="flex w-full max-w-md items-center justify-end gap-2">
+      <div className="flex w-full max-w-md items-center justify-end gap-2 lg:hidden">
         <span className="text-xs text-muted-foreground">Tema</span>
         <ThemeToggle />
       </div>
