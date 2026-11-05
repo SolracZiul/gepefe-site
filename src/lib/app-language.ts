@@ -1,19 +1,22 @@
 import { en } from './i18n-en';
+import { es } from './i18n-es';
 
-export type AppLanguage = 'pt' | 'en';
+export type AppLanguage = 'pt' | 'en' | 'es';
 export const languageStorageKey = 'language';
 export function readLanguage(): AppLanguage {
-  try { return localStorage.getItem(languageStorageKey) === 'en' ? 'en' : 'pt'; } catch { return 'pt'; }
+  try { const v = localStorage.getItem(languageStorageKey); return v === 'en' || v === 'es' ? v : 'pt'; } catch { return 'pt'; }
 }
 export function saveLanguage(language: AppLanguage) {
   try { localStorage.setItem(languageStorageKey, language); } catch { /* storage unavailable */ }
-  document.documentElement.lang = language === 'en' ? 'en' : 'pt-BR';
+  document.documentElement.lang = language === 'pt' ? 'pt-BR' : language;
 }
 
-const normalized = new Map(Object.entries(en).map(([k, v]) => [k.replace(/\s+/g, ' ').trim(), v]));
-export function translate(text: string): string | undefined {
+const normalize = (dict: Record<string, string>) => new Map(Object.entries(dict).map(([k, v]) => [k.replace(/\s+/g, ' ').trim(), v]));
+const dictionaries: Record<'en' | 'es', Map<string, string>> = { en: normalize(en), es: normalize(es) };
+export function translate(text: string, language: AppLanguage = readLanguage()): string | undefined {
+  if (language === 'pt') return undefined;
   const key = text.replace(/\s+/g, ' ').trim();
-  return key ? normalized.get(key) : undefined;
+  return key ? dictionaries[language].get(key) : undefined;
 }
 
 const ATTRS = ['placeholder', 'aria-label', 'title'];
@@ -29,11 +32,11 @@ function translateNode(node: Node) {
   node.childNodes.forEach(translateNode);
 }
 
-/** Translates the UI into English by rewriting rendered text; Portuguese is the source language. */
+/** Translates the UI by rewriting rendered text; Portuguese is the source language. */
 export function startTranslation(native: boolean) {
   if (!native) { saveLanguage('pt'); return; }
   saveLanguage(readLanguage());
-  if (readLanguage() !== 'en') return;
+  if (readLanguage() === 'pt') return;
   const run = () => { translateNode(document.body); const t = translate(document.title); if (t) document.title = t; };
   run();
   new MutationObserver(records => {

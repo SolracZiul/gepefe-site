@@ -35,12 +35,13 @@ export function AccountSheet({ open, onOpenChange }: { open: boolean; onOpenChan
     if (v === language) return;
     setLanguage(v); saveLanguage(v); window.location.reload();
   };
+  const langNames: Record<AppLanguage, [string, string]> = { pt: ['português (Brasil)', 'Português'], en: ['inglês', 'English'], es: ['espanhol', 'Español'] };
   const langOption = (v: AppLanguage) => <button key={v} type="button" role="radio" aria-checked={language === v} onClick={() => pickLanguage(v)} className="flex w-full items-center gap-4 px-6 py-3 text-left">
     <span className={cn('flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2', language === v ? 'border-primary' : 'border-muted-foreground')}>{language === v && <span className="h-2.5 w-2.5 rounded-full bg-primary" />}</span>
-    <span><span className="block text-base font-semibold">{v === 'en' ? 'inglês' : 'português (Brasil)'}</span>
-      <span data-no-translate className="block text-sm text-muted-foreground">{v === 'en' ? 'English' : 'Português'}</span></span>
+    <span><span className="block text-base font-semibold">{langNames[v][0]}</span>
+      <span data-no-translate className="block text-sm text-muted-foreground">{langNames[v][1]}</span></span>
   </button>;
-  const other: AppLanguage = language === 'en' ? 'pt' : 'en';
+  const others: AppLanguage[] = (['pt', 'en', 'es'] as AppLanguage[]).filter(v => v !== language);
   const name = userDisplayName(user, 'Minha conta');
   const avatar = userAvatarUrl(user);
   const close = () => onOpenChange(false);
@@ -59,7 +60,7 @@ export function AccountSheet({ open, onOpenChange }: { open: boolean; onOpenChan
         <p className="px-6 pb-1 pt-3 text-sm font-semibold text-muted-foreground">Idioma atual</p>
         {langOption(language)}
         <p className="px-6 pb-1 pt-3 text-sm font-semibold text-muted-foreground">Idiomas sugeridos</p>
-        {langOption(other)}
+        {others.map(langOption)}
       </div>
       <DialogFooter className="border-t border-border px-6 py-3"><Button variant="ghost" onClick={() => setLangOpen(false)}>Cancelar</Button></DialogFooter>
     </DialogContent>
@@ -80,7 +81,7 @@ export function AccountSheet({ open, onOpenChange }: { open: boolean; onOpenChan
           {isNative() && <button type="button" onClick={() => setLangOpen(true)} className="flex w-full items-center gap-3 py-4 text-left">
             <Languages className="h-5 w-5 shrink-0 text-muted-foreground" />
             <span className="min-w-0 flex-1"><span className="block text-sm font-medium">Idioma</span>
-              <span className="block text-xs text-muted-foreground">{language === 'en' ? 'inglês' : 'português (Brasil)'}</span></span>
+              <span className="block text-xs text-muted-foreground">{langNames[language][0]}</span></span>
             <ChevronRight className="h-5 w-5 text-muted-foreground" />
           </button>}
         </div>
