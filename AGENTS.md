@@ -5,7 +5,7 @@
 - Keep academic filtering, author formatting and browser-only reading history in `src/lib/repository.ts` with focused behavior tests; these rules must be reusable and independently verifiable.
 - Test files stub platform plugins (Capacitor), not the app's own modules: `mock.module` persists into later test files in one `bun test` run and would blank real exports other suites import.
 - Reading history stores only article IDs under a user-scoped browser key, not permissions or snapshots; it is device-local, not synced analytics.
-- All routes use RepositoryShell as the sole owner of institutional header/sidebar (there is no global footer; research and policy links live in the account sheet), so navigation and theme remain identical without page-level chrome.
+- All routes use RepositoryShell as the sole owner of header/sidebar (no global footer; research/policy links live in the account sheet), so navigation and theme remain identical without page-level chrome.
 - Institutional link ordering, mobile account shortcuts and the search tab's destination come from shared navigation definitions; the shell provides bottom navigation below the desktop breakpoint, and on the search route its mobile header row becomes the auto-focused search bar with one clear action.
 - RepositoryShell measures the fixed header height for content and full-height sidebar offsets; page wrappers stay fluid to keep routes edge-to-edge, except the privacy page's centered inner desktop grid.
 - Collections share RepositoryCollection and memoized PublicationCard with stable ID callbacks to prevent list-wide rerenders.
