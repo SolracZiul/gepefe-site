@@ -81,7 +81,7 @@ export function AccountSheet({ open, onOpenChange }: { open: boolean; onOpenChan
             {accountLinks.map(item => <Link key={item.href} to={item.href} onClick={close} className="hover:underline">{item.label}</Link>)}
           </nav>
         </div>
-      </>}
+      </div>}
     </SheetContent>
   </Sheet>;
 }
