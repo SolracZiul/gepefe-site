@@ -44,3 +44,6 @@
 - [x] Drop the redundant "Ver Site" and "Sair" buttons from the admin header and add a red "Sair" (LogOut) action to the profile quick actions that signs out of Supabase and returns to /auth; checked the button renders with icon and destructive color at 393, 320 and 1280px.
 - [x] Signup now signs the user in straight away (email confirmation is off): the session from signUp sends them to home or the admin panel and the toast reads "Conta criada com sucesso!"; verified with a real signup that landed on / with a live session, then removed the throwaway account.
 
+- [x] Auth signup no longer clipped: removed the page scroll lock so the taller signup form scrolls to "Criar conta"; verified at 393px. Account sheet "Sair" moved back directly below "Configurações".
+- [x] Account sheet Configurações view now animates like other screens (fade + slide-in from the right; menu slides back from the left).
+- [ ] Mobile web header gets the desktop-style single theme icon button next to the account photo; verify at 393px in preview.
