@@ -60,7 +60,7 @@ export function AccountSheet({ open, onOpenChange }: { open: boolean; onOpenChan
         <p className="px-6 pb-1 pt-3 text-sm font-semibold text-muted-foreground">Idioma atual</p>
         {langOption(language)}
         <p className="px-6 pb-1 pt-3 text-sm font-semibold text-muted-foreground">Idiomas sugeridos</p>
-        {langOption(other)}
+        {others.map(langOption)}
       </div>
       <DialogFooter className="border-t border-border px-6 py-3"><Button variant="ghost" onClick={() => setLangOpen(false)}>Cancelar</Button></DialogFooter>
     </DialogContent>
@@ -81,7 +81,7 @@ export function AccountSheet({ open, onOpenChange }: { open: boolean; onOpenChan
           {isNative() && <button type="button" onClick={() => setLangOpen(true)} className="flex w-full items-center gap-3 py-4 text-left">
             <Languages className="h-5 w-5 shrink-0 text-muted-foreground" />
             <span className="min-w-0 flex-1"><span className="block text-sm font-medium">Idioma</span>
-              <span className="block text-xs text-muted-foreground">{language === 'en' ? 'inglês' : 'português (Brasil)'}</span></span>
+              <span className="block text-xs text-muted-foreground">{langNames[language][0]}</span></span>
             <ChevronRight className="h-5 w-5 text-muted-foreground" />
           </button>}
         </div>
