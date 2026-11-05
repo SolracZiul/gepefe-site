@@ -20,11 +20,12 @@ const ATTRS = ['placeholder', 'aria-label', 'title'];
 function translateNode(node: Node) {
   if (node.nodeType === Node.TEXT_NODE) {
     const out = translate(node.nodeValue ?? '');
-    if (out) node.nodeValue = node.nodeValue!.replace(node.nodeValue!.trim(), out);
+    const next = out && node.nodeValue!.replace(node.nodeValue!.trim(), out);
+    if (next && next !== node.nodeValue) node.nodeValue = next;
     return;
   }
   if (!(node instanceof Element) || node.closest('[data-no-translate], script, style, .prose')) return;
-  for (const a of ATTRS) { const v = node.getAttribute(a); const out = v && translate(v); if (out) node.setAttribute(a, out); }
+  for (const a of ATTRS) { const v = node.getAttribute(a); const out = v && translate(v); if (out && out !== v) node.setAttribute(a, out); }
   node.childNodes.forEach(translateNode);
 }
 
