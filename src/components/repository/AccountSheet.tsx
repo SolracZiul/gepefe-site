@@ -72,14 +72,14 @@ export function AccountSheet({ open, onOpenChange }: { open: boolean; onOpenChan
           <button type="button" onClick={() => setView('settings')} className={rowClass}>
             <Settings className="h-5 w-5 shrink-0 text-muted-foreground" />Configurações
           </button>
+          {user && <button type="button" onClick={() => { close(); void signOut().then(() => navigate('/auth')); }} className={cn(rowClass, 'text-destructive hover:bg-destructive/10')}>
+            <LogOut className="h-5 w-5 shrink-0" />Sair / Encerrar Sessão
+          </button>}
         </nav>
         <div className="mt-auto pt-8">
           <nav aria-label="Links institucionais" className="flex justify-center gap-5 text-xs text-muted-foreground">
             {accountLinks.map(item => <Link key={item.href} to={item.href} onClick={close} className="hover:underline">{item.label}</Link>)}
           </nav>
-          {user && <button type="button" onClick={() => { close(); void signOut().then(() => navigate('/auth')); }} className={cn(rowClass, 'mt-4 border-t border-border pt-4 text-destructive hover:bg-destructive/10')}>
-            <LogOut className="h-5 w-5 shrink-0" />Sair / Encerrar Sessão
-          </button>}
         </div>
       </>}
     </SheetContent>
