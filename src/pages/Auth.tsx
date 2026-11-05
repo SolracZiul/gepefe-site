@@ -33,15 +33,6 @@ export default function Auth() {
     navigate(isAdmin ? '/admin' : '/');
   }, [navigate]);
 
-  // The login screen stays fixed: lock page scrolling while it is mounted.
-  useEffect(() => {
-    const root = document.documentElement;
-    const previous = root.style.overflow;
-    root.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
-    return () => { root.style.overflow = previous; document.body.style.overflow = ''; };
-  }, []);
-
   useEffect(() => {
 
     const checkUserAndRedirect = async () => {
