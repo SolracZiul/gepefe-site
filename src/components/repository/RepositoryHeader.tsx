@@ -69,7 +69,7 @@ export function RepositoryHeader({ query, onQueryChange, onToggleSidebar, onSear
         {query && <Button type="button" variant="ghost" size="icon" aria-label="Limpar busca" title="Limpar busca" onClick={() => onQueryChange('')} className="absolute right-1 top-1 h-9 w-9 hover:bg-muted hover:text-foreground"><X /></Button>}
       </form>
       <div className="flex items-center justify-end gap-2 lg:col-start-3">
-        <ThemeToggle />
+        <ThemeToggle variant="icon" />
         {user ? <DropdownMenu><DropdownMenuTrigger asChild><Button variant="outline" className="max-w-44 hover:bg-muted hover:text-foreground"><User /><span className="hidden truncate sm:inline">{name.split(' ')[0]}</span></Button></DropdownMenuTrigger><DropdownMenuContent align="end">
           <DropdownMenuItem asChild><Link to="/profile"><User className="mr-2 h-4 w-4" />Meu Perfil</Link></DropdownMenuItem>
           {isAdmin && <DropdownMenuItem asChild><Link to="/admin"><Shield className="mr-2 h-4 w-4" />Painel Admin</Link></DropdownMenuItem>}
