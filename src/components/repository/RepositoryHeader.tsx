@@ -52,9 +52,12 @@ export function RepositoryHeader({ query, onQueryChange, onToggleSidebar, onSear
         </div>}
       </> : <>
         <Link to="/" aria-label="GEPEFE — início" className="shrink-0"><img src="/lovable-uploads/24fb75f9-0b2a-410a-8f90-d6d3efcf52e4.png" alt="GEPEFE" className="h-8 w-auto" /></Link>
-        {user ? <button type="button" aria-label="Abrir conta" title="Conta" onClick={() => setAccountOpen(true)} className="rounded-full">
-          <UserAvatar name={name} avatar={avatar} className="h-9 w-9 text-sm" />
-        </button> : <Button variant="ghost" size="icon" aria-label="Abrir conta" title="Conta" onClick={() => setAccountOpen(true)} className="rounded-full hover:bg-muted hover:text-foreground"><User /></Button>}
+        <div className="flex items-center gap-1">
+          <ThemeToggle variant="icon" />
+          {user ? <button type="button" aria-label="Abrir conta" title="Conta" onClick={() => setAccountOpen(true)} className="rounded-full">
+            <UserAvatar name={name} avatar={avatar} className="h-9 w-9 text-sm" />
+          </button> : <Button variant="ghost" size="icon" aria-label="Abrir conta" title="Conta" onClick={() => setAccountOpen(true)} className="rounded-full hover:bg-muted hover:text-foreground"><User /></Button>}
+        </div>
       </>}
     </div>
     <AccountSheet open={accountOpen} onOpenChange={setAccountOpen} />
