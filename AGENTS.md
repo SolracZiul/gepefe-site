@@ -5,7 +5,7 @@
 - Keep academic filtering, author formatting and browser-only reading history in `src/lib/repository.ts` with focused behavior tests; these rules must be reusable and independently verifiable.
 - Test files stub platform plugins (Capacitor), not the app's own modules: `mock.module` persists into later test files in one `bun test` run and would blank real exports other suites import.
 - Reading history stores only article IDs under a user-scoped browser key, not permissions or snapshots; it is device-local, not synced analytics.
-- All routes use RepositoryShell as the sole owner of header/sidebar (no global footer; research/policy links live in the account sheet), so navigation and theme remain identical without page-level chrome.
+- All routes use RepositoryShell as the sole owner of header/sidebar (no footer; research/policy links in account sheet), so navigation and theme stay identical without page chrome.
 - Institutional link ordering, mobile account shortcuts and the search tab's destination come from shared navigation definitions; the shell provides bottom navigation below the desktop breakpoint, and on the search route its mobile header row becomes the auto-focused search bar with one clear action.
 - RepositoryShell measures the fixed header height for content and full-height sidebar offsets; page wrappers stay fluid to keep routes edge-to-edge, except the privacy page's centered inner desktop grid.
 - Collections share RepositoryCollection and memoized PublicationCard with stable ID callbacks to prevent list-wide rerenders.
@@ -24,7 +24,7 @@
 - Detail pages share one item through `shareContent` in `src/lib/native.ts`, which passes the item title and its canonical public link to the platform sheet (Capacitor on native, `navigator.share` on web) and copies the link when no sheet exists; the helper reports which channel delivered it so the page can confirm a copy, and a sheet the user closed is never treated as a failure.
 - Academic items have one canonical address, `/publicacao/{id}` through `publicationPath` in `src/lib/repository.ts`, so cards, citation, sharing and routing never disagree; older `/artigo` and `/article` links redirect there and news keeps its own `/noticia/{id}`.
 - Collection read actions link to the canonical detail page, never a modal; DocumentPreview uses the shared file URL helper and PDF.js beneath the abstract for cross-device rendering, while blocked/non-PDF destinations use the integrated-browser helper.
-- Detail tabs/actions share a desktop toolbar; mobile tabs scroll independently.
+- Detail tabs/actions share a desktop toolbar; mobile tabs scroll alone.
 
 - AuthProvider shares one live Supabase session subscription across routes; never persist permissions.
 - Favorites share user-keyed React Query and ID-only local cache with optimistic item rollback; articles share stale-while-revalidate queries so populated lists survive refresh errors.
