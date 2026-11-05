@@ -56,7 +56,7 @@ export function AccountSheet({ open, onOpenChange }: { open: boolean; onOpenChan
               options={[{ value: 'pt', label: 'Português' }, { value: 'en', label: 'Inglês' }]} />
           </div>
         </div>
-      </> : <>
+      </div> : <div className="flex flex-1 flex-col animate-in fade-in slide-in-from-left-4 duration-200">
         <SheetHeader><SheetTitle className="text-left text-xl">Conta</SheetTitle></SheetHeader>
         {user ? <div className="mt-6 flex items-center gap-4">
           <UserAvatar name={name} avatar={avatar} className="h-14 w-14 shrink-0 text-xl" />
