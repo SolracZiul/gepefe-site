@@ -392,4 +392,6 @@ export const en: Record<string, string> = {
   'Educação Física': 'Physical Education',
   'Educação Física Escolar': 'School Physical Education',
   'Mensagem': 'Message',
+  'Tema': 'Theme',
+  'Idioma': 'Language',
 };

@@ -30,7 +30,8 @@ function translateNode(node: Node) {
 }
 
 /** Translates the UI into English by rewriting rendered text; Portuguese is the source language. */
-export function startTranslation() {
+export function startTranslation(native: boolean) {
+  if (!native) { saveLanguage('pt'); return; }
   saveLanguage(readLanguage());
   if (readLanguage() !== 'en') return;
   const run = () => { translateNode(document.body); const t = translate(document.title); if (t) document.title = t; };

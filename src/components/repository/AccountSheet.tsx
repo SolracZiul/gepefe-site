@@ -10,6 +10,7 @@ import { accountLinks, bibliotecaHref } from '@/lib/repository-navigation';
 import { readLanguage, saveLanguage, type AppLanguage } from '@/lib/app-language';
 import { userAvatarUrl, userDisplayName } from '@/lib/user-avatar';
 import { cn } from '@/lib/utils';
+import { isNative } from '@/lib/native';
 import { UserAvatar } from './UserAvatar';
 
 function Segmented<T extends string>({ label, value, options, onChange }: { label: string; value: T; options: { value: T; label: string; icon?: typeof Sun }[]; onChange: (v: T) => void }) {
@@ -72,16 +73,16 @@ export function AccountSheet({ open, onOpenChange }: { open: boolean; onOpenChan
         </SheetHeader>
         <div className="mt-6 divide-y divide-border border-y border-border">
           <div className="flex flex-wrap items-center justify-between gap-3 py-4">
-            <span className="flex items-center gap-3 text-sm font-medium">{resolvedTheme === 'dark' ? <Moon className="h-5 w-5 text-muted-foreground" /> : <Sun className="h-5 w-5 text-muted-foreground" />}Tema do Aplicativo</span>
+            <span className="flex items-center gap-3 text-sm font-medium">{resolvedTheme === 'dark' ? <Moon className="h-5 w-5 text-muted-foreground" /> : <Sun className="h-5 w-5 text-muted-foreground" />}Tema</span>
             <Segmented label="Tema do aplicativo" value={resolvedTheme === 'dark' ? 'dark' : 'light'} onChange={setTheme}
               options={[{ value: 'light', label: 'Claro', icon: Sun }, { value: 'dark', label: 'Escuro', icon: Moon }]} />
           </div>
-          <button type="button" onClick={() => setLangOpen(true)} className="flex w-full items-center gap-3 py-4 text-left">
+          {isNative() && <button type="button" onClick={() => setLangOpen(true)} className="flex w-full items-center gap-3 py-4 text-left">
             <Languages className="h-5 w-5 shrink-0 text-muted-foreground" />
-            <span className="min-w-0 flex-1"><span className="block text-sm font-medium">Idioma do Aplicativo</span>
+            <span className="min-w-0 flex-1"><span className="block text-sm font-medium">Idioma</span>
               <span className="block text-xs text-muted-foreground">{language === 'en' ? 'inglês' : 'português (Brasil)'}</span></span>
             <ChevronRight className="h-5 w-5 text-muted-foreground" />
-          </button>
+          </button>}
         </div>
       </div> : <div className="flex flex-1 flex-col animate-in fade-in slide-in-from-left-4 duration-200">
         <SheetHeader><SheetTitle className="text-left text-xl">Conta</SheetTitle></SheetHeader>
