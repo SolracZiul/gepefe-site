@@ -1,9 +1,9 @@
 /// <reference types="bun" />
 import { expect, test } from 'bun:test';
-import { bibliotecaHref, bibliotecaTabs, footerLinks, institutionalLinks, institutionalRedirectTarget, isSearchRoute, mobileNavigation, normalizeBibliotecaFilter, privacyPath, searchPath, sidebarLinks } from './repository-navigation';
+import { bibliotecaHref, bibliotecaTabs, accountLinks, institutionalLinks, institutionalRedirectTarget, isSearchRoute, mobileNavigation, normalizeBibliotecaFilter, privacyPath, searchPath, sidebarLinks } from './repository-navigation';
 
 test('the footer links to the privacy policy while the sidebar menu stays collections-only', () => {
-  expect(footerLinks.map(item => item.href)).toEqual(['/todos', '/noticias', '/linhas-de-pesquisa', '/privacidade']);
+  expect(accountLinks.map(item => item.href)).toEqual(['/linhas-de-pesquisa', '/privacidade']);
   expect(sidebarLinks.map(item => item.href)).not.toContain(privacyPath);
 });
 
